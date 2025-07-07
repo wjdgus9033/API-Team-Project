@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
+import Loading from "./loading";
 
 export default function SimpleFetch() {
   const [rows, setRows] = useState([]); // row 불러오기
@@ -48,12 +49,7 @@ export default function SimpleFetch() {
     fetchData();
   }, []);
 
-  if (loading) {
-    return <div style={{ padding: 20 }}> 데이터를 불러오는 중입니다...</div>;
-  }
-  if (error) {
-    return <div style={{ color: "red", padding: 20 }}>{error}</div>;
-  }
+  if (loading) return <Loading />;
 
   return (
     <div style={{ padding: 20 }}>

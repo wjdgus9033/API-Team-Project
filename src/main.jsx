@@ -8,7 +8,7 @@ import {
 
 import Root from "./routes/root.jsx";
 import Home from "./routes/home.jsx";
-import Stats from "./routes/stats.jsx";
+import Stats from "./routes/stats/stats.jsx";
 import Shelters from "./routes/shelters.jsx";
 import About from "./routes/about.jsx";
 
