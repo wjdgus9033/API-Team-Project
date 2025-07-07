@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+} from "recharts";
 
 export default function SimpleFetch() {
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState([]); // row 불러오기
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,7 +25,7 @@ export default function SimpleFetch() {
 
         for (let i = 0; i < rowElements.length; i++) {
           const row = rowElements[i];
-          const get = (tag) => row.getElementsByTagName(tag)[0]?.textContent || "0";
+          const get = (tag) => row.getElementsByTagName(tag)[0]?.textContent || "0"; // 태그별로 row 불러오기
 
           parsed.push({
             year: get("wrttimeid"),
@@ -32,40 +36,112 @@ export default function SimpleFetch() {
         }
 
         setRows(parsed);
+        setLoading(false);
+
       } catch (err) {
         console.error("에러 발생:", err);
         setError("데이터를 불러오지 못했습니다.");
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
 
+  if (loading) {
+    return <div style={{ padding: 20 }}> 데이터를 불러오는 중입니다...</div>;
+  }
+  if (error) {
+    return <div style={{ color: "red", padding: 20 }}>{error}</div>;
+  }
+
   return (
     <div style={{ padding: 20 }}>
-      <h2>🔥 폭염 피해 요약</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      <table border="1" cellPadding="8">
-        <thead>
-          <tr>
-            <th>연도</th>
-            <th>총 피해자</th>
-            <th>외부 피해자</th>
-            <th>내부 피해자</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r, i) => (
-            <tr key={i}>
-              <td>{r.year}</td>
-              <td>{r.total}</td>
-              <td>{r.outdoor}</td>
-              <td>{r.indoor}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <h1 style={{ textAlign: "center", marginBottom: 15 }}>
+        연도별 폭염으로 인한 피해자 수 (차트)
+      </h1>
+
+      <div style={{ display: "flex", justifyContent: "space-around", padding: 20, gap: 20 }}>
+
+        <div style={{ width: "30%", minWidth: 300, textAlign: "center" }}>
+          <h3>총 피해자 수</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={rows}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="year" padding={{ left: 20, right: 20 }}/>
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="total" stroke="red" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div style={{ width: "30%", minWidth: 300, textAlign: "center" }}>
+          <h3>외부 피해자 수</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={rows}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="year" padding={{ left: 20, right: 20 }}/>
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="outdoor" stroke="#82ca9d" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div style={{ width: "30%", minWidth: 300, textAlign: "center" }}>
+          <h3>내부 피해자 수</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={rows}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="year" padding={{ left: 20, right: 20 }}/>
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="indoor" stroke="blue" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ padding: 20 }}>
+        <h1 style={{ textAlign: "center", marginBottom: 20 }}>
+          연도별 폭염으로 인한 피해자 수 (표)
+        </h1>
+        <div style={{ display: "flex", justifyContent: "space-around", padding: 20, gap: 20 }}>
+          <table border="1" cellPadding="8" style={{ width: "90%" }}>
+            <thead>
+              <tr>
+                <th>항목</th>
+                {rows.map((r, i) => (
+                  <th key={i}>{r.year}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody style={{ textAlign: "center", verticalAlign: "middle" }}>
+              <tr>
+                <td>총 피해자</td>
+                {rows.map((r, i) => (
+                  <td key={i}>{Number(r.total).toLocaleString()}</td> // 숫자에 콤마 넣기
+                ))}
+              </tr>
+              <tr>
+                <td>외부 피해자</td>
+                {rows.map((r, i) => (
+                  <td key={i}>{Number(r.outdoor).toLocaleString()}</td>
+                ))}
+              </tr>
+              <tr>
+                <td>내부 피해자</td>
+                {rows.map((r, i) => (
+                  <td key={i}>{Number(r.indoor).toLocaleString()}</td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
