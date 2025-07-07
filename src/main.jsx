@@ -9,7 +9,7 @@ import "./common.css";
 
 import Root from "./components/root/root.jsx";
 import Home from "./components/home.jsx";
-import Stats from "./components/stats/stats.jsx";
+import State from "./components/state/state.jsx";
 import Shelters from "./components/shelters.jsx";
 import About from "./components/about.jsx";
 
@@ -19,7 +19,7 @@ const router = createBrowserRouter([
     element: <Root />,
     children: [
       { index: true, element: <Home /> },
-      { path: "stats", element: <Stats /> },
+      { path: "state", element: <State /> },
       { path: "shelters", element: <Shelters /> },
       { path: "about", element: <About /> },
     ],

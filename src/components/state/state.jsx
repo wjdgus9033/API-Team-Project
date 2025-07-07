@@ -11,7 +11,7 @@ export default function SimpleFetch() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const key = import.meta.env.VITE_API_KEY;
+      const key = import.meta.env.VITE_STATE_API_KEY;
       const url = `https://apis.data.go.kr/1741000/CasualtiesFromHeatwaveByYear/getCasualtiesFromHeatwaveByYear?ServiceKey=${key}&pageNo=1&numOfRows=14&type=xml`;
 
       try {
