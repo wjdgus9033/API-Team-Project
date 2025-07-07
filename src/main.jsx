@@ -5,12 +5,13 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import "./common.css";
 
-import Root from "./routes/root/root.jsx";
-import Home from "./routes/home.jsx";
-import Stats from "./routes/stats/stats.jsx";
-import Shelters from "./routes/shelters.jsx";
-import About from "./routes/about.jsx";
+import Root from "./components/root/root.jsx";
+import Home from "./components/home.jsx";
+import Stats from "./components/stats/stats.jsx";
+import Shelters from "./components/shelters.jsx";
+import About from "./components/about.jsx";
 
 const router = createBrowserRouter([
   {
