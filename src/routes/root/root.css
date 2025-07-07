@@ -1,0 +1,32 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    display: flex;
+    align-items: center; /* 수직 가운데 */
+    justify-content: center; /* 가운데 정렬 */
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    margin: 0;
+    height: 80px;
+    background-color: #ffe5b4;
+}
+
+.navbar a {
+    font-size: 20px;
+    text-decoration: none; /* 밑줄 제거 */
+    color: #333;
+    font-weight: bold;
+}
+
+.navbar a:hover {
+    color: #d84315;
+}
+
+.header {
+    margin: 0;
+    padding: 0;
+}

@@ -66,7 +66,7 @@ export default function SimpleFetch() {
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={rows}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" padding={{ left: 20, right: 20 }}/>
+              <XAxis dataKey="year" padding={{ left: 20, right: 20 }} />
               <YAxis />
               <Tooltip />
               <Line type="monotone" dataKey="total" stroke="red" />
@@ -79,7 +79,7 @@ export default function SimpleFetch() {
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={rows}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" padding={{ left: 20, right: 20 }}/>
+              <XAxis dataKey="year" padding={{ left: 20, right: 20 }} />
               <YAxis />
               <Tooltip />
               <Line type="monotone" dataKey="outdoor" stroke="#82ca9d" />
@@ -92,7 +92,7 @@ export default function SimpleFetch() {
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={rows}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" padding={{ left: 20, right: 20 }}/>
+              <XAxis dataKey="year" padding={{ left: 20, right: 20 }} />
               <YAxis />
               <Tooltip />
               <Line type="monotone" dataKey="indoor" stroke="blue" />
@@ -138,6 +138,10 @@ export default function SimpleFetch() {
           </table>
         </div>
       </div>
+      <div style={{ textAlign: "right",  marginTop: 40, marginRight: 20, fontSize: "0.9rem", color: "#666" }}>
+        ※ 출처: 행정안전부 통계연보 - 연도별 폭염 인명피해
+      </div>
+
     </div>
   );
 }

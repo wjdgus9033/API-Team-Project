@@ -6,7 +6,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
-import Root from "./routes/root.jsx";
+import Root from "./routes/root/root.jsx";
 import Home from "./routes/home.jsx";
 import Stats from "./routes/stats/stats.jsx";
 import Shelters from "./routes/shelters.jsx";
