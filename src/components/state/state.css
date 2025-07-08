@@ -1,0 +1,9 @@
+table {
+    table-layout: auto;
+}
+
+th,td {
+    padding: 8px 12px;
+    text-align: center;
+    white-space: nowrap;
+}

@@ -3,6 +3,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
 import Loading from "./loading";
+import "./state.css"
 
 export default function SimpleFetch() {
   const [rows, setRows] = useState([]); // row 불러오기
