@@ -13,7 +13,7 @@ import Root from "./components/root/root.jsx";
 import Home from "./components/home.jsx";
 import State from "./components/state/state.jsx";
 import Shelters from "./components/shelters.jsx";
-import About from "./components/about.jsx";
+import About from "./components/about/about.jsx";
 
 const router = createBrowserRouter([
   {
