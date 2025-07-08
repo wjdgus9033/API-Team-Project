@@ -1,36 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-import {
-  Box,
-  Flex,
-  VStack,
-  HStack,
-  Text,
-  Button,
-  Input,
-  FormControl,
-  FormLabel,
-  Card,
-  CardBody,
-  Badge,
-  Heading,
-  Alert,
-  AlertIcon,
-  AlertDescription,
-  List,
-  ListItem,
-  Divider,
-  IconButton,
-  useColorModeValue,
-  Container,
-  SimpleGrid,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  InputGroup,
-  InputLeftElement
-} from "@chakra-ui/react";
-import { SearchIcon, RepeatIcon } from "@chakra-ui/icons";
 
 export default function Shelters() {
   const [shelters, setShelters] = useState([]);
@@ -378,273 +346,135 @@ export default function Shelters() {
     }
   };
 
-  // 색상 테마
-  const bgColor = useColorModeValue('gray.50', 'gray.900');
-  const cardBg = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
-
   return (
-    <Container maxW="container.xl" py={6} bg={bgColor} minH="100vh">
-      <VStack spacing={6} align="stretch">
-        {/* 헤더 */}
-        <Box textAlign="center" mb={4}>
-          <Heading as="h1" size="xl" color="blue.600" mb={2}>
-            🏠 무더위쉼터 찾기
-          </Heading>
-          <Text color="gray.600" fontSize="lg">
-            현재 위치 기반 1km 이내 무더위쉼터를 찾아드립니다
-          </Text>
-        </Box>
+    <div style={{ display: 'flex', gap: '20px' }}>
+      {/* 지도 영역 */}
+      <div style={{ flex: 1 }}>
+        <div 
+          ref={mapContainer} 
+          style={{ width: '100%', height: '600px', border: '1px solid #ccc' }}
+        ></div>
+        
+        {/* 현재 위치 정보 및 컨트롤 */}
+        <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#e8f5e8' }}>
+          <div style={{ marginBottom: '10px' }}>
+            <strong>📍 현재 위치:</strong> 
+            {currentLocation ? 
+              `위도 ${currentLocation.lat.toFixed(4)}, 경도 ${currentLocation.lng.toFixed(4)}` : 
+              '위치 정보를 가져오는 중...'
+            }
+            <button 
+              onClick={getCurrentLocation}
+              style={{ marginLeft: '10px', padding: '5px 10px', cursor: 'pointer' }}
+            >
+              📍 현재 위치 새로고침
+            </button>
+          </div>
+          <div>
+            <strong>🏠 1km 이내 무더위쉼터:</strong> {nearbyShelters.length}개 발견
+          </div>
+        </div>
 
-        {/* 통계 정보 */}
-        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
-          <Stat bg={cardBg} p={4} borderRadius="lg" border="1px" borderColor={borderColor}>
-            <StatLabel>📍 현재 위치</StatLabel>
-            <StatNumber fontSize="md">
-              {currentLocation ? 
-                `위도 ${currentLocation.lat.toFixed(4)}` : 
-                '위치 정보 가져오는 중...'
-              }
-            </StatNumber>
-            <StatHelpText>
-              {currentLocation ? `경도 ${currentLocation.lng.toFixed(4)}` : ''}
-            </StatHelpText>
-          </Stat>
+        {/* 검색 폼 (기존 기능 유지) */}
+        <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f9f9f9' }}>
+          <form onSubmit={handleSubmit}>
+            <label>
+              키워드 검색: 
+              <input 
+                type="text"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                style={{ marginLeft: '10px', marginRight: '10px', padding: '5px' }}
+              />
+            </label>
+            <button type="submit">검색하기</button>
+          </form>
           
-          <Stat bg={cardBg} p={4} borderRadius="lg" border="1px" borderColor={borderColor}>
-            <StatLabel>🏠 근처 쉼터</StatLabel>
-            <StatNumber color="green.500">{nearbyShelters.length}개</StatNumber>
-            <StatHelpText>1km 이내 발견</StatHelpText>
-          </Stat>
-          
-          <Stat bg={cardBg} p={4} borderRadius="lg" border="1px" borderColor={borderColor}>
-            <StatLabel>🔍 검색 결과</StatLabel>
-            <StatNumber color="blue.500">{places.length}개</StatNumber>
-            <StatHelpText>키워드 검색</StatHelpText>
-          </Stat>
-        </SimpleGrid>
-
-        <Flex direction={{ base: 'column', lg: 'row' }} gap={6}>
-          {/* 지도 영역 */}
-          <VStack flex={1} spacing={4}>
-            <Card w="100%" bg={cardBg}>
-              <CardBody p={4}>
-                <Box 
-                  ref={mapContainer} 
-                  w="100%" 
-                  h="500px" 
-                  borderRadius="md"
-                  border="2px solid"
-                  borderColor={borderColor}
-                />
-              </CardBody>
-            </Card>
-            
-            {/* 현재 위치 컨트롤 */}
-            <Card w="100%" bg="green.50" borderColor="green.200" border="1px">
-              <CardBody>
-                <VStack spacing={3}>
-                  <HStack justify="space-between" w="100%">
-                    <Text fontWeight="bold" color="green.700">
-                      📍 현재 위치 정보
-                    </Text>
-                    <Button 
-                      size="sm"
-                      colorScheme="green"
-                      leftIcon={<RepeatIcon />}
-                      onClick={getCurrentLocation}
+          {/* 검색 결과 목록 */}
+          {places.length > 0 && (
+            <div style={{ marginTop: '10px' }}>
+              <h4>검색 결과</h4>
+              <ul style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                {places.map((place, i) => (
+                  <li key={i} style={{ marginBottom: '5px', fontSize: '14px' }}>
+                    <strong>{place.place_name}</strong><br />
+                    {place.road_address_name || place.address_name}
+                  </li>
+                ))}
+              </ul>
+              
+              {/* 페이지네이션 */}
+              {pagination && (
+                <div style={{ marginTop: '10px' }}>
+                  {[...Array(pagination.last)].map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handlePagination(i + 1)}
+                      style={{
+                        marginRight: '5px',
+                        backgroundColor: pagination.current === (i + 1) ? '#007bff' : '#f8f9fa',
+                        color: pagination.current === (i + 1) ? 'white' : 'black',
+                        border: '1px solid #ccc',
+                        padding: '5px 10px'
+                      }}
                     >
-                      위치 새로고침
-                    </Button>
-                  </HStack>
-                  <Text fontSize="sm" color="green.600">
-                    {currentLocation ? 
-                      `위도 ${currentLocation.lat.toFixed(4)}, 경도 ${currentLocation.lng.toFixed(4)}` : 
-                      '위치 정보를 가져오는 중...'
-                    }
-                  </Text>
-                  <Badge colorScheme="green" fontSize="sm">
-                    🏠 1km 이내 무더위쉼터: {nearbyShelters.length}개 발견
-                  </Badge>
-                </VStack>
-              </CardBody>
-            </Card>
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
 
-            {/* 검색 폼 */}
-            <Card w="100%" bg={cardBg}>
-              <CardBody>
-                <VStack spacing={4}>
-                  <Heading size="md" color="blue.600">🔍 키워드 검색</Heading>
-                  <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-                    <VStack spacing={3}>
-                      <FormControl>
-                        <FormLabel>검색 키워드</FormLabel>
-                        <InputGroup>
-                          <InputLeftElement pointerEvents="none">
-                            <SearchIcon color="gray.300" />
-                          </InputLeftElement>
-                          <Input 
-                            type="text"
-                            value={keyword}
-                            onChange={(e) => setKeyword(e.target.value)}
-                            placeholder="예: 무더위쉼터, 도서관, 카페"
-                          />
-                        </InputGroup>
-                      </FormControl>
-                      <Button type="submit" colorScheme="blue" w="100%">
-                        검색하기
-                      </Button>
-                    </VStack>
-                  </form>
-                  
-                  {/* 검색 결과 목록 */}
-                  {places.length > 0 && (
-                    <Box w="100%">
-                      <Heading size="sm" mb={3} color="blue.600">검색 결과</Heading>
-                      <Box maxH="200px" overflowY="auto" border="1px" borderColor={borderColor} borderRadius="md" p={2}>
-                        <List spacing={2}>
-                          {places.map((place, i) => (
-                            <ListItem key={i} p={2} bg="blue.50" borderRadius="md">
-                              <Text fontWeight="bold" color="blue.800">{place.place_name}</Text>
-                              <Text fontSize="sm" color="gray.600">
-                                {place.road_address_name || place.address_name}
-                              </Text>
-                            </ListItem>
-                          ))}
-                        </List>
-                      </Box>
-                      
-                      {/* 페이지네이션 */}
-                      {pagination && (
-                        <HStack spacing={2} justify="center" mt={3}>
-                          {[...Array(pagination.last)].map((_, i) => (
-                            <Button
-                              key={i}
-                              size="sm"
-                              onClick={() => handlePagination(i + 1)}
-                              colorScheme={pagination.current === (i + 1) ? 'blue' : 'gray'}
-                              variant={pagination.current === (i + 1) ? 'solid' : 'outline'}
-                            >
-                              {i + 1}
-                            </Button>
-                          ))}
-                        </HStack>
-                      )}
-                    </Box>
-                  )}
-                </VStack>
-              </CardBody>
-            </Card>
-          </VStack>
-
-          {/* 근처 무더위쉼터 목록 영역 */}
-          <VStack flex={1} spacing={4} align="stretch">
-            <Card bg={cardBg}>
-              <CardBody>
-                <VStack spacing={3} align="stretch">
-                  <HStack justify="space-between">
-                    <Heading size="lg" color="blue.600">
-                      🏠 근처 무더위쉼터
-                    </Heading>
-                    <Badge colorScheme="blue" fontSize="lg" p={2}>
-                      {nearbyShelters.length}개
-                    </Badge>
-                  </HStack>
-                  <Text fontSize="sm" color="gray.500">
-                    * 현재 위치에서 1km 이내의 쉼터만 표시됩니다
-                  </Text>
-                  <Divider />
-                </VStack>
-              </CardBody>
-            </Card>
-            
-            {error && (
-              <Alert status="error" borderRadius="lg">
-                <AlertIcon />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            
-            {nearbyShelters.length === 0 && !error && (
-              <Alert status="info" borderRadius="lg">
-                <AlertIcon />
-                <AlertDescription>
-                  1km 이내에 무더위쉼터가 없습니다.
-                </AlertDescription>
-              </Alert>
-            )}
-            
-            <VStack spacing={4} maxH="500px" overflowY="auto" pr={2}>
-              {nearbyShelters.map((s, idx) => (
-                <Card 
-                  key={idx} 
-                  w="100%"
-                  bg={cardBg}
-                  borderColor="blue.200"
-                  border="2px solid"
-                  _hover={{ 
-                    borderColor: "blue.400", 
-                    shadow: "lg",
-                    transform: "translateY(-2px)",
-                    transition: "all 0.2s"
-                  }}
-                >
-                  <CardBody>
-                    <VStack align="stretch" spacing={3}>
-                      <HStack justify="space-between" align="flex-start">
-                        <Heading size="md" color="blue.700" flex={1}>
-                          {s.name}
-                        </Heading>
-                        <Badge 
-                          colorScheme="green" 
-                          fontSize="sm"
-                          p={2}
-                          borderRadius="full"
-                        >
-                          {s.distance?.toFixed(2)}km
-                        </Badge>
-                      </HStack>
-                      
-                      <VStack align="stretch" spacing={2}>
-                        <HStack>
-                          <Text fontSize="lg">📍</Text>
-                          <Text fontSize="sm" color="gray.600">{s.address}</Text>
-                        </HStack>
-                        
-                        <HStack>
-                          <Text fontSize="lg">🕒</Text>
-                          <VStack align="start" spacing={1}>
-                            <Text fontSize="sm">
-                              <Text as="span" fontWeight="bold">평일:</Text> {s.weekday}
-                            </Text>
-                            <Text fontSize="sm">
-                              <Text as="span" fontWeight="bold">주말:</Text> 
-                              <Badge 
-                                ml={2} 
-                                colorScheme={s.weekend === "주말 휴일" ? "red" : "green"}
-                                size="sm"
-                              >
-                                {s.weekend}
-                              </Badge>
-                            </Text>
-                          </VStack>
-                        </HStack>
-                        
-                        <HStack>
-                          <Text fontSize="lg">📌</Text>
-                          <Text fontSize="xs" color="gray.400">
-                            좌표: {s.lat}, {s.lon}
-                          </Text>
-                        </HStack>
-                      </VStack>
-                    </VStack>
-                  </CardBody>
-                </Card>
-              ))}
-            </VStack>
-          </VStack>
-        </Flex>
-      </VStack>
-    </Container>
+      {/* 근처 무더위쉼터 목록 영역 */}
+      <div style={{ flex: 1, maxHeight: '600px', overflowY: 'auto' }}>
+        <h2>🏠 근처 무더위쉼터 ({nearbyShelters.length}개)</h2>
+        <p style={{ fontSize: '14px', color: '#666' }}>
+          * 현재 위치에서 1km 이내의 쉼터만 표시됩니다
+        </p>
+        
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        
+        {nearbyShelters.length === 0 && !error && (
+          <p style={{ color: '#888', fontStyle: 'italic' }}>
+            1km 이내에 무더위쉼터가 없습니다.
+          </p>
+        )}
+        
+        {nearbyShelters.map((s, idx) => (
+          <div 
+            key={idx} 
+            style={{ 
+              marginBottom: "1rem", 
+              padding: "15px", 
+              border: "2px solid #e3f2fd",
+              borderRadius: "8px",
+              backgroundColor: "#f8f9ff"
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <strong style={{ color: '#1976d2', fontSize: '16px' }}>{s.name}</strong>
+              <span style={{ 
+                backgroundColor: '#4caf50', 
+                color: 'white', 
+                padding: '2px 8px', 
+                borderRadius: '12px',
+                fontSize: '12px'
+              }}>
+                {s.distance?.toFixed(2)}km
+              </span>
+            </div>
+            <div style={{ marginTop: '8px', fontSize: '14px', lineHeight: '1.4' }}>
+              📍 {s.address}<br />
+              🕒 평일: {s.weekday}<br />
+              🕒 주말: {s.weekend}<br />
+              📌 좌표: {s.lat}, {s.lon}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
