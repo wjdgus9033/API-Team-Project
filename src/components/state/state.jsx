@@ -12,11 +12,10 @@ export default function SimpleFetch() {
   useEffect(() => {
     const fetchData = async () => {
       const key = import.meta.env.VITE_STATE_API_KEY;
-      const url = `https://apis.data.go.kr/1741000/CasualtiesFromHeatwaveByYear/getCasualtiesFromHeatwaveByYear?ServiceKey=${key}&pageNo=1&numOfRows=14&type=xml`;
+      const url = await fetch(`/state?serviceKey=${key}&pageNo=1&numOfRows=14&type=xml`);
 
       try {
-        const res = await fetch(url);
-        const xmlText = await res.text();
+        const xmlText = await url.text();
 
         const parser = new DOMParser();
         const xml = parser.parseFromString(xmlText, "application/xml");
