@@ -12,7 +12,7 @@ import Home from "./components/home.jsx";
 import State from "./components/state/state.jsx";
 import Shelters from "./components/shelters.jsx";
 import About from "./components/about.jsx";
-import Kakaomap from "./components/maps/KakaoMap";
+import Kakaomap from "./components/maps/Kakaomap.jsx";
 
 
 const router = createBrowserRouter([
