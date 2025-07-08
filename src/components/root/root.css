@@ -1,32 +1,61 @@
 body {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
-.navbar {
-    display: flex;
-    align-items: center; /* 수직 가운데 */
-    justify-content: center; /* 가운데 정렬 */
-    gap: 20px;
-    padding: 20px;
-    width: 100%;
-    margin: 0;
-    height: 80px;
-    background-color: #ffe5b4;
+.container {
+  display: flex;
+  height: 100vh;
 }
 
-.navbar a {
-    font-size: 20px;
-    text-decoration: none; /* 밑줄 제거 */
-    color: #333;
-    font-weight: bold;
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 200px;
+  padding: 20px;
+  background-color: #ffe5b4;
+  height: 100%;
 }
 
-.navbar a:hover {
-    color: #d84315;
+.sidebar a,
+.info-submenu a {
+  font-size: 18px;
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
 }
 
-.header {
-    margin: 0;
-    padding: 0;
+.sidebar a:hover,
+.info-submenu a:hover {
+  color: #d84315;
 }
+
+.info-button {
+  font-size: 18px;
+  font-weight: bold;
+  background: none;
+  border: none;
+  padding: 0;
+  color: #333;
+  cursor: pointer;
+  text-align: left;
+}
+
+.info-button:hover {
+  color: #d84315;
+}
+
+.info-submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 10px;
+}
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+  margin-left: 30px; /* ✅ 왼쪽 여백 추가 */
+}
+
