@@ -7,30 +7,26 @@ export default function Shelters() {
   useEffect(() => {
     const fetchShelters = async () => {
       try {
-        const key = encodeURIComponent(import.meta.env.VITE_SHELTER_API_KEY);
-        const res = await fetch(`/shelter?serviceKey=${key}&pageNo=1&numOfRows=10`);
-        const xmlText = await res.text();
+        const key = import.meta.env.VITE_SHELTER_API_KEY;
+        const res = await fetch(`/shelter?serviceKey=${key}&pageNo=1&numOfRows=100&returnType=JSON`);
+        const data = await res.json();
 
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(xmlText, "application/xml");
-        const rows = xml.getElementsByTagName("row");
+        const items = data.body || [];
+        if (!Array.isArray(items)) throw new Error("목록이 없습니다.");
 
-        const parsed = [];
-
-        for (let i = 0; i < rows.length; i++) {
-          const row = rows[i];
-          const get = tag => row.getElementsByTagName(tag)[0]?.textContent || "";
-
-          parsed.push({
-            name: get("RSTR_NM"),
-            address: get("DTL_ADRES"),
-            phone: get("USE_PSB_NMPR") ? `${get("USE_PSB_NMPR")}명 수용 가능` : "정보 없음",
-            weekday: `${get("WKDAY_OPER_BEGIN_TIME")} ~ ${get("WKDAY_OPER_END_TIME")}`,
-            weekend: `${get("WKEND_HDAY_OPER_BEGIN_TIME")} ~ ${get("WKEND_HDAY_OPER_END_TIME")}`,
-            lat: parseFloat(get("YCORD")) || 0,
-            lon: parseFloat(get("XCORD")) || 0,
-          });
-        }
+        const parsed = items.map(item => ({
+          name: item.RSTR_NM,
+          address: item.RN_DTL_ADRES || item.DTL_ADRES,
+          weekday: `${item.WKDAY_OPER_BEGIN_TIME || "-"} ~ ${item.WKDAY_OPER_END_TIME || "-"}`,
+          weekend:
+            item.CHCK_MATTER_WKEND_HDAY_OPN_AT === "N" ||
+              !item.WKEND_HDAY_OPER_BEGIN_TIME ||
+              !item.WKEND_HDAY_OPER_END_TIME
+              ? "주말 휴일"
+              : `${item.WKEND_HDAY_OPER_BEGIN_TIME} ~ ${item.WKEND_HDAY_OPER_END_TIME}`,
+          lat: item.LA ?? 0,
+          lon: item.LO ?? 0,
+        }));
 
         setShelters(parsed);
       } catch (err) {
@@ -48,7 +44,7 @@ export default function Shelters() {
       {error && <p style={{ color: "red" }}>{error}</p>}
       {shelters.map((s, idx) => (
         <div key={idx} style={{ marginBottom: "1rem" }}>
-          <strong>{s.name}</strong> ({s.phone})<br />
+          <strong>{s.name}</strong><br />
           {s.address}<br />
           평일 운영: {s.weekday}<br />
           주말 운영: {s.weekend}<br />
