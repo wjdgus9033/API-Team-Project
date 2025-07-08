@@ -17,8 +17,8 @@ export default function Root() {
         </button>
         {infoOpen && (
           <div className="info-submenu">
-            <Link to="/about/what-is-heatwave">폭염이란?</Link>
-            <Link to="/about/prevention">예방 수칙 안내</Link>
+            <Link to="/about/heat wave">폭염이란?</Link>
+            <Link to="/about/precautions">예방 수칙 안내</Link>
             <Link to="/about/symptoms">증상별 대처법</Link>
           </div>
         )}
