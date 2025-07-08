@@ -12,6 +12,8 @@ import Home from "./components/home.jsx";
 import State from "./components/state/state.jsx";
 import Shelters from "./components/shelters.jsx";
 import About from "./components/about.jsx";
+import Kakaomap from "./components/maps/KakaoMap";
+
 
 const router = createBrowserRouter([
   {
@@ -22,6 +24,7 @@ const router = createBrowserRouter([
       { path: "state", element: <State /> },
       { path: "shelters", element: <Shelters /> },
       { path: "about", element: <About /> },
+      { path: "map", element: <Kakaomap /> },
     ],
   },
 ]);
