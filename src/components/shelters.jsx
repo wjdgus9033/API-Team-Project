@@ -4,6 +4,10 @@ export default function Shelters() {
   const [shelters, setShelters] = useState([]);
   const [error, setError] = useState(null);
 
+  const formatTime = (timeRange) => {
+    return timeRange.replace(/\b(\d{2})(\d{2})\b/g, "$1:$2");
+  };  // 영업시간 ":" 이거 넣는 함수
+
   useEffect(() => {
     const fetchShelters = async () => {
       try {
@@ -46,8 +50,8 @@ export default function Shelters() {
         <div key={idx} style={{ marginBottom: "1rem" }}>
           <strong>{s.name}</strong><br />
           {s.address}<br />
-          평일 운영: {s.weekday}<br />
-          주말 운영: {s.weekend}<br />
+          평일 운영: {formatTime(s.weekday)}<br />
+          주말 운영: {formatTime(s.weekend)}<br />
           좌표: {s.lat}, {s.lon}
         </div>
       ))}
