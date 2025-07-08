@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
-import Loading from "./loading";
+import Loading from "./loading"; // 로딩 관련
 import "./state.css"
+import InOutChart from "./inoutChart"; // 외부 내부 차트
+import VictimTable from "./victimTable"; // 피해자 표
 
 export default function SimpleFetch() {
   const [rows, setRows] = useState([]); // row 불러오기
@@ -74,74 +76,13 @@ export default function SimpleFetch() {
           </ResponsiveContainer>
         </div>
 
-        <div style={{ width: "30%", minWidth: 300, textAlign: "center" }}>
-          <h3>외부 피해자 수</h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={rows}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" padding={{ left: 20, right: 20 }} />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="outdoor" stroke="#82ca9d" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div style={{ width: "30%", minWidth: 300, textAlign: "center" }}>
-          <h3>내부 피해자 수</h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={rows}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" padding={{ left: 20, right: 20 }} />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="indoor" stroke="blue" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        <InOutChart data={rows} />
       </div>
 
-      <div style={{ padding: 20 }}>
-        <h1 style={{ textAlign: "center", marginBottom: 20 }}>
-          연도별 폭염으로 인한 피해자 수 (표)
-        </h1>
-        <div style={{ display: "flex", justifyContent: "space-around", padding: 20, gap: 20 }}>
-          <table border="1" cellPadding="8" style={{ width: "90%" }}>
-            <thead>
-              <tr>
-                <th>항목</th>
-                {rows.map((r, i) => (
-                  <th key={i}>{r.year}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody style={{ textAlign: "center", verticalAlign: "middle" }}>
-              <tr>
-                <td>총 피해자</td>
-                {rows.map((r, i) => (
-                  <td key={i}>{Number(r.total).toLocaleString()}</td> // 숫자에 콤마 넣기
-                ))}
-              </tr>
-              <tr>
-                <td>외부 피해자</td>
-                {rows.map((r, i) => (
-                  <td key={i}>{Number(r.outdoor).toLocaleString()}</td>
-                ))}
-              </tr>
-              <tr>
-                <td>내부 피해자</td>
-                {rows.map((r, i) => (
-                  <td key={i}>{Number(r.indoor).toLocaleString()}</td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div style={{ textAlign: "right",  marginTop: 40, marginRight: 20, fontSize: "0.9rem", color: "#666" }}>
+      <VictimTable rows={rows} />
+      <div style={{ textAlign: "right", marginTop: 40, marginRight: 20, fontSize: "0.9rem", color: "#666" }}>
         ※ 출처: 행정안전부 통계연보 - 연도별 폭염 인명피해
       </div>
-
     </div>
   );
 }
