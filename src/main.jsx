@@ -33,7 +33,6 @@ const router = createBrowserRouter([
           { path: "symptoms", element: <Symptoms />},
         ],
       },
-      { path: "map", element: <Kakaomap /> },
     ],
   },
 ]);
