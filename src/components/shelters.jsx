@@ -12,11 +12,31 @@ export default function Shelters() {
   const [markers, setMarkers] = useState([]);
   const [places, setPlaces] = useState([]);
   const [keyword, setKeyword] = useState('무더위쉼터');
+  const [searchCategory, setSearchCategory] = useState('shelter'); // 검색 카테고리
   const [pagination, setPagination] = useState(null);
   const [infowindow, setInfowindow] = useState(null);
   const [placesService, setPlacesService] = useState(null);
 
-  // 수원시 장안구 영화동 좌표
+  // 카테고리별 키워드 정의
+  const searchKeywords = {
+    shelter: '무더위쉼터',
+    senior: '경로당',
+    community: '주민센터',
+    welfare: '복지관',
+    library: '도서관',
+    mall: '쇼핑몰',
+    cafe: '카페'
+  };
+
+  const categoryNames = {
+    shelter: '🏠 무더위쉼터',
+    senior: '👴 경로당',
+    community: '🏢 주민센터', 
+    welfare: '🏥 복지관',
+    library: '📚 도서관',
+    mall: '🛍️ 쇼핑몰',
+    cafe: '☕ 카페'
+  };
   const defaultLocation = {
     lat: 37.3007,
     lng: 127.0107
@@ -289,7 +309,21 @@ export default function Shelters() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    searchPlaces(placesService, infowindow, map, keyword);
+    const searchKeyword = searchKeywords[searchCategory] || keyword;
+    searchPlaces(placesService, infowindow, map, searchKeyword);
+  };
+
+  // 카테고리 변경 처리
+  const handleCategoryChange = (category) => {
+    setSearchCategory(category);
+    const searchKeyword = searchKeywords[category];
+    if (searchKeyword) {
+      setKeyword(searchKeyword);
+      // 자동으로 검색 실행
+      if (placesService && map && infowindow) {
+        searchPlaces(placesService, infowindow, map, searchKeyword);
+      }
+    }
   };
 
   const displayPlaces = (places, map, infowindow) => {
@@ -371,12 +405,40 @@ export default function Shelters() {
             </button>
           </div>
           <div>
-            <strong>🏠 1km 이내 무더위쉼터:</strong> {nearbyShelters.length}개 발견
+            <strong>🏠 1km 이내 더위 피할 곳:</strong> {nearbyShelters.length}개 발견
           </div>
         </div>
 
         {/* 검색 폼 (기존 기능 유지) */}
         <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f9f9f9' }}>
+          <div style={{ marginBottom: '15px' }}>
+            <h4 style={{ margin: '0 0 10px 0', color: '#333' }}>🔍 더위 피할 곳 찾기</h4>
+            
+            {/* 카테고리 버튼들 */}
+            <div style={{ marginBottom: '10px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {Object.entries(categoryNames).map(([key, name]) => (
+                  <button
+                    key={key}
+                    onClick={() => handleCategoryChange(key)}
+                    style={{
+                      padding: '6px 12px',
+                      fontSize: '12px',
+                      borderRadius: '20px',
+                      border: '1px solid #ddd',
+                      backgroundColor: searchCategory === key ? '#007bff' : '#fff',
+                      color: searchCategory === key ? 'white' : '#333',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    {name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          
           <form onSubmit={handleSubmit}>
             <label>
               키워드 검색: 
@@ -430,16 +492,16 @@ export default function Shelters() {
 
       {/* 근처 무더위쉼터 목록 영역 */}
       <div style={{ flex: 1, maxHeight: '600px', overflowY: 'auto' }}>
-        <h2>🏠 근처 무더위쉼터 ({nearbyShelters.length}개)</h2>
+        <h2>🏠 근처 더위 피할 곳 ({nearbyShelters.length}개)</h2>
         <p style={{ fontSize: '14px', color: '#666' }}>
-          * 현재 위치에서 1km 이내의 쉼터만 표시됩니다
+          * 현재 위치에서 1km 이내의 무더위쉼터, 경로당, 주민센터, 복지관 등을 표시합니다
         </p>
         
         {error && <p style={{ color: "red" }}>{error}</p>}
         
         {nearbyShelters.length === 0 && !error && (
           <p style={{ color: '#888', fontStyle: 'italic' }}>
-            1km 이내에 무더위쉼터가 없습니다.
+            1km 이내에 더위를 피할 수 있는 곳이 없습니다.
           </p>
         )}
         
