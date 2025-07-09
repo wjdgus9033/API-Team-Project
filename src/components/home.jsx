@@ -1,8 +1,10 @@
 // 홈
+import Weather from "./weather/Weather";
 
 export default function Home() {
   return (
-    <div>
+    <>
+      <Weather/>
       <h1>폭염 대응 정보 포털</h1>
       <p>폭염 피해를 줄이기 위한 정보 제공 및 무더위쉼터 검색 서비스입니다.</p>
       <ul>
@@ -11,6 +13,6 @@ export default function Home() {
         <li>간단한 뉴스</li>
         <li>온열질환 종류, 무더위 피해자 차트</li>
       </ul>
-    </div>
+    </>
   );
 }
