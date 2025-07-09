@@ -159,7 +159,7 @@ export default function Shelters() {
   const fetchShelters = async () => {
     try {
       const key = import.meta.env.VITE_SHELTER_API_KEY;
-      const res = await fetch(`/shelter?serviceKey=${key}&pageNo=1&numOfRows=1000&returnType=JSON`);
+      const res = await fetch(`/shelter1?serviceKey=${key}&pageNo=1&numOfRows=1000&returnType=JSON`);
       const data = await res.json();
 
       const items = data.body || [];

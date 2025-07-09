@@ -15,10 +15,14 @@ export default function SimpleFetch() {
   useEffect(() => {
     const fetchData = async () => {
       const key = import.meta.env.VITE_STATE_API_KEY;
-      const url = await fetch(`/state?serviceKey=${key}&pageNo=1&numOfRows=14&type=xml`);
+      console.log("KEY:", key);
+      const url = `/state1?serviceKey=${key}&pageNo=1&numOfRows=14&type=xml`;
+      console.log("Fetch URL 확인:", url);
 
       try {
-        const xmlText = await url.text();
+        const res = await fetch(url);
+        console.log(res);
+        const xmlText = await res.text();
 
         const parser = new DOMParser();
         const xml = parser.parseFromString(xmlText, "application/xml");
