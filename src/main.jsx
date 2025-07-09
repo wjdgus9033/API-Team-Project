@@ -16,6 +16,7 @@ import Shelters from "./components/shelters.jsx";
 import HeatWave from "./components/about/heat wave.jsx";
 import Precautions from "./components/about/precautions.jsx";
 import Symptoms from "./components/about/symptoms.jsx";
+import Kakaomap from "./components/maps/KakaoMap";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
           { path: "symptoms", element: <Symptoms />},
         ],
       },
+      { path: "map", element: <Kakaomap /> },
     ],
   },
 ]);
