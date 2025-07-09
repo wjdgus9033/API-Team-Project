@@ -5,10 +5,12 @@ export default function Shelters() {
   const [nearbyShelters, setNearbyShelters] = useState([]);
   const [error, setError] = useState(null);
   const [currentLocation, setCurrentLocation] = useState(null);
+  const [currentAddress, setCurrentAddress] = useState('위치 정보를 가져오는 중...');
   
   // 카카오맵 관련 상태
   const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
+  const [geocoder, setGeocoder] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [places, setPlaces] = useState([]);
   const [keyword, setKeyword] = useState('무더위쉼터');
@@ -58,17 +60,11 @@ export default function Shelters() {
     return distance;
   };
 
-  // 1km 이내 쉼터 필터링
+  // 가장 가까운 쉼터 5개 필터링
   const filterNearbyShelters = (shelterList, userLocation) => {
     return shelterList.filter(shelter => {
       if (!shelter.lat || !shelter.lon) return false;
-      const distance = calculateDistance(
-        userLocation.lat, 
-        userLocation.lng, 
-        parseFloat(shelter.lat), 
-        parseFloat(shelter.lon)
-      );
-      return distance <= 1; // 1km 이내
+      return true; // 모든 쉼터를 대상으로 함
     }).map(shelter => ({
       ...shelter,
       distance: calculateDistance(
@@ -77,7 +73,8 @@ export default function Shelters() {
         parseFloat(shelter.lat), 
         parseFloat(shelter.lon)
       )
-    })).sort((a, b) => a.distance - b.distance); // 거리순 정렬
+    })).sort((a, b) => a.distance - b.distance) // 거리순 정렬
+    .slice(0, 5); // 가장 가까운 5개만 선택
   };
 
   // 현재 위치 가져오기
@@ -90,6 +87,9 @@ export default function Shelters() {
             lng: position.coords.longitude
           };
           setCurrentLocation(location);
+          
+          // 현재 위치의 주소 가져오기
+          getAddressFromCoords(location.lat, location.lng);
           
           // 지도 중심을 현재 위치로 이동
           if (map) {
@@ -107,6 +107,28 @@ export default function Shelters() {
       // 기본 위치 사용
       setCurrentLocation(defaultLocation);
     }
+  };
+
+  // 좌표를 주소로 변환하는 함수
+  const getAddressFromCoords = (lat, lng) => {
+    if (!geocoder) return;
+    
+    const coord = new window.kakao.maps.LatLng(lat, lng);
+    
+    geocoder.coord2Address(coord.getLng(), coord.getLat(), (result, status) => {
+      if (status === window.kakao.maps.services.Status.OK) {
+        const address = result[0];
+        if (address.road_address) {
+          // 도로명 주소가 있으면 도로명 주소 사용
+          setCurrentAddress(address.road_address.address_name);
+        } else if (address.address) {
+          // 지번 주소 사용
+          setCurrentAddress(address.address.address_name);
+        }
+      } else {
+        setCurrentAddress('주소를 찾을 수 없습니다');
+      }
+    });
   };
 
   // 카카오맵 초기화
@@ -131,6 +153,9 @@ export default function Shelters() {
 
         const ps = new window.kakao.maps.services.Places();
         setPlacesService(ps);
+        
+        const geo = new window.kakao.maps.services.Geocoder();
+        setGeocoder(geo);
       });
     };
 
@@ -325,6 +350,53 @@ export default function Shelters() {
       if (placesService && map && infowindow) {
         searchPlaces(placesService, infowindow, map, searchKeyword);
       }
+      
+      // 오른쪽 목록도 해당 카테고리로 업데이트
+      if (currentLocation) {
+        updateNearbyPlacesByCategory(category, searchKeyword);
+      }
+    }
+  };
+
+  // 카테고리별 근처 장소 업데이트
+  const updateNearbyPlacesByCategory = (category, searchKeyword) => {
+    if (!placesService || !currentLocation) return;
+    
+    if (category === 'shelter') {
+      // 무더위쉼터는 기존 API 데이터 사용
+      if (shelters.length > 0) {
+        const nearby = filterNearbyShelters(shelters, currentLocation);
+        setNearbyShelters(nearby);
+      }
+    } else {
+      // 다른 카테고리는 카카오맵 검색 결과 사용
+      placesService.keywordSearch(searchKeyword, (data, status) => {
+        if (status === window.kakao.maps.services.Status.OK && data.length > 0) {
+          const placesWithDistance = data.map(place => ({
+            name: place.place_name,
+            address: place.road_address_name || place.address_name,
+            weekday: "운영시간 확인 필요",
+            weekend: "운영시간 확인 필요", 
+            lat: parseFloat(place.y),
+            lon: parseFloat(place.x),
+            distance: calculateDistance(
+              currentLocation.lat,
+              currentLocation.lng,
+              parseFloat(place.y),
+              parseFloat(place.x)
+            )
+          }));
+          
+          // 거리순 정렬 후 5개만 선택
+          const nearbyPlaces = placesWithDistance
+            .sort((a, b) => a.distance - b.distance)
+            .slice(0, 5);
+          
+          setNearbyShelters(nearbyPlaces);
+        } else {
+          setNearbyShelters([]);
+        }
+      });
     }
   };
 
@@ -395,10 +467,7 @@ export default function Shelters() {
         <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#e8f5e8' }}>
           <div style={{ marginBottom: '10px' }}>
             <strong>📍 현재 위치:</strong> 
-            {currentLocation ? 
-              `위도 ${currentLocation.lat.toFixed(4)}, 경도 ${currentLocation.lng.toFixed(4)}` : 
-              '위치 정보를 가져오는 중...'
-            }
+            {currentAddress}
             <button 
               onClick={getCurrentLocation}
               style={{ marginLeft: '10px', padding: '5px 10px', cursor: 'pointer' }}
@@ -407,7 +476,7 @@ export default function Shelters() {
             </button>
           </div>
           <div>
-            <strong>🏠 1km 이내 더위 피할 곳:</strong> {nearbyShelters.length}개 발견
+            <strong>🏠 가장 가까운 {categoryNames[searchCategory]?.replace(/🏠|👴|🏢|🏥|📚|🛍️|☕|🔍/, '').trim() || '시설'}:</strong> {nearbyShelters.length}개 발견
           </div>
         </div>
 
@@ -492,18 +561,18 @@ export default function Shelters() {
         </div>
       </div>
 
-      {/* 근처 무더위쉼터 목록 영역 */}
+      {/* 가장 가까운 쉼터 목록 영역 */}
       <div style={{ flex: 1, maxHeight: '600px', overflowY: 'auto' }}>
-        <h2>🏠 근처 더위 피할 곳 ({nearbyShelters.length}개)</h2>
+        <h2>🏠 가장 가까운 {categoryNames[searchCategory] || '쉼터'} 목록 ({nearbyShelters.length}개)</h2>
         <p style={{ fontSize: '14px', color: '#666' }}>
-          * 현재 위치에서 1km 이내의 무더위쉼터, 경로당, 주민센터, 복지관 등을 표시합니다
+          * 현재 위치에서 가장 가까운 {categoryNames[searchCategory] || '무더위쉼터'} 5개를 거리순으로 표시합니다
         </p>
         
         {error && <p style={{ color: "red" }}>{error}</p>}
         
         {nearbyShelters.length === 0 && !error && (
           <p style={{ color: '#888', fontStyle: 'italic' }}>
-            1km 이내에 더위를 피할 수 있는 곳이 없습니다.
+            근처에 이용 가능한 {categoryNames[searchCategory]?.replace(/🏠|👴|🏢|🏥|📚|🛍️|☕|🔍/, '').trim() || '시설'}이 없습니다.
           </p>
         )}
         
