@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+// import loading from "./loading";
 
 export default function Shelters() {
   const [shelters, setShelters] = useState([]);
@@ -202,6 +203,7 @@ export default function Shelters() {
             : `${item.WKEND_HDAY_OPER_BEGIN_TIME} ~ ${item.WKEND_HDAY_OPER_END_TIME}`,
         lat: item.LA ?? 0,
         lon: item.LO ?? 0,
+        tel: item.TELNO || item.TEL || '',
       }));
 
       setShelters(parsed);
@@ -603,7 +605,7 @@ export default function Shelters() {
               📍 {s.address}<br />
               🕒 평일: {s.weekday}<br />
               🕒 주말: {s.weekend}<br />
-              📌 좌표: {s.lat}, {s.lon}
+              📞 전화번호: {s.tel || '정보 없음'}
             </div>
           </div>
         ))}
