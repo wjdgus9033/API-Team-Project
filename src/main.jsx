@@ -16,6 +16,7 @@ import Shelters from "./components/shelters.jsx";
 import HeatWave from "./components/about/heat wave.jsx";
 import Precautions from "./components/about/precautions.jsx";
 import Symptoms from "./components/about/symptoms.jsx";
+import News from "./components/news/News.jsx";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
           { path: "symptoms", element: <Symptoms />},
         ],
       },
+      { path: "news", element: <News /> },
     ],
   },
 ]);

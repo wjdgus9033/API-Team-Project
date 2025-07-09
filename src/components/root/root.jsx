@@ -20,6 +20,7 @@ export default function Root() {
             <Link to="/about/heat wave">폭염이란?</Link>
             <Link to="/about/precautions">예방 수칙 안내</Link>
             <Link to="/about/symptoms">증상별 대처법</Link>
+            <Link to="/news">📰 폭염 뉴스</Link>
           </div>
         )}
       </nav>
