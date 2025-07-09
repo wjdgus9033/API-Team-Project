@@ -75,7 +75,7 @@ export default function Shelters() {
         parseFloat(shelter.lon)
       )
     })).sort((a, b) => a.distance - b.distance) // 거리순 정렬
-    .slice(0, 5); // 가장 가까운 5개만 선택
+    .slice(0, 10); // 가장 가까운 10개만 선택
   };
 
   // 현재 위치 가져오기
@@ -388,11 +388,11 @@ export default function Shelters() {
               parseFloat(place.x)
             )
           }));
-          
-          // 거리순 정렬 후 5개만 선택
+
+          // 거리순 정렬 후 10개만 선택
           const nearbyPlaces = placesWithDistance
             .sort((a, b) => a.distance - b.distance)
-            .slice(0, 5);
+            .slice(0, 10);
           
           setNearbyShelters(nearbyPlaces);
         } else {
@@ -564,10 +564,10 @@ export default function Shelters() {
       </div>
 
       {/* 가장 가까운 쉼터 목록 영역 */}
-      <div style={{ flex: 1, maxHeight: '600px', overflowY: 'auto' }}>
+      <div style={{ flex: 1, maxHeight: '1100px', overflowY: 'auto' }}>
         <h2>🏠 가장 가까운 {categoryNames[searchCategory] || '쉼터'} 목록 ({nearbyShelters.length}개)</h2>
         <p style={{ fontSize: '14px', color: '#666' }}>
-          * 현재 위치에서 가장 가까운 {categoryNames[searchCategory] || '무더위쉼터'} 5개를 거리순으로 표시합니다
+          * 현재 위치에서 가장 가까운 {categoryNames[searchCategory] || '무더위 쉼터'} 10개를 거리순으로 표시합니다
         </p>
         
         {error && <p style={{ color: "red" }}>{error}</p>}
