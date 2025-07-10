@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchHeatwaveNews, fetchHealthNews } from './newsApi';
+import { fetchHeatwaveNews, fetchHealthNews } from '../newsApi';
 import './HomeNewsSection.css';
 
 export default function HomeNewsSection() {
@@ -8,6 +8,26 @@ export default function HomeNewsSection() {
   const [healthNewsData, setHealthNewsData] = useState([]);
   const [newsLoading, setNewsLoading] = useState(true);
   const [healthNewsLoading, setHealthNewsLoading] = useState(true);
+
+  // HTML 태그 제거 함수
+  const removeHtmlTags = (text) => {
+    return text ? text.replace(/<[^>]*>/g, '') : '';
+  };
+
+  // HTML 엔티티 디코딩 함수
+  const decodeHtmlEntities = (text) => {
+    if (!text) return '';
+    
+    const textArea = document.createElement('textarea');
+    textArea.innerHTML = text;
+    return textArea.value;
+  };
+
+  // HTML 태그 제거 + 엔티티 디코딩
+  const cleanText = (text) => {
+    const withoutTags = removeHtmlTags(text);
+    return decodeHtmlEntities(withoutTags);
+  };
 
   useEffect(() => {
     const loadNews = async () => {
@@ -55,7 +75,7 @@ export default function HomeNewsSection() {
               newsData.map((article, index) => (
                 <div key={index} className="news-brief-item">
                   <a href={article.link} target="_blank" rel="noopener noreferrer" className="news-link">
-                    <h4>{article.title}</h4>
+                    <h4>{cleanText(article.title)}</h4>
                   </a>
                   <span className="news-time">{new Date(article.pubDate).toLocaleString('ko-KR')}</span>
                 </div>
@@ -84,7 +104,7 @@ export default function HomeNewsSection() {
               healthNewsData.map((article, index) => (
                 <div key={index} className="news-brief-item">
                   <a href={article.link} target="_blank" rel="noopener noreferrer" className="news-link">
-                    <h4>{article.title}</h4>
+                    <h4>{cleanText(article.title)}</h4>
                   </a>
                   <span className="news-time">{new Date(article.pubDate).toLocaleString('ko-KR')}</span>
                 </div>
