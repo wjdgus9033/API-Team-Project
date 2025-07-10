@@ -25,11 +25,13 @@ export default function MapComponent({
     
     window.kakao.maps.event.addListener(marker, 'mouseover', () => {
       const content = `
-        <div style="padding:10px;z-index:1;min-width:200px;">
+        <div style="padding:10px;z-index:1;min-width:200px;
+          max-width:200px;
+          word-wrap:break-word;">
           <strong>${shelter.name}</strong><br/>
           <small>${shelter.address}</small><br/>
           <span style="color:blue;">거리: ${shelter.distance?.toFixed(2)}km</span>
-        </div>
+        </div> 
       `;
       infowindow.setContent(content);
       infowindow.open(map, marker);
