@@ -16,16 +16,7 @@ export default function MapComponent({
 
   const addShelterMarker = (position, shelter) => {
     const marker = new window.kakao.maps.Marker({
-      position: position,
-      image: new window.kakao.maps.MarkerImage(
-        'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png',
-        new window.kakao.maps.Size(36, 37),
-        {
-          spriteSize: new window.kakao.maps.Size(36, 691),
-          spriteOrigin: new window.kakao.maps.Point(0, 10),
-          offset: new window.kakao.maps.Point(13, 37)
-        }
-      )
+      position: position
     });
     
     marker.setMap(map);

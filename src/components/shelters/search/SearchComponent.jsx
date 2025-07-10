@@ -53,18 +53,8 @@ export default function SearchComponent({
   };
 
   const addMarker = (position, idx, title) => {
-    const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png';
-    const imageSize = new window.kakao.maps.Size(36, 37);
-    const imgOptions = {
-      spriteSize: new window.kakao.maps.Size(36, 691),
-      spriteOrigin: new window.kakao.maps.Point(0, (idx * 46) + 10),
-      offset: new window.kakao.maps.Point(13, 37)
-    };
-    
-    const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions);
     const marker = new window.kakao.maps.Marker({
-      position: position,
-      image: markerImage
+      position: position
     });
     
     marker.setMap(map);
