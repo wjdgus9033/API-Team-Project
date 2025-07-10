@@ -68,18 +68,6 @@ export default function MapComponent({
         infowindow.setContent(content);
         infowindow.open(map, currentMarker);
       });
-
-      // 1km 반경 원 그리기
-      const circle = new window.kakao.maps.Circle({
-        center: currentPos,
-        radius: 1000,
-        strokeWeight: 2,
-        strokeColor: '#FF0000',
-        strokeOpacity: 0.8,
-        fillColor: '#FF0000',
-        fillOpacity: 0.1
-      });
-      circle.setMap(map);
     }
     
     // 근처 쉼터 마커들 추가
