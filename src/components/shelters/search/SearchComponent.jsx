@@ -59,7 +59,7 @@ export default function SearchComponent({
     setMarkers([]);
   };
 
-  const addMarker = (position, idx, title) => {
+  const addMarker = (position, idx, place) => {
     const marker = new window.kakao.maps.Marker({
       position: position
     });
@@ -68,7 +68,7 @@ export default function SearchComponent({
     setMarkers(prev => [...prev, marker]);
     
     window.kakao.maps.event.addListener(marker, 'mouseover', () => {
-      displayInfowindow(marker, title);
+      displayInfowindow(marker, place);
     });
     
     window.kakao.maps.event.addListener(marker, 'mouseout', () => {
@@ -78,8 +78,39 @@ export default function SearchComponent({
     return marker;
   };
 
-  const displayInfowindow = (marker, title) => {
-    const content = `<div style="padding:5px;z-index:1;">${title}</div>`;
+  const displayInfowindow = (marker, place) => {
+    let content;
+    
+    if (currentLocation && place.y && place.x) {
+      // 거리 계산
+      const distance = calculateDistance(
+        currentLocation.lat,
+        currentLocation.lng,
+        parseFloat(place.y),
+        parseFloat(place.x)
+      );
+      
+      content = `
+        <div style="padding:10px;z-index:1;min-width:200px;
+          max-width:200px;
+          word-wrap:break-word;">
+          <strong>${place.place_name}</strong><br/>
+          <small>${place.road_address_name || place.address_name || '주소 정보 없음'}</small><br/>
+          <span style="color:blue;">거리: ${distance.toFixed(2)}km</span>
+        </div>
+      `;
+    } else {
+      // 거리 정보가 없는 경우
+      content = `
+        <div style="padding:10px;z-index:1;min-width:200px;
+          max-width:200px;
+          word-wrap:break-word;">
+          <strong>${place.place_name || place}</strong><br/>
+          <small>${place.road_address_name || place.address_name || ''}</small>
+        </div>
+      `;
+    }
+    
     infowindow.setContent(content);
     infowindow.open(map, marker);
   };
@@ -90,7 +121,7 @@ export default function SearchComponent({
     
     places.forEach((place, idx) => {
       const placePosition = new window.kakao.maps.LatLng(place.y, place.x);
-      const marker = addMarker(placePosition, idx, place.place_name);
+      const marker = addMarker(placePosition, idx, place);
       bounds.extend(placePosition);
     });
     
