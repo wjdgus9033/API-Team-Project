@@ -62,7 +62,7 @@ export default function Home() {
             </table>
           </div>
           <div className="table-footer" style={{ paddingTop: "10px"}}>
-            <Link to="/symptoms" className="more-link">더보기</Link>
+            <Link to="/about/symptoms" className="more-link">더보기</Link>
           </div>
         </div>
         <div className="card">

@@ -1,8 +1,9 @@
 .related-table {
-  width: 100%;
+  width: 80%;
   border-collapse: collapse;
   margin-top: 1rem;
   border: 1px solid #ccc;
+  margin: 1rem auto;
 }
 
 .related-table th,
@@ -15,7 +16,7 @@
 }
 
 .related-table th {
-  background-color: #f4f4f4;
+  background-color: rgb(255, 157, 157);
   font-weight: bold;
 }
 
