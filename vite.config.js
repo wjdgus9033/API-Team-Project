@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  
+
   return {
     plugins: [react()],
     server: {
@@ -11,12 +11,12 @@ export default defineConfig(({ mode }) => {
         '/shelter1': {
           target: 'https://www.safetydata.go.kr',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/shelter/, '/V2/api/DSSP-IF-10942'),
+          rewrite: path => path.replace(/^\/shelter1/, '/V2/api/DSSP-IF-10942'),
         },
         '/state1': {
           target: 'https://apis.data.go.kr',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/state/, '/1741000/CasualtiesFromHeatwaveByYear/getCasualtiesFromHeatwaveByYear'),
+          rewrite: path => path.replace(/^\/state1/, '/1741000/CasualtiesFromHeatwaveByYear/getCasualtiesFromHeatwaveByYear'),
         },
         '/api/naver': {
           target: 'https://openapi.naver.com',

@@ -4,7 +4,7 @@ import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, L
 export default function InOutChart({ data }) {
   return (
     <>
-      <div style={{ width: "30%", minWidth: 300, textAlign: "center" }}>
+      <div style={{ width: "100%", minWidth: 300, textAlign: "center" }}>
         <h3>외부 피해자 수</h3>
         <ResponsiveContainer width="100%" height={250}>
           <LineChart data={data}>
@@ -17,7 +17,7 @@ export default function InOutChart({ data }) {
         </ResponsiveContainer>
       </div>
 
-      <div style={{ width: "30%", minWidth: 300, textAlign: "center" }}>
+      <div style={{ width: "100%", minWidth: 300, textAlign: "center" }}>
         <h3>내부 피해자 수</h3>
         <ResponsiveContainer width="100%" height={250}>
           <LineChart data={data}>
