@@ -10,7 +10,7 @@ import { ChakraProvider } from "@chakra-ui/react"
 import { system } from "./ChakrConfig.js";
 
 import Root from "./components/root/root.jsx";
-import Home from "./components/home.jsx";
+import Home from "./components/home/home.jsx";
 import State from "./components/state/state.jsx";
 import Shelters from "./components/shelters.jsx";
 import HeatWave from "./components/about/heat wave.jsx";
