@@ -22,7 +22,7 @@ export default function MapComponent({
     marker.setMap(map);
     setMarkers(prev => [...prev, marker]);
     
-    window.kakao.maps.event.addListener(marker, 'click', () => {
+    window.kakao.maps.event.addListener(marker, 'mouseover', () => {
       const content = `
         <div style="padding:10px;z-index:1;min-width:200px;">
           <strong>${shelter.name}</strong><br/>
@@ -32,6 +32,10 @@ export default function MapComponent({
       `;
       infowindow.setContent(content);
       infowindow.open(map, marker);
+    });
+
+    window.kakao.maps.event.addListener(marker, 'mouseout', () => {
+      infowindow.close();
     });
     
     return marker;
@@ -54,10 +58,14 @@ export default function MapComponent({
       currentMarker.setMap(map);
       setMarkers(prev => [...prev, currentMarker]);
       
-      window.kakao.maps.event.addListener(currentMarker, 'click', () => {
+      window.kakao.maps.event.addListener(currentMarker, 'mouseover', () => {
         const content = '<div style="padding:5px;z-index:1;color:red;font-weight:bold;">현재 위치</div>';
         infowindow.setContent(content);
         infowindow.open(map, currentMarker);
+      });
+
+      window.kakao.maps.event.addListener(currentMarker, 'mouseout', () => {
+        infowindow.close();
       });
     }
     
