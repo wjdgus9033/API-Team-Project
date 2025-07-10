@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { parseStorageItem } from "../utility/util";
 
 const defaultPos = convertPosition(37.2914844, 127.012561);
 
@@ -9,11 +10,17 @@ export const useLocationStore = create((set) => ({
     const watchId = navigator.geolocation.watchPosition(
       (pos) => {
         if (!pos) return;
+        const val = parseStorageItem("updatedLocation");
+        const parseVal = parseInt(val.nx, 10) + parseInt(val.ny, 10);
         const convertPos = convertPosition(
           pos.coords.latitude,
           pos.coords.longitude
         );
+        const parsePos = parseInt(convertPos.nx, 10) + parseInt(convertPos.ny, 10);
+
+        if(parseVal === parsePos) return console.log("좌표가 동일합니다.");
         set({ position: convertPos });
+        sessionStorage.setItem("updatedLocation", JSON.stringify(convertPos));
       },
       (error) => {
         console.error(error);
@@ -27,7 +34,6 @@ export const useLocationStore = create((set) => ({
     return watchId;
   },
 }));
-
 
 export function convertPosition(lat, lon) {
   const RE = 6371.00877;

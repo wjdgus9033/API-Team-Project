@@ -11,38 +11,34 @@ import {
   DateLabel,
   CardContainerWrapper,
 } from "./WeatherStyled";
-
+import tempImage from './tempImage.png';
+import React from "react";
 
 export default function WeatherCard({ items }) {
   const convertItem = Object.values(convertWeatherItems(items, "day"));
 
   // baseDate, baseTime, category, fcstDate, fcstTime, fcstValue, nx, ny
-  function createCard({ time,date, data, itemIdx }) {
+  function createCard({ time, date, data }) {
     const styledCard = (
-      <CardContainerWrapper key={itemIdx} time={time}>
+      <CardContainerWrapper time={time}>
         {time === "00시" && <DateLabel>{date}</DateLabel>}
-      <CardContainer>
-        {/* {nextDateLabel(time)} */}
-        <PText>{time}</PText>
-        <WeatherImage>ASDF</WeatherImage>
-        <Temperature>{data.TMP}℃</Temperature>
-        <PText>{data.REH}%</PText>
-        <PText>{data.POP}%</PText>
-        <PText>{data.WSD}m/s</PText>
-      </CardContainer>
+        <CardContainer>
+          {/* {nextDateLabel(time)} */}
+          <PText>{time}</PText>
+          <WeatherImage src={tempImage} alt="asd"/>
+          <Temperature>{data.TMP}℃</Temperature>
+          <PText>{data.REH}%</PText>
+          <PText>{data.POP}%</PText>
+          <PText>{data.WSD}m/s</PText>
+        </CardContainer>
       </CardContainerWrapper>
     );
     return styledCard;
   }
 
-
   return (
     convertItem &&
-    convertItem.map((item, itemIdx) => (
-      <>
-        {createCard(item, itemIdx)}
-      </>
-    ))
+    convertItem.map((item, itemIdx) => <React.Fragment key={itemIdx}>{createCard(item)}</React.Fragment>)
   );
 }
 

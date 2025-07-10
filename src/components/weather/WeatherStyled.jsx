@@ -8,7 +8,8 @@ const getGradientForTime = (time) => {
   if (hour >= 6 && hour <= 23) {
     return "linear-gradient(to bottom, rgba(0, 89, 255, 0.6), rgba(66, 131, 252, 0.3))";
   } else {
-    return "linear-gradient(to bottom, rgba(3, 5, 8, 0.6), rgba(35, 76, 153, 0.3))";
+    return (//"linear-gradient(to bottom, rgba(3, 5, 8, 0.6), rgba(35, 76, 153, 0.3))"
+     "linear-gradient(to bottom, rgba(0, 89, 255, 0.6), rgba(66, 131, 252, 0.3))");
   }
 };
 
@@ -20,18 +21,54 @@ const getFontColorForTime = (time) => {
   if (hour >= 6 && hour <= 23) {
     return "#494848";
   } else {
-    return "#dadada";
+    return "#494848";//"#dadada";
   }
 };
 
+export const WeatherWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 2rem);
+  justify-content: center;
+`;
+
+export const WeatherCardWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  overflow-x: auto;
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+
+  &:hover {
+    scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
+  }
+
+  &::-webkit-scrollbar {
+    height: 8px;
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+`;
 export const CardContainerWrapper = styled.div`
   display: flex;
   padding-top: 1rem;
   flex-direction: column;
   flex: 0 0 4rem;
   position: relative;
-    border-right: 1px dotted rgba(0, 0, 0, 0.4);
-      background: ${({ time }) => getGradientForTime(time)};
+  border-right: 1px dotted rgba(0, 0, 0, 0.4);
+  background: ${({ time }) => getGradientForTime(time)};
   color: ${({ time }) => getFontColorForTime(time)};
 `;
 
@@ -52,7 +89,13 @@ export const LiveCardContainer = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.4);
   border-radius: 1rem;
   width: 50%;
+  max-width: 40rem;
+  min-width: 20rem;
   height: 15rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
   background: linear-gradient(
     to bottom,
     rgba(0, 89, 255, 0.7),
@@ -60,24 +103,26 @@ export const LiveCardContainer = styled.div`
   );
 `;
 export const LabelCard = styled.div`
-  padding: 1rem 0.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   border-right: 1px solid rgba(0, 0, 0, 0.4);
   flex: 0 0 5rem;
 `;
 
-export const DateLabel = styled.div `
-  width: 4rem;
-  height: 1rem;
+export const DateLabel = styled.div`
+  width: 3rem;
+  height: 1.2rem;
   position: absolute;
-  top: 0rem;
   text-align: center;
-  color: white;
+  top: 0;
+  left: calc(-40%);
+  color: #494848;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  background-color: #ff6b57;
 `;
-
 
 export const CardDate = styled.p`
   /* font-size: 0.5rem; */
@@ -92,7 +137,9 @@ export const LineContainer = styled.div`
     height: 2rem; */
 `;
 
-export const WeatherImage = styled.p``;
+export const WeatherImage = styled.img`
+  width: 50px;
+`;
 
 export const WeatherImageLabel = styled.p``;
 
@@ -107,5 +154,5 @@ export const Temperature = styled.h3`
 export const SpanText = styled.span``;
 
 export const PText = styled.p`
-  margin: 5px 0;
+  margin: 6px 0;
 `;

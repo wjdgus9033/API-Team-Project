@@ -36,3 +36,16 @@ export function getBaseHour() {
   if (baseHour <= 20) return "1700";
   return "2000";
 }
+
+
+export function parseStorageItem(key) {
+  const val = sessionStorage.getItem(key);
+
+  if(!val) return console.log("세션스토리지에 값이 없습니다.");
+
+  try {
+    return JSON.parse(val);
+  } catch(e) {
+    return console.error("parse 실패 ===", e);
+  }
+}

@@ -1,28 +1,82 @@
 import { convertPTY, convertSky, convertWeatherItems } from "./weatherUtility";
+import styled from "styled-components";
+import {
+  LiveCardContainer,
+  Temperature,
+  PText,
+  CardDate,
+  WeatherImage,
+  SpanText,
+} from "./WeatherStyled";
 
-import { LiveCardContainer, Temperature, PText, CardDate, SpanText } from "./WeatherStyled";
+import tempImage from "./tempImage.png";
 
-export default function WeatherLiveCard({ items, convertedItems}) {
-    const convertItem = Object.values((convertWeatherItems(items, "live")));
-    console.log("convertedddd ==" , convertedItems)
-    console.log(convertItem);
+const CardLine1 = styled.div`
+  border: 1px solid rgba(255, 213, 173, 0.5);
+  display: block;
+  border-radius: 10px;
+  height: 1.5rem;
+  text-align: center;
+  line-height: 50%;
+  padding: 0.2rem;
+`;
+const LiveWeatherImage = styled.img`
+  width: 20%;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+`;
 
-    // baseDate, baseTime, category, fcstDate, fcstTime, fcstValue, nx, ny
-  function createCard({time, data}) {
+export default function WeatherLiveCard({ items, convertedItems }) {
+  const convertItem = Object.values(convertWeatherItems(items, "live"));
+  console.log("convertedddd ==", convertedItems);
+  console.log(convertItem);
+
+  // baseDate, baseTime, category, fcstDate, fcstTime, fcstValue, nx, ny
+  function createCard({ time, data }) {
     const styledCard = (
       <>
-      <CardDate>{time}</CardDate>
-      <Temperature><SpanText>{convertSky(data.SKY)}</SpanText> {data.T1H}℃</Temperature>
-      <PText>강수확률: {data.POP}%</PText>
-      <>강수형태: {convertPTY(data.PTY)}</>
+        <CardLine1>
+          <PText>{time || "-"} 날씨</PText>
+        </CardLine1>
+        <LiveWeatherImage src={tempImage} alt="Weather"/>
+        <Temperature>{data.T1H || convertedItems.data.TMP || "-"}℃</Temperature>
+        <PText>{data.REH || convertedItems.data.REH || "-"}%</PText>
+        <PText>{convertedItems.data.POP || "-"}%</PText>
+        <PText>{convertedItems.data.WSD || "-"}m/s</PText>
+        <PText>강수확률: {convertedItems.data.POP || "-"}%</PText>
+        <>강수형태: {convertPTY(data.PTY) || "-"}</>
       </>
     );
+    //     PTY
+    // :
+    // "0"
+    // REH
+    // :
+    // "38"
+    // RN1
+    // :
+    // "0"
+    // T1H
+    // :
+    // "32.3"
+    // UUU
+    // :
+    // "-3.3"
+    // VEC
+    // :
+    // "109"
+    // VVV
+    // :
+    // "1.2"
 
     return styledCard;
   }
   return (
     convertItem &&
-    convertItem.map((group, groupIdx) => <LiveCardContainer key={groupIdx}>{createCard(group)}</LiveCardContainer>)
+    convertItem.map((group, groupIdx) => (
+      <LiveCardContainer key={groupIdx}>{createCard(group)}</LiveCardContainer>
+    ))
   );
 }
 

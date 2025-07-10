@@ -44,8 +44,7 @@ export function convertWeatherItems(items, category) {
         groups[key] = {
           time:
             item.baseTime.slice(0, 2) +
-            ":" +
-            item.baseTime.slice(2, item.baseTime.length),
+            "시",
           data: {},
         };
       }
