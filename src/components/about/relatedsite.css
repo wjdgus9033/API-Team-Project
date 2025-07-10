@@ -28,3 +28,54 @@
   text-decoration: underline;
 }
 
+.container {
+    padding: 20px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.title {
+    margin-bottom: 15px;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+    text-align: left;
+}
+
+.warning {
+    background-color: #f8d7da;
+    padding: 10px;
+    width: 50%;
+    word-break: break-word;
+    white-space: normal;
+    line-height: 1.8;
+}
+
+.alert {
+    background-color: #f5c6cb;
+    padding: 10px;
+    width: 50%;
+}
+
+.cell {
+    padding: 10px;
+    word-break: break-word;
+    white-space: normal;
+    line-height: 1.5;
+}
+
+.source {
+    text-align: right;
+    margin-top: 5px;
+    font-size: 12px;
+}

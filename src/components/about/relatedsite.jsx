@@ -3,7 +3,7 @@ import "./relatedsite.css"
 export default function RelatedSite() {
     return (
         <div>
-            <h2>관련 사이트 정보 안내</h2>
+            <h2 style={{ textAlign: "center",fontSize: "50px" }}>관련 사이트 정보 안내</h2>
             <table className="related-table">
                 <thead>
                     <tr>
