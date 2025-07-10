@@ -13,7 +13,7 @@ export default function Symptoms() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <>
       <h2 style={{ marginBottom: "15px" }}>🌡️ 폭염 관련 주요 질환</h2>
       <table
         border="1"
@@ -101,6 +101,6 @@ export default function Symptoms() {
       <p style={{ textAlign: "right", fontSize: "12px", marginTop: "8px" }}>
         ※ 출처: 질병관리청, 기상청 자료 요약
       </p>
-    </div>
+    </>
   );
 }
