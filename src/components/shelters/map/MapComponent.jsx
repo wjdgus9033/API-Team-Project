@@ -4,6 +4,7 @@ export default function MapComponent({
   mapContainer, 
   map, 
   currentLocation, 
+  currentAddress, // 추가
   nearbyShelters, 
   infowindow 
 }) {
@@ -59,7 +60,12 @@ export default function MapComponent({
       setMarkers(prev => [...prev, currentMarker]);
       
       window.kakao.maps.event.addListener(currentMarker, 'mouseover', () => {
-        const content = '<div style="padding:5px;z-index:1;color:red;font-weight:bold;">현재 위치</div>';
+        const content = `
+          <div style="padding:8px;z-index:1;color:red;font-weight:bold;max-width:200px;word-wrap:break-word;">
+            <div style="margin-bottom:3px;">📍 현재 위치</div>
+            ${currentAddress ? `<div style="font-size:11px;font-weight:normal;color:#666;">${currentAddress}</div>` : ''}
+          </div>
+        `;
         infowindow.setContent(content);
         infowindow.open(map, currentMarker);
       });

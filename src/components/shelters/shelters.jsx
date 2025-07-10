@@ -32,10 +32,11 @@ export default function Shelters() {
     <div style={{ display: 'flex', gap: '20px' }}>
       {/* 지도 영역 */}
       <div style={{ flex: 1 }}>
-        <MapComponent
+        <MapComponent 
           mapContainer={mapContainer}
           map={map}
           currentLocation={currentLocation}
+          currentAddress={currentAddress} // 추가
           nearbyShelters={nearbyShelters}
           infowindow={infowindow}
         />
