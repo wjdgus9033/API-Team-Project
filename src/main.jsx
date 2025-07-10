@@ -8,13 +8,14 @@ import {
 import "./common.css";
 
 import Root from "./components/root/root.jsx";
-import Home from "./components/home.jsx";
+import Home from "./components/home/home.jsx";
 import State from "./components/state/state.jsx";
-import Shelters from "./components/shelters.jsx";
+import Shelters from "./components/shelters/shelters.jsx";
 import HeatWave from "./components/about/heat wave.jsx";
 import Precautions from "./components/about/precautions.jsx";
 import Symptoms from "./components/about/symptoms.jsx";
 import News from "./components/news/News.jsx";
+import RelatedSite from "./components/about/relatedsite.jsx";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
           { path: "heat wave", element: <HeatWave /> },
           { path: "precautions", element: <Precautions /> },
           { path: "symptoms", element: <Symptoms />},
+          { path: "relatedsite", element: <RelatedSite />}
         ],
       },
       { path: "news", element: <News /> },

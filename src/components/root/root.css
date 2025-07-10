@@ -1,65 +1,86 @@
-body {
+body, ul, li {
   margin: 0;
   padding: 0;
+  list-style: none;   	    
 }
-
-.container {
-  display: flex;
-  height: 100vh;
-}
-
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 200px;
-  padding: 20px;
-  background-color: #ffe5b4;
-  height: 100%;
-  white-space: nowrap; 
-}
-
-.sidebar a,
-.info-submenu a {
-  font-size: 18px;
+a {
+  color: inherit;   	    
   text-decoration: none;
+}
+.side-bar > ul ul {
+  display: none;
+}
+body {
+  height: 5000px;
+  background-color: white;
+}
+
+:root {
+  --side-bar-width: 230px;
+  --side-bar-height: 90vh;
+}
+
+.side-bar {
+  position: fixed;
+  background-color:#FF6B57;
+  width: var(--side-bar-width);
+  min-height: var(--side-bar-height);  
+  margin-top: calc((100vh - var(--side-bar-height)) / 2);
+  z-index: 1000;
+}
+
+
+.side-bar ul > li > a,
+.side-bar ul > li > button {
+  display: block;
   color: #333;
+  font-size: 1.4rem;
   font-weight: bold;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 50px;
 }
-.info-submenu a{
-  font-size: 15px;
+.side-bar ul > li > button i {
+  color: #333;
 }
-
-.sidebar a:hover,
-.info-submenu a:hover {
-  color: #d84315;
-}
-
 .info-button {
-  font-size: 18px;
-  font-weight: bold;
-  background: none;
-  border: none;
-  padding: 0;
-  color: #333;
-  cursor: pointer;
-  text-align: left;
+  all: unset;
+}
+/* 자식의 position이 absolute일 때 자식을 영역 안에 가두어 준다 */
+.side-bar > ul > li {
+  position: relative;
 }
 
-.info-button:hover {
-  color: #d84315;
+/* 모든 메뉴가 마우스 인식 시 반응 */
+.side-bar ul > li:hover > a {
+  background-color:	#FFD1C1;
+  border-bottom: 1px solid #999;
+  border-radius: 10px;
 }
 
-.info-submenu {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-left: 10px;
+/* 1차 메뉴의 항목이 마우스 인식 시에 2차 메뉴 등장 */
+.side-bar > ul > li:hover > ul {
+  display: block;
+  position: absolute;
+  background-color: #FFE0B2;
+  top: 0;         /* 2차 메뉴의 상단을 1차 메뉴의 상단에 고정 */
+  left: 100%;     /* 2차 메뉴를 1차 메뉴의 너비만큼 이동 */
+  width: 100%;    /* 1차 메뉴의 너비를 상속 */
+  border-radius: 10px;
+  overflow: hidden;
 }
+.side-bar {
+  border-radius: 20px;
+  transform: translate(calc(var(--side-bar-width) * -0.8), 0);  /* X축 이동, Y축 고정 */
+  transition: .5s;
+}
+
+/* 마우스 인식 시 원래의 위치로 이동 */
+.side-bar:hover {
+  transform: translate(-20px, 0);   /* 둥근 모서리의 너비만큼 X축 이동, Y축 고정 */
+}
+
 .main-content {
-  flex-grow: 1;
-  padding: 20px;
-  overflow-y: auto;
-  margin-left: 10px; /* ✅ 왼쪽 여백 추가 */
+  margin-left: 30px;
+  padding: 2rem;
 }
-

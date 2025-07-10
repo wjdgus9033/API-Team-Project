@@ -1,0 +1,30 @@
+.related-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  border: 1px solid #ccc;
+}
+
+.related-table th,
+.related-table td {
+  border: 1px solid #ccc;
+  padding: 12px;
+  text-align: left;
+  vertical-align: top;
+   text-align: center;
+}
+
+.related-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.related-table a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.related-table a:hover {
+  text-decoration: underline;
+}
+

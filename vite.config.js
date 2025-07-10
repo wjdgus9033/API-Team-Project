@@ -8,12 +8,12 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     server: {
       proxy: {
-        '/shelter': {
+        '/shelter1': {
           target: 'https://www.safetydata.go.kr',
           changeOrigin: true,
           rewrite: path => path.replace(/^\/shelter/, '/V2/api/DSSP-IF-10942'),
         },
-        '/state': {
+        '/state1': {
           target: 'https://apis.data.go.kr',
           changeOrigin: true,
           rewrite: path => path.replace(/^\/state/, '/1741000/CasualtiesFromHeatwaveByYear/getCasualtiesFromHeatwaveByYear'),
