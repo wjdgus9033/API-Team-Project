@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SEARCH_KEYWORDS, CATEGORY_NAMES } from './searchConstants';
 import CategoryButtons from './CategoryButtons';
 import SearchResults from './SearchResults';
@@ -17,6 +17,13 @@ export default function SearchComponent({
   const [places, setPlaces] = useState([]);
   const [pagination, setPagination] = useState(null);
   const [markers, setMarkers] = useState([]);
+
+  // 현재 위치가 변경될 때마다 선택된 카테고리에 따라 결과 업데이트
+  useEffect(() => {
+    if (currentLocation && searchCategory !== 'shelter') {
+      updateNearbyPlacesByCategory(searchCategory, SEARCH_KEYWORDS[searchCategory]);
+    }
+  }, [currentLocation, searchCategory]);
 
   const calculateDistance = (lat1, lng1, lat2, lng2) => {
     const R = 6371;

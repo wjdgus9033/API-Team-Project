@@ -20,13 +20,13 @@ export default function Shelters() {
   const { currentLocation, currentAddress, getCurrentLocation } = useCurrentLocation(geocoder, defaultLocation);
   const { shelters, error } = useSheltersData();
 
-  // 무더위쉼터 및 현재 위치 처리
+  // 무더위쉼터 및 현재 위치 처리 - 카테고리에 따라 다르게 처리
   useEffect(() => {
-    if (shelters.length > 0 && currentLocation) {
+    if (shelters.length > 0 && currentLocation && searchCategory === 'shelter') {
       const nearby = filterNearbyShelters(shelters, currentLocation);
       setNearbyShelters(nearby);
     }
-  }, [shelters, currentLocation]);
+  }, [shelters, currentLocation, searchCategory]);
 
   return (
     <div style={{ display: 'flex', gap: '20px' }}>
