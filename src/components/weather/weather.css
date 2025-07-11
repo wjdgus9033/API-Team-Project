@@ -1,9 +1,10 @@
 .weather-card {
   background-color: #fff;
-  padding: 1.5rem;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
+  position: relative;
+  height: 20rem;
 }
 
 .weather-card:hover {

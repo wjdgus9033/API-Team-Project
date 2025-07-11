@@ -35,7 +35,7 @@ export default function Weather({ nowWeatherData, hourWeatherData }) {
           <WarningCard />
         </div>
         <div className="weather-card">
-          오늘의 날씨
+          <PText mVal={"20px"}>오늘의 날씨</PText>
           <WeatherLiveCard
             items={nowWeatherData}
             convertedItems={getNowSkyAndTempData()}
@@ -43,9 +43,9 @@ export default function Weather({ nowWeatherData, hourWeatherData }) {
         </div>
       </section>
       <section className="weather-card full">
-        오늘의 날씨 온도
+        <PText mVal={"5px"}>오늘의 일간 날씨</PText>
         <WeatherCardWrapper>
-          {/* <WeatherLabelCard /> */}
+          <WeatherLabelCard />
           <WeatherCard items={hourWeatherData} />
         </WeatherCardWrapper>
       </section>

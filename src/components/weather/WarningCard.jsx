@@ -42,12 +42,11 @@ const TextContent = styled.p`
 
 const WarningCardWrapper = styled.div`
   width: 100%;
-  height: 15rem;
+  height: 100%;
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
   border-radius: inherit;
-  position: relative;
+  position: absolute;
+  top: 0;
   /* background: ${({ val }) => getGradientForTemp(val)}; */
 `;
 
@@ -65,7 +64,6 @@ width: 60%;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-right: 2rem;
 `;
 
 export default function WarningCard({ items, convertedItems }) {

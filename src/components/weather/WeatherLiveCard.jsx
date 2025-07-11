@@ -5,30 +5,40 @@ import {
   calcSummerHeatIndex,
 } from "./weatherUtility";
 import styled from "styled-components";
-import {
-  LiveCardContainer,
-  Temperature,
-  PText,
-  CardDate,
-  WeatherImage,
-} from "./WeatherStyled";
+import { Temperature, PText, CardDate, WeatherImage } from "./WeatherStyled";
 
 import tempImage from "./weather-assets/tempImage.png";
 
-const CardLine1 = styled.div`
-  border: 1px solid rgba(255, 213, 173, 0.5);
-  display: block;
-  border-radius: 10px;
-  height: 1.5rem;
-  text-align: center;
-  line-height: 50%;
-  padding: 0.2rem;
+export const LiveCardContainer = styled.div`
+  border-radius: inherit;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  /* background: linear-gradient(
+    to bottom,
+    rgba(0, 89, 255, 0.7),
+    rgba(66, 131, 252, 0.4)
+  ); */
 `;
+
+const LeftWrapper = styled.div`
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+const RightWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+`;
+
 const LiveWeatherImage = styled.img`
   width: 120px;
-  position: absolute;
-  top: 0%;
-  left: 15%;
 `;
 const LiveTemp = styled.h1`
   margin-top: 0.5rem;
@@ -45,33 +55,40 @@ export default function WeatherLiveCard({ items, convertedItems }) {
 
   // baseDate, baseTime, category, fcstDate, fcstTime, fcstValue, nx, ny
   function createCard({ time, data }) {
+    const get1 = calcSummerHeatIndex(
+      parseFloat(data.T1H ?? convertedItems?.data?.TMP ?? 0),
+      parseFloat(data.REH ?? convertedItems?.data?.REH ?? 0),
+      parseFloat(convertedItems?.data?.WSD ?? 0)
+    );
     const styledCard = (
       <>
         {/* <CardLine1>
           <PText>{time || "-"} 날씨</PText>
         </CardLine1> */}
-        <LiveWeatherImage src={tempImage} alt="Weather" />
-        <LiveTemp>{data.T1H ?? convertedItems?.data?.TMP ?? "-"}°</LiveTemp>
-        <LivePText>
-          체감온도:{" "}
-          <strong>
-            {calcSummerHeatIndex(
-              parseFloat(data.T1H ?? convertedItems?.data?.TMP ?? 0),
-              parseFloat(data.REH ?? convertedItems?.data?.REH ?? 0),
-              parseFloat(convertedItems?.data?.WSD ?? 0)
-            )}
-          </strong>
-        </LivePText>
-        <LivePText mVal="3px">
-          습도: <strong>{data.REH ?? convertedItems?.data?.REH ?? "-"}</strong>%
-        </LivePText>
-        <LivePText mVal="6px">
-          비 올 확률: {convertedItems?.data?.POP ?? "-"}%
-        </LivePText>
-        <LivePText mVal="6px">
-          풍속: {convertedItems?.data?.WSD ?? "-"}m/s
-        </LivePText>
-        <LivePText mVal="6px">강수형태: {convertPTY(data.PTY) ?? "-"}</LivePText>
+        <LeftWrapper>
+          <LiveWeatherImage src={tempImage} alt="Weather" />
+          <LiveTemp>{data.T1H ?? convertedItems?.data?.TMP ?? "-"}°</LiveTemp>
+          <h3>
+            체감온도: <strong>{get1}</strong>
+          </h3>
+        </LeftWrapper>
+        <RightWrapper>
+          {" "}
+          <LivePText mVal="3px">
+            습도:{" "}
+            <strong>{data.REH ?? convertedItems?.data?.REH ?? "-"}</strong>%
+          </LivePText>
+          <LivePText mVal="6px">
+            비 올 확률: {convertedItems?.data?.POP ?? "-"}%
+          </LivePText>
+          <LivePText mVal="6px">
+            풍속: {convertedItems?.data?.WSD ?? "-"}m/s
+          </LivePText>
+          <LivePText mVal="6px">
+            강수형태: 
+            {convertPTY(data.PTY) ?? "-"}
+          </LivePText>
+        </RightWrapper>
       </>
     );
     return styledCard;

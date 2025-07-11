@@ -91,7 +91,6 @@ export const LiveCardContainer = styled.div`
   width: 100%;
   height: 15rem;
   display: flex;
-  flex-direction: column;
   align-items: center;
   position: relative;
   /* background: linear-gradient(
@@ -102,6 +101,7 @@ export const LiveCardContainer = styled.div`
 `;
 export const LabelCard = styled.div`
   padding-top: 1rem;
+  flex-shrink: 0;
   width: 4rem;
   display: flex;
   flex-direction: column;
@@ -110,8 +110,9 @@ export const LabelCard = styled.div`
   border-right: 1px solid rgba(0, 0, 0, 0.4);
   background-color: white;
   z-index: 1;
-  position: absolute;
-  
+  position: sticky;
+  left: 0;
+  top: 0;
 `;
 
 export const DateLabel = styled.div`
