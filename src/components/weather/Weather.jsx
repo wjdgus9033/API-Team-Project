@@ -1,75 +1,54 @@
-import { useEffect } from "react";
 import WeatherCard from "./WeatherCard";
-import { useLocationStore } from "../../../store/locationStore";
 import { convertWeatherItems } from "./weatherUtility";
-import {
-  useWeatherAPIStore,
-  fetchHourWeatherData,
-  fetchNowWeatherData,
-} from "../../../store/weatherAPIStore";
-import { getToday, getHour, parseStorageItem } from "../../../utility/util";
-import { WeatherWrapper, WeatherCardWrapper } from "./WeatherStyled";
+import { getToday, getHour } from "../../../utility/util";
+import { WeatherCardWrapper, PText } from "./WeatherStyled";
 import WeatherLabelCard from "./WeatherLabelCard";
 import WeatherLiveCard from "./WeatherLiveCard";
 import WarningCard from "./WarningCard";
+import styled from "styled-components";
 
-export default function Weather() {
-  const {
-    hourWeatherData,
-    nowWeatherData,
-    setHourWeatherData,
-    setNowWeatherData,
-  } = useWeatherAPIStore();
-  const { position, startWatching } = useLocationStore();
+const WeatherCardGrid = styled.div`
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+`;
 
-  useEffect(() => {
-    sessionStorage.setItem("updatedLocation", JSON.stringify(position));
-    console.log("location ==============", parseStorageItem("updatedLocation"));
-    const watchId = startWatching();
-    return () => navigator.geolocation.clearWatch(watchId);
-  }, []);
-
-  useEffect(() => {
-    async function fetchSet() {
-      try {
-        const hourData = await fetchHourWeatherData(position);
-        //console.log("data==================", hourData);
-        const nowData = await fetchNowWeatherData(position);
-        console.log("data==================", nowData, position);
-        setHourWeatherData(hourData);
-        setNowWeatherData(nowData);
-      } catch (error) {
-        console.error("API 호출 에러:", error);
-      }
-    }
-    fetchSet();
-  }, [position]);
-
+export default function Weather({ nowWeatherData, hourWeatherData }) {
   function getNowSkyAndTempData() {
     if (!hourWeatherData) {
       return null;
     }
     const convertItem = convertWeatherItems(hourWeatherData, "day");
-
     console.log("converted ============ ", convertItem);
-
     const key = getToday() + getHour();
-
     const data = convertItem[key];
-
     return data;
   }
 
   return (
-    <WeatherWrapper>
-      <WeatherCardWrapper>
-        <WeatherLiveCard items={nowWeatherData} convertedItems={getNowSkyAndTempData()} />
-        <WarningCard items={nowWeatherData} convertedItems={getNowSkyAndTempData()}/>
-      </WeatherCardWrapper>
-      <WeatherCardWrapper>
-        <WeatherLabelCard />
-        <WeatherCard items={hourWeatherData} />
-      </WeatherCardWrapper>
-    </WeatherWrapper>
+    <>
+      <section className="weather-card-section">
+        <div className="weather-card">
+          <PText mVal={"20px"}>오늘의 폭염주의보</PText>
+          <WarningCard />
+        </div>
+        <div className="weather-card">
+          오늘의 날씨
+          <WeatherLiveCard
+            items={nowWeatherData}
+            convertedItems={getNowSkyAndTempData()}
+          />
+        </div>
+      </section>
+      <section className="weather-card full">
+        오늘의 날씨 온도
+        <WeatherCardWrapper>
+          <WeatherLabelCard />
+          <WeatherCard items={hourWeatherData} />
+        </WeatherCardWrapper>
+      </section>
+    </>
   );
 }

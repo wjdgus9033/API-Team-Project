@@ -1,5 +1,7 @@
 import styled from "styled-components";
 
+const getMargin = (props) => `${props.mVal ?? 0}`;
+
 const getGradientForTime = (time) => {
   if (!time) return "inherit";
 
@@ -85,32 +87,31 @@ export const CardContainer = styled.div`
 `;
 
 export const LiveCardContainer = styled.div`
-  margin-left: 5rem;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  border-radius: 1rem;
-  width: 30%;
-  max-width: 40rem;
-  min-width: 30rem;
+  border-radius: inherit;
+  width: 100%;
   height: 15rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  background: linear-gradient(
+  /* background: linear-gradient(
     to bottom,
     rgba(0, 89, 255, 0.7),
     rgba(66, 131, 252, 0.4)
-  );
+  ); */
 `;
 export const LabelCard = styled.div`
+  padding-top: 1rem;
+  width: 4rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
   border-right: 1px solid rgba(0, 0, 0, 0.4);
-  flex: 0 0 5rem;
+  background-color: white;
+  z-index: 1;
+  position: absolute;
+  
 `;
 
 export const DateLabel = styled.div`
@@ -157,5 +158,6 @@ export const Temperature = styled.h3`
   margin: 5px 0;
 `;
 export const PText = styled.p`
-  margin: 6px 0;
+  margin-top: ${getMargin?? 0};
+  margin-bottom: ${getMargin?? 0};
 `;

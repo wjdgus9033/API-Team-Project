@@ -1,29 +1,29 @@
 import { create } from "zustand";
 import { parseStorageItem } from "../utility/util";
 
-const defaultPos = convertPosition(37.2914844, 127.012561);
+const defaultLoc = convertLocation(37.2914844, 127.012561);
 
 export const useLocationStore = create((set) => ({
-  position: defaultPos,
-  setPosition: (pos) => set({ position: pos }),
+  location: defaultLoc,
+  setLocation: (loc) => set({ location: loc }),
   startWatching: () => {
     const watchId = navigator.geolocation.watchPosition(
-      (pos) => {
-        if (!pos) return;
+      (loc) => {
+        if (!loc) return;
         const val = parseStorageItem("updatedLocation");
         const parseVal = parseInt(val.nx, 10) + parseInt(val.ny, 10);
-        const convertPos = convertPosition(
-          pos.coords.latitude,
-          pos.coords.longitude
+        const convertLoc = convertLocation(
+          loc.coords.latitude,
+          loc.coords.longitude
         );
-        const parsePos = parseInt(convertPos.nx, 10) + parseInt(convertPos.ny, 10);
+        const parseLoc = parseInt(convertLoc.nx, 10) + parseInt(convertLoc.ny, 10);
 
-        if(parseVal === parsePos) return console.log("좌표가 동일합니다.");
-        set({ position: convertPos });
-        sessionStorage.setItem("updatedLocation", JSON.stringify(convertPos));
+        if(parseVal === parseLoc) return console.log("좌표가 동일합니다.");
+        set({ location: convertLoc });
+        sessionStorage.setItem("updatedLocation", JSON.stringify(convertLoc));
       },
       (error) => {
-        console.error(error);
+        console.warn(error);
       },
       {
         enableHighAccuracy: true,
@@ -35,7 +35,7 @@ export const useLocationStore = create((set) => ({
   },
 }));
 
-export function convertPosition(lat, lon) {
+export function convertLocation(lat, lon) {
   const RE = 6371.00877;
   const GRID = 5.0;
   const SLAT1 = 30.0;

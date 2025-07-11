@@ -11,6 +11,7 @@ import {
 import tempImage from './weather-assets/tempImage.png';
 import tempImage1 from './weather-assets/test1.png';
 import React from "react";
+
 function getImageCard(sky, pty) {
   if(sky === "1") return tempImage;
   if(sky === "3") return tempImage;
@@ -33,12 +34,12 @@ export default function WeatherCard({ items }) {
       <CardContainerWrapper time={time}>
         {time === "00시" && <DateLabel>{date}</DateLabel>}
         <CardContainer>
-          <PText>{time}</PText>
+          <PText mVal={"3px"}>{time}</PText>
           <WeatherImage src={getImageCard(data.SKY, data.PTY)} alt="asd"/>
           <Temperature>{data.TMP}°</Temperature>
-          <PText>{data.REH}%</PText>
-          <PText>{data.POP}%</PText>
-          <PText>{data.WSD}m/s</PText>
+          <PText mVal={"5px"}>{data.REH}%</PText>
+          <PText mVal={"5px"}>{data.POP}%</PText>
+          <PText mVal={"5px"}>{data.WSD}m/s</PText>
         </CardContainer>
       </CardContainerWrapper>
     );

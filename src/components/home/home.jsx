@@ -4,6 +4,7 @@ import Total from "../state/statetotal";
 import useApiData from "../state/useApiData";
 import HomeNewsSection from "../news/HomeNewsSection/HomeNewsSection";
 import { Link } from "react-router-dom";
+import WeatherLayout from "../weather/WeatherLayout";
 
 export default function Home() {
   const { rows, loading, error } = useApiData();
@@ -20,18 +21,12 @@ export default function Home() {
       </section>
 
       {/* 2. 폭염주의보 / 오늘의 날씨 */}
-      <section className="card-grid">
-        <div className="card">오늘의 폭염주의보</div>
-        <div className="card">오늘의 날씨</div>
-      </section>
-
-      <section className="card full">
-        <div>오늘의 날씨 온도</div>
-      </section>
+    
+      <WeatherLayout/>
 
       {/* 3. 간단한 뉴스 2개 */}
       <section>
-        <HomeNewsSection />
+        {/* <HomeNewsSection /> */}
       </section>
 
       {/* 4. 온열질환 / 피해자 차트 */}

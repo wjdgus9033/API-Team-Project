@@ -46,6 +46,6 @@ export function parseStorageItem(key) {
   try {
     return JSON.parse(val);
   } catch(e) {
-    return console.error("parse 실패 ===", e);
+    return console.warn("parse 실패 ===", e);
   }
 }

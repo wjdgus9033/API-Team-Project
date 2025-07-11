@@ -47,9 +47,9 @@ export default function WeatherLiveCard({ items, convertedItems }) {
   function createCard({ time, data }) {
     const styledCard = (
       <>
-        <CardLine1>
+        {/* <CardLine1>
           <PText>{time || "-"} 날씨</PText>
-        </CardLine1>
+        </CardLine1> */}
         <LiveWeatherImage src={tempImage} alt="Weather" />
         <LiveTemp>{data.T1H ?? convertedItems?.data?.TMP ?? "-"}°</LiveTemp>
         <LivePText>

@@ -82,28 +82,3 @@ export function calcSummerHeatIndex(temp, humidity, windSpeed) {
   const hi = t + 0.33 * h - 0.70 * w - 4.00;
   return hi.toFixed(1);
 }
-
-/**
-1
-맑음
-3
-구름많음
-4
-흐림
-
-
-0
-없음
-1
-비
-2
-비/눈
-3
-눈
-4
-소나기
-5
-빗방울
-6
-빗방울눈날림
- */

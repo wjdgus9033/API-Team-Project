@@ -29,7 +29,6 @@
     "sort-by": "^1.2.0",
     "styled-components": "^6.1.19",
     "zustand": "^5.0.6"
-    "uqr": "^0.1.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
