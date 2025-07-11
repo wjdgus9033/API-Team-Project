@@ -1,0 +1,168 @@
+/* 홈페이지 뉴스 섹션 전용 스타일 */
+.home-news-section {
+  margin: 20px 0;
+}
+
+/* 뉴스 섹션 그리드 */
+.news-section-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* 뉴스 간략 카드 */
+.news-brief-card {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+  transition: transform 0.2s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+/* 카드를 위로 띄움 */
+.news-brief-card:hover {
+  /* transform: translateY(-2px); */
+   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.news-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.news-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.more-link {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.more-link:hover {
+  color: #2980b9;
+  text-decoration: underline;
+}
+
+.news-brief-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.news-brief-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #3498db;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.news-brief-item:hover {
+  background: #e9ecef;
+  transform: translateX(4px);
+}
+
+.news-link {
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+  margin-right: 16px;
+}
+
+.news-link:hover h4 {
+  color: #3498db;
+  text-decoration: underline;
+}
+
+.news-brief-item h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: #2c3e50;
+  transition: color 0.2s ease;
+}
+
+.news-time {
+  font-size: 0.8rem;
+  color: #6c757d;
+  white-space: nowrap;
+}
+
+.news-loading {
+  text-align: center;
+  padding: 20px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* 건강 뉴스 카드 특별 스타일 */
+
+.health-news-card .news-header h3 {
+  color: #27ae60;
+}
+
+.health-news-card .news-brief-item {
+  border-left: 4px solid #27ae60;
+}
+
+.health-news-card .more-link {
+  color: #27ae60;
+}
+
+.health-news-card .more-link:hover {
+  color: #219a52;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .news-section-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .news-brief-card {
+    padding: 20px;
+  }
+  
+  .news-brief-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .news-link {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-news-section {
+    margin: 16px 0;
+  }
+  
+  .news-brief-card {
+    padding: 16px;
+  }
+  
+  .news-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .news-header h3 {
+    font-size: 1.1rem;
+  }
+}

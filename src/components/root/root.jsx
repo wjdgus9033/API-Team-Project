@@ -14,7 +14,6 @@ export default function Root() {
             <div></div><div></div><div></div>
           </section>
         </section>
-
         <ul>
           <li>
             <Link to="/">
@@ -33,14 +32,20 @@ export default function Root() {
             </Link>
           </li>
           <li>
+            <Link to="/news">
+              <i className="fa-solid fa-building-shield"></i>폭염 뉴스
+            </Link>
+          </li>
+          <li>
             <button className="info-button" onClick={() => setInfoOpen(!infoOpen)}>
               <i className="fa-solid fa-circle-info"></i> 정보 안내
             </button>
             {infoOpen && (
               <ul className="info-submenu">
                 <li><Link to="/about/heat wave">폭염이란?</Link></li>
-                <li><Link to="/about/precautions">예방 수칙 안내</Link></li>
                 <li><Link to="/about/symptoms">증상별 대처법</Link></li>
+                <li><Link to="/about/precautions">예방 수칙 안내</Link></li>
+                <li><Link to="/about/relatedsite">관련 사이트 안내</Link></li>
               </ul>
             )}
           </li>
