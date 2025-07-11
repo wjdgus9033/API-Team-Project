@@ -6,8 +6,7 @@ export const SEARCH_KEYWORDS = {
   welfare: '복지관 복지센터',
   library: '도서관',
   mall: '쇼핑몰',
-  cafe: '카페',
-  all: '무더위쉼터 경로당 주민센터 복지관 복지센터'
+  cafe: '카페'
 };
 
 export const CATEGORY_NAMES = {
@@ -17,6 +16,5 @@ export const CATEGORY_NAMES = {
   welfare: '🏥 복지관',
   library: '📚 도서관',
   mall: '🛍️ 쇼핑몰',
-  cafe: '☕ 카페',
-  all: '🔍 모든 시설'
+  cafe: '☕ 카페'
 };
