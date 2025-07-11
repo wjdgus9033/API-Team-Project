@@ -20,7 +20,10 @@ export default function LocationInfo({
         </button>
       </div>
       <div>
-        <strong>🏠 가장 가까운 {CATEGORY_NAMES[searchCategory]?.replace(/🏠|👴|🏢|🏥|📚|🛍️|☕|🔍/, '').trim() || '시설'}:</strong> {nearbyShelters.length}개 발견
+        <strong>
+          {CATEGORY_NAMES[searchCategory]?.split(' ')[0] || '🏠'} 
+          {CATEGORY_NAMES[searchCategory]?.replace(/🏠|👴|🏢|🏥|📚|🛍️|☕|🔍/, '').trim() || '시설'} 
+          </strong>
       </div>
     </div>
   );
