@@ -72,6 +72,16 @@ export function convertWeatherItems(items, category) {
   return groups;
 }
 
+export function calcSummerHeatIndex(temp, humidity, windSpeed) {
+  const t = parseFloat(temp);
+  const h = parseFloat(humidity);
+  const w = parseFloat(windSpeed);
+
+  if (isNaN(t) || isNaN(h) || isNaN(w)) return "-";
+
+  const hi = t + 0.33 * h - 0.70 * w - 4.00;
+  return hi.toFixed(1);
+}
 
 /**
 1

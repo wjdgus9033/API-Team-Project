@@ -1,4 +1,9 @@
-import { convertPTY, convertSky, convertWeatherItems } from "./weatherUtility";
+import {
+  convertPTY,
+  convertSky,
+  convertWeatherItems,
+  calcSummerHeatIndex,
+} from "./weatherUtility";
 import styled from "styled-components";
 import {
   LiveCardContainer,
@@ -6,10 +11,9 @@ import {
   PText,
   CardDate,
   WeatherImage,
-  SpanText,
 } from "./WeatherStyled";
 
-import tempImage from "./tempImage.png";
+import tempImage from "./weather-assets/tempImage.png";
 
 const CardLine1 = styled.div`
   border: 1px solid rgba(255, 213, 173, 0.5);
@@ -21,10 +25,17 @@ const CardLine1 = styled.div`
   padding: 0.2rem;
 `;
 const LiveWeatherImage = styled.img`
-  width: 20%;
+  width: 120px;
   position: absolute;
-  top: 5px;
-  left: 5px;
+  top: 0%;
+  left: 15%;
+`;
+const LiveTemp = styled.h1`
+  margin-top: 0.5rem;
+`;
+
+const LivePText = styled.p`
+  margin: ${({ mVal }) => mVal ?? 0};
 `;
 
 export default function WeatherLiveCard({ items, convertedItems }) {
@@ -39,37 +50,30 @@ export default function WeatherLiveCard({ items, convertedItems }) {
         <CardLine1>
           <PText>{time || "-"} 날씨</PText>
         </CardLine1>
-        <LiveWeatherImage src={tempImage} alt="Weather"/>
-        <Temperature>{data.T1H || convertedItems.data.TMP || "-"}℃</Temperature>
-        <PText>{data.REH || convertedItems.data.REH || "-"}%</PText>
-        <PText>{convertedItems.data.POP || "-"}%</PText>
-        <PText>{convertedItems.data.WSD || "-"}m/s</PText>
-        <PText>강수확률: {convertedItems.data.POP || "-"}%</PText>
-        <>강수형태: {convertPTY(data.PTY) || "-"}</>
+        <LiveWeatherImage src={tempImage} alt="Weather" />
+        <LiveTemp>{data.T1H ?? convertedItems?.data?.TMP ?? "-"}°</LiveTemp>
+        <LivePText>
+          체감온도:{" "}
+          <strong>
+            {calcSummerHeatIndex(
+              parseFloat(data.T1H ?? convertedItems?.data?.TMP ?? 0),
+              parseFloat(data.REH ?? convertedItems?.data?.REH ?? 0),
+              parseFloat(convertedItems?.data?.WSD ?? 0)
+            )}
+          </strong>
+        </LivePText>
+        <LivePText mVal="3px">
+          습도: <strong>{data.REH ?? convertedItems?.data?.REH ?? "-"}</strong>%
+        </LivePText>
+        <LivePText mVal="6px">
+          비 올 확률: {convertedItems?.data?.POP ?? "-"}%
+        </LivePText>
+        <LivePText mVal="6px">
+          풍속: {convertedItems?.data?.WSD ?? "-"}m/s
+        </LivePText>
+        <LivePText mVal="6px">강수형태: {convertPTY(data.PTY) ?? "-"}</LivePText>
       </>
     );
-    //     PTY
-    // :
-    // "0"
-    // REH
-    // :
-    // "38"
-    // RN1
-    // :
-    // "0"
-    // T1H
-    // :
-    // "32.3"
-    // UUU
-    // :
-    // "-3.3"
-    // VEC
-    // :
-    // "109"
-    // VVV
-    // :
-    // "1.2"
-
     return styledCard;
   }
   return (

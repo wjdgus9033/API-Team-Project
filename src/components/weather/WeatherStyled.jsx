@@ -8,8 +8,10 @@ const getGradientForTime = (time) => {
   if (hour >= 6 && hour <= 23) {
     return "linear-gradient(to bottom, rgba(0, 89, 255, 0.6), rgba(66, 131, 252, 0.3))";
   } else {
-    return (//"linear-gradient(to bottom, rgba(3, 5, 8, 0.6), rgba(35, 76, 153, 0.3))"
-     "linear-gradient(to bottom, rgba(0, 89, 255, 0.6), rgba(66, 131, 252, 0.3))");
+    return (
+      //"linear-gradient(to bottom, rgba(3, 5, 8, 0.6), rgba(35, 76, 153, 0.3))"
+      "linear-gradient(to bottom, rgba(0, 89, 255, 0.6), rgba(66, 131, 252, 0.3))"
+    );
   }
 };
 
@@ -21,7 +23,7 @@ const getFontColorForTime = (time) => {
   if (hour >= 6 && hour <= 23) {
     return "#494848";
   } else {
-    return "#494848";//"#dadada";
+    return "#494848"; //"#dadada";
   }
 };
 
@@ -35,7 +37,7 @@ export const WeatherWrapper = styled.div`
 export const WeatherCardWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: left;
+  justify-content: flex-start;
   overflow-x: auto;
 
   /* Firefox */
@@ -83,14 +85,14 @@ export const CardContainer = styled.div`
 `;
 
 export const LiveCardContainer = styled.div`
-  margin-left: 1rem;
+  margin-left: 5rem;
   margin-bottom: 1rem;
   padding: 0.5rem;
   border: 1px solid rgba(0, 0, 0, 0.4);
   border-radius: 1rem;
-  width: 50%;
+  width: 30%;
   max-width: 40rem;
-  min-width: 20rem;
+  min-width: 30rem;
   height: 15rem;
   display: flex;
   flex-direction: column;
@@ -117,7 +119,7 @@ export const DateLabel = styled.div`
   position: absolute;
   text-align: center;
   top: 0;
-  left: calc(-40%);
+  left: -40%;
   color: #494848;
   border: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: 8px;
@@ -141,7 +143,11 @@ export const WeatherImage = styled.img`
   width: 50px;
 `;
 
-export const WeatherImageLabel = styled.p``;
+export const WeatherImageLabel = styled.p`
+  display: flex;
+  align-items: center;
+  height: 50px;
+`;
 
 export const TempTextLabel = styled.h3`
   margin: 5px 0;
@@ -150,9 +156,6 @@ export const TempTextLabel = styled.h3`
 export const Temperature = styled.h3`
   margin: 5px 0;
 `;
-
-export const SpanText = styled.span``;
-
 export const PText = styled.p`
   margin: 6px 0;
 `;

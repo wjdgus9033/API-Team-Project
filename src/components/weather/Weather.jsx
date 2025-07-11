@@ -11,7 +11,7 @@ import { getToday, getHour, parseStorageItem } from "../../../utility/util";
 import { WeatherWrapper, WeatherCardWrapper } from "./WeatherStyled";
 import WeatherLabelCard from "./WeatherLabelCard";
 import WeatherLiveCard from "./WeatherLiveCard";
-
+import WarningCard from "./WarningCard";
 
 export default function Weather() {
   const {
@@ -24,7 +24,7 @@ export default function Weather() {
 
   useEffect(() => {
     sessionStorage.setItem("updatedLocation", JSON.stringify(position));
-    console.log("location ==============", parseStorageItem("updatedLocation"))
+    console.log("location ==============", parseStorageItem("updatedLocation"));
     const watchId = startWatching();
     return () => navigator.geolocation.clearWatch(watchId);
   }, []);
@@ -45,28 +45,29 @@ export default function Weather() {
     fetchSet();
   }, [position]);
 
-function getNowSky() {
-  if (!hourWeatherData) {
-    return null;
+  function getNowSkyAndTempData() {
+    if (!hourWeatherData) {
+      return null;
+    }
+    const convertItem = convertWeatherItems(hourWeatherData, "day");
+
+    console.log("converted ============ ", convertItem);
+
+    const key = getToday() + getHour();
+
+    const data = convertItem[key];
+
+    return data;
   }
-  const convertItem = convertWeatherItems(hourWeatherData, "day");
-
-  console.log("converted ============ ", convertItem);
-
-  const key = getToday() + getHour();
-
-  const data = convertItem[key];
-
-  return data;
-}
 
   return (
     <WeatherWrapper>
       <WeatherCardWrapper>
-      <WeatherLiveCard items={nowWeatherData} convertedItems={getNowSky()} />
+        <WeatherLiveCard items={nowWeatherData} convertedItems={getNowSkyAndTempData()} />
+        <WarningCard items={nowWeatherData} convertedItems={getNowSkyAndTempData()}/>
       </WeatherCardWrapper>
       <WeatherCardWrapper>
-        <WeatherLabelCard/>
+        <WeatherLabelCard />
         <WeatherCard items={hourWeatherData} />
       </WeatherCardWrapper>
     </WeatherWrapper>
