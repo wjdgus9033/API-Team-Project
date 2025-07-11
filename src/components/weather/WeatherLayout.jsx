@@ -5,9 +5,8 @@ import {
   fetchHourWeatherData,
   fetchNowWeatherData,
 } from "../../../store/weatherAPIStore";
-import { parseStorageItem } from "../../../utility/util";
+import { getBaseHour, getHour, parseStorageItem } from "../../../utility/util";
 import Weather from "./Weather";
-
 
 export default function WeatherLayout() {
   const {
@@ -30,16 +29,34 @@ export default function WeatherLayout() {
     //Location Data의 값이 같을 시 useEffect를 호출하는걸 방지하여 현재는 1차적으로 방지해주는데 2차방지도 필요할듯함
     async function fetchSet() {
       try {
-        const hourData = await fetchHourWeatherData(location);
-        const nowData = await fetchNowWeatherData(location);
-        console.log("data==================", nowData, location);
-        sessionStorage.setItem("nowWeatherData", JSON.stringify(nowData));
-        sessionStorage.setItem("hourWeatherData", JSON.stringify(hourData));
+        const cachedNow = parseStorageItem("nowWeatherData")?.[0]?.baseTime;
+        const cachedHour = parseStorageItem("hourWeatherData")?.[0]?.baseTime;
+        if (cachedNow !== getHour() || !cachedNow) {
+          const nowData = await fetchNowWeatherData(location);
+          setNowWeatherData(nowData);
+          console.log("Debug Test now data is true");
+        } else {
+          setNowWeatherData(parseStorageItem("nowWeatherData"));
+          console.log("Debug now data is false");
+        }
 
-        console.log("parsed Storage Now Weather Item === ", parseStorageItem("nowWeatherData"));
-        console.log("parsed Storage Hour Weather Item === ", parseStorageItem("hourWeatherData"));
-        setHourWeatherData(hourData);
-        setNowWeatherData(nowData);
+        if (cachedHour !== getBaseHour() || !cachedHour) {
+          console.log("Debug Test hour data is true");
+          const hourData = await fetchHourWeatherData(location);
+          setHourWeatherData(hourData);
+        } else {
+          setHourWeatherData(parseStorageItem("hourWeatherData"));
+          console.log("Debug hour data is false");
+        }
+
+        console.log(
+          "parsed Storage Now Weather Item === ",
+          parseStorageItem("nowWeatherData")
+        );
+        console.log(
+          "parsed Storage Hour Weather Item === ",
+          parseStorageItem("hourWeatherData")
+        );
       } catch (error) {
         console.error("API 호출 에러:", error);
       }

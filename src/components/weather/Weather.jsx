@@ -45,7 +45,7 @@ export default function Weather({ nowWeatherData, hourWeatherData }) {
       <section className="weather-card full">
         오늘의 날씨 온도
         <WeatherCardWrapper>
-          <WeatherLabelCard />
+          {/* <WeatherLabelCard /> */}
           <WeatherCard items={hourWeatherData} />
         </WeatherCardWrapper>
       </section>

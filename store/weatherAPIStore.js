@@ -13,8 +13,8 @@ const SERVICE_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 export const useWeatherAPIStore = create((set) => ({
   hourWeatherData: null,
   nowWeatherData: null,
-  setHourWeatherData: (res) =>  set({hourWeatherData: res}),
-  setNowWeatherData: (res) => set({nowWeatherData: res}),
+  setHourWeatherData: (res) => set({ hourWeatherData: res }),
+  setNowWeatherData: (res) => set({ nowWeatherData: res }),
 }));
 
 export async function fetchHourWeatherData(position) {
@@ -31,6 +31,11 @@ export async function fetchHourWeatherData(position) {
         ny: position.ny,
       },
     });
+
+    sessionStorage.setItem(
+      "hourWeatherData",
+      JSON.stringify(response.data.response.body.items.item)
+    );
     return response.data.response.body.items.item;
   } catch (error) {
     console.error("API 호출 에러:", error);
@@ -38,7 +43,7 @@ export async function fetchHourWeatherData(position) {
 }
 
 export async function fetchNowWeatherData(position) {
-    try {
+  try {
     const response = await axios.get(URL, {
       params: {
         serviceKey: SERVICE_KEY,
@@ -51,6 +56,10 @@ export async function fetchNowWeatherData(position) {
         ny: position.ny,
       },
     });
+    sessionStorage.setItem(
+      "nowWeatherData",
+      JSON.stringify(response.data.response.body.items.item)
+    );
     return response.data.response.body.items.item;
   } catch (error) {
     console.error("API 호출 에러:", error);
