@@ -4,6 +4,7 @@ import { MapComponent } from './map';
 import { SearchComponent } from './search';
 import { LocationInfo } from './locate';
 import { SheltersList } from './list';
+import './Shelters.css'; // 스타일 파일 추가
 
 export default function Shelters() {
   const [nearbyShelters, setNearbyShelters] = useState([]);

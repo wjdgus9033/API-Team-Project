@@ -178,9 +178,6 @@ export default function SearchComponent({
         const nearby = filterNearbyShelters(shelters, currentLocation);
         setNearbyShelters(nearby);
       }
-    } else if (category === 'all') {
-      // 모든 시설 카테고리 처리
-      searchAllCategories();
     } else {
       placesService.keywordSearch(searchKeyword, (data, status) => {
         if (status === window.kakao.maps.services.Status.OK && data.length > 0) {
