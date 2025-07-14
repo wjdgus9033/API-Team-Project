@@ -286,18 +286,6 @@ export default function SearchComponent({
         />
       </div>
       
-      <form onSubmit={handleSubmit}>
-        <label>
-          키워드 검색: 
-          <input 
-            type="text"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            style={{ marginLeft: '10px', marginRight: '10px', padding: '5px' }}
-          />
-        </label>
-        <button type="submit">검색하기</button>
-      </form>
       
       <SearchResults
         places={places}
