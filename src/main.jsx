@@ -15,7 +15,7 @@ import HeatWave from "./components/about/heat wave.jsx";
 import Precautions from "./components/about/precautions.jsx";
 import Symptoms from "./components/about/symptoms.jsx";
 import RelatedSite from "./components/about/relatedsite.jsx";
-import Test from "./components/shelters/search/test.jsx";
+import Test from "./components/shelters/test.jsx";
 
 const router = createBrowserRouter([
   {
