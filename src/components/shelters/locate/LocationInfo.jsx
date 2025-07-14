@@ -7,7 +7,7 @@ export default function LocationInfo({
 }) {
 
   return (
-    <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#e8f5e8' }}>
+    <div className='card' style={{ marginTop: '10px', padding: '10px', backgroundColor: '#e8f5e8' }}>
       <div style={{ marginBottom: '10px' }}>
         <strong>📍 현재 위치:</strong> 
         {currentAddress}

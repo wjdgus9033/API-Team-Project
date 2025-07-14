@@ -42,7 +42,7 @@ export default function Shelters() {
   }, [shelters, currentLocation, searchCategory]);
 
   return (
-    <div style={{ display: 'flex', gap: '20px' }}>
+    <div className="card" style={{ display: 'flex', gap: '20px' }}>
       {/* 지도 영역 */}
       <div style={{ flex: 1 }}>
         <MapComponent 

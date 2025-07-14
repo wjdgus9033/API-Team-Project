@@ -13,7 +13,6 @@ export default function SearchComponent({
   shelters,
   setNearbyShelters
 }) {
-  const [keyword, setKeyword] = useState('무더위쉼터');
   const [places, setPlaces] = useState([]);
   const [pagination, setPagination] = useState(null);
   const [markers, setMarkers] = useState([]);
@@ -149,17 +148,10 @@ export default function SearchComponent({
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const searchKeyword = SEARCH_KEYWORDS[searchCategory] || keyword;
-    searchPlaces(placesService, infowindow, map, searchKeyword);
-  };
-
   const handleCategoryChange = (category) => {
     setSearchCategory(category);
     const searchKeyword = SEARCH_KEYWORDS[category];
     if (searchKeyword) {
-      setKeyword(searchKeyword);
       if (placesService && map && infowindow) {
         searchPlaces(placesService, infowindow, map, searchKeyword);
       }
@@ -216,7 +208,7 @@ export default function SearchComponent({
   };
 
   return (
-    <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f9f9f9' }}>
+    <div className='card' style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f9f9f9' }}>
       <div style={{ marginBottom: '15px' }}>
         <h4 style={{ margin: '0 0 10px 0', color: '#333' }}>🔍 더위 피할 곳 찾기</h4>
         
