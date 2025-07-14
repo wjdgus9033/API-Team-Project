@@ -62,7 +62,7 @@ body {
 .side-bar > ul > li:hover > ul {
   display: block;
   position: absolute;
-  background-color: #FFE0B2;
+  background-color: #ffcbc4;
   top: 0;         /* 2차 메뉴의 상단을 1차 메뉴의 상단에 고정 */
   left: 100%;     /* 2차 메뉴를 1차 메뉴의 너비만큼 이동 */
   width: 100%;    /* 1차 메뉴의 너비를 상속 */
@@ -83,4 +83,12 @@ body {
 .main-content {
   margin-left: 30px;
   padding: 2rem;
+}
+.container{
+  min-height: 100vh; /* 화면 전체 높이 채우기 */
+  background-color: #FFE0B2;
+}
+
+.side-bar ul ul li a {
+  font-size: 18px !important;
 }

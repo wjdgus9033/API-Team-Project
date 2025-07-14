@@ -1,9 +1,10 @@
 .related-table {
-  width: 80%;
+  width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
   border: 1px solid #ccc;
   margin: 1rem auto;
+  table-layout: fixed;
 }
 
 .related-table th,
@@ -12,7 +13,9 @@
   padding: 12px;
   text-align: left;
   vertical-align: top;
-   text-align: center;
+  text-align: center;
+  word-break: break-word;
+  white-space: normal;
 }
 
 .related-table th {
@@ -30,53 +33,69 @@
 }
 
 .container {
-    padding: 20px;
+  padding: 20px;
 }
 
 .card {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+.relatedcard {
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 1500px;
+  transition: box-shadow 0.3s ease;
+  background-color: #fff;
+  overflow-x: auto;
+}
+
+.relatedcard:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 .title {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .table {
-    border-collapse: collapse;
-    width: 100%;
-    table-layout: fixed;
-    text-align: left;
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  text-align: left;
 }
 
 .warning {
-    background-color: #f8d7da;
-    padding: 10px;
-    width: 50%;
-    word-break: break-word;
-    white-space: normal;
-    line-height: 1.8;
+  background-color: #f8d7da;
+  padding: 10px;
+  width: 50%;
+  word-break: break-word;
+  white-space: normal;
+  line-height: 1.8;
 }
 
 .alert {
-    background-color: #f5c6cb;
-    padding: 10px;
-    width: 50%;
+  background-color: #f5c6cb;
+  padding: 10px;
+  width: 50%;
 }
 
 .cell {
-    padding: 10px;
-    word-break: break-word;
-    white-space: normal;
-    line-height: 1.5;
+  padding: 10px;
+  word-break: break-word;
+  white-space: normal;
+  line-height: 1.5;
 }
 
 .source {
-    text-align: right;
-    margin-top: 5px;
-    font-size: 12px;
+  text-align: right;
+  margin-top: 5px;
+  font-size: 12px;
 }

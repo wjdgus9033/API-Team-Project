@@ -44,7 +44,7 @@ export default function Root() {
               <ul className="info-submenu">
                 <li><Link to="/about/heat wave">폭염이란?</Link></li>
                 <li><Link to="/about/symptoms">증상별 대처법</Link></li>
-                <li><Link to="/about/precautions">예방 수칙 안내</Link></li>
+                <li><Link to="/about/precautions">예방 수칙 안내 포스터</Link></li>
                 <li><Link to="/about/relatedsite">관련 사이트 안내</Link></li>
               </ul>
             )}

@@ -31,8 +31,8 @@
 /* 카드 부분 */
 .dashboard {
   padding: 2rem;
-  max-width: 1200px;
   margin: 0 auto;
+  max-width: 1600px;
 }
 
 .card {
@@ -43,6 +43,7 @@
   transition: box-shadow 0.3s ease;
   line-height: 1.8; /* 텍스트 줄 간격 */
   margin-bottom: 2rem;
+  max-width: 1500px;
 }
 
 .card:hover {

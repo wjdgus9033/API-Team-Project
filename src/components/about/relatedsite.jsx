@@ -2,7 +2,7 @@ import "./relatedsite.css"
 
 export default function RelatedSite() {
     return (
-        <div div style={{ textAlign: "center" }}>
+        <div className="relatedcard" style={{ textAlign: "center" }}>
             <h2 style={{ textAlign: "center",fontSize: "50px" }}>관련 사이트 정보 안내</h2>
             <table className="related-table">
                 <thead>
@@ -15,9 +15,7 @@ export default function RelatedSite() {
                 <tbody>
                     <tr>
                         <td>
-                            <a href="https://www.safekorea.go.kr" target="_blank" rel="noopener noreferrer">
-                                국민재난안전포털
-                            </a><br />
+                            <a href="https://www.safekorea.go.kr" target="_blank" rel="noopener noreferrer">국민재난안전포털</a><br />
                             <a href="https://www.safekorea.go.kr/idsiSFK/neo/main/main.html" target="_blank">자연재난행동요령</a><br />
                             <a href="https://www.safekorea.go.kr/idsiSFK/neo/main/main.html" target="_blank">무더위쉼터</a>
                         </td>
