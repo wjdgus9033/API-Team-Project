@@ -4,6 +4,7 @@ import { MapComponent } from './map';
 import { SearchComponent } from './search';
 import { LocationInfo } from './locate';
 import { SheltersList } from './list';
+import './Shelters.css'; 
 
 export default function Shelters() {
   const [nearbyShelters, setNearbyShelters] = useState([]);
@@ -15,27 +16,40 @@ export default function Shelters() {
     lng: 127.0107
   };
 
-  // 커스텀 훅들 사용
+  // 커스텀 훅
   const { map, geocoder, placesService, infowindow } = useKakaoMap(mapContainer, defaultLocation);
   const { currentLocation, currentAddress, getCurrentLocation } = useCurrentLocation(geocoder, defaultLocation);
   const { shelters, error } = useSheltersData();
 
-  // 무더위쉼터 및 현재 위치 처리
   useEffect(() => {
-    if (shelters.length > 0 && currentLocation) {
+    const hasShownLocationAlert = sessionStorage.getItem('locationAlertShown');
+    
+    if (!hasShownLocationAlert) {
+      alert("위치 권한 허용해주세요");
+      getCurrentLocation();
+      
+      // 세션 동안 alert가 다시 뜨지 않도록 설정
+      sessionStorage.setItem('locationAlertShown', 'true');
+    }
+  }, []); // 빈 dependency array로 컴포넌트 마운트 시에만 실행
+
+  // 무더위쉼터, 현재 위치 - 카테고리에 따라 다르게
+  useEffect(() => {
+    if (shelters.length > 0 && currentLocation && searchCategory === 'shelter') {
       const nearby = filterNearbyShelters(shelters, currentLocation);
       setNearbyShelters(nearby);
     }
-  }, [shelters, currentLocation]);
+  }, [shelters, currentLocation, searchCategory]);
 
   return (
-    <div style={{ display: 'flex', gap: '20px' }}>
+    <div className="card" style={{ display: 'flex', gap: '20px' }}>
       {/* 지도 영역 */}
       <div style={{ flex: 1 }}>
-        <MapComponent
+        <MapComponent 
           mapContainer={mapContainer}
           map={map}
           currentLocation={currentLocation}
+          currentAddress={currentAddress} // 추가
           nearbyShelters={nearbyShelters}
           infowindow={infowindow}
         />
@@ -59,7 +73,7 @@ export default function Shelters() {
         />
       </div>
 
-      {/* 가장 가까운 쉼터 목록 영역 */}
+      {/* 가까운 쉼터 목록 영역 */}
       <SheltersList
         nearbyShelters={nearbyShelters}
         searchCategory={searchCategory}

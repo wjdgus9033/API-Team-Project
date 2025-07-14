@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SEARCH_KEYWORDS, CATEGORY_NAMES } from './searchConstants';
 import CategoryButtons from './CategoryButtons';
 import SearchResults from './SearchResults';
@@ -13,10 +13,16 @@ export default function SearchComponent({
   shelters,
   setNearbyShelters
 }) {
-  const [keyword, setKeyword] = useState('무더위쉼터');
   const [places, setPlaces] = useState([]);
   const [pagination, setPagination] = useState(null);
   const [markers, setMarkers] = useState([]);
+
+  // 현재 위치가 변경될 때마다 선택된 카테고리에 따라 결과 업데이트
+  useEffect(() => {
+    if (currentLocation && searchCategory !== 'shelter') {
+      updateNearbyPlacesByCategory(searchCategory, SEARCH_KEYWORDS[searchCategory]);
+    }
+  }, [currentLocation, searchCategory]);
 
   const calculateDistance = (lat1, lng1, lat2, lng2) => {
     const R = 6371;
@@ -52,26 +58,16 @@ export default function SearchComponent({
     setMarkers([]);
   };
 
-  const addMarker = (position, idx, title) => {
-    const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png';
-    const imageSize = new window.kakao.maps.Size(36, 37);
-    const imgOptions = {
-      spriteSize: new window.kakao.maps.Size(36, 691),
-      spriteOrigin: new window.kakao.maps.Point(0, (idx * 46) + 10),
-      offset: new window.kakao.maps.Point(13, 37)
-    };
-    
-    const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions);
+  const addMarker = (position, idx, place) => {
     const marker = new window.kakao.maps.Marker({
-      position: position,
-      image: markerImage
+      position: position
     });
     
     marker.setMap(map);
     setMarkers(prev => [...prev, marker]);
     
     window.kakao.maps.event.addListener(marker, 'mouseover', () => {
-      displayInfowindow(marker, title);
+      displayInfowindow(marker, place);
     });
     
     window.kakao.maps.event.addListener(marker, 'mouseout', () => {
@@ -81,8 +77,39 @@ export default function SearchComponent({
     return marker;
   };
 
-  const displayInfowindow = (marker, title) => {
-    const content = `<div style="padding:5px;z-index:1;">${title}</div>`;
+  const displayInfowindow = (marker, place) => {
+    let content;
+    
+    if (currentLocation && place.y && place.x) {
+      // 거리 계산
+      const distance = calculateDistance(
+        currentLocation.lat,
+        currentLocation.lng,
+        parseFloat(place.y),
+        parseFloat(place.x)
+      );
+      
+      content = `
+        <div style="padding:10px;z-index:1;min-width:200px;
+          max-width:200px;
+          word-wrap:break-word;">
+          <strong>${place.place_name}</strong><br/>
+          <small>${place.road_address_name || place.address_name || '주소 정보 없음'}</small><br/>
+          <span style="color:blue;">거리: ${distance.toFixed(2)}km</span>
+        </div>
+      `;
+    } else {
+      // 거리 정보가 없는 경우
+      content = `
+        <div style="padding:10px;z-index:1;min-width:200px;
+          max-width:200px;
+          word-wrap:break-word;">
+          <strong>${place.place_name || place}</strong><br/>
+          <small>${place.road_address_name || place.address_name || ''}</small>
+        </div>
+      `;
+    }
+    
     infowindow.setContent(content);
     infowindow.open(map, marker);
   };
@@ -93,7 +120,7 @@ export default function SearchComponent({
     
     places.forEach((place, idx) => {
       const placePosition = new window.kakao.maps.LatLng(place.y, place.x);
-      const marker = addMarker(placePosition, idx, place.place_name);
+      const marker = addMarker(placePosition, idx, place);
       bounds.extend(placePosition);
     });
     
@@ -121,17 +148,10 @@ export default function SearchComponent({
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const searchKeyword = SEARCH_KEYWORDS[searchCategory] || keyword;
-    searchPlaces(placesService, infowindow, map, searchKeyword);
-  };
-
   const handleCategoryChange = (category) => {
     setSearchCategory(category);
     const searchKeyword = SEARCH_KEYWORDS[category];
     if (searchKeyword) {
-      setKeyword(searchKeyword);
       if (placesService && map && infowindow) {
         searchPlaces(placesService, infowindow, map, searchKeyword);
       }
@@ -165,7 +185,8 @@ export default function SearchComponent({
               currentLocation.lng,
               parseFloat(place.y),
               parseFloat(place.x)
-            )
+            ),
+            category: category
           }));
 
           const nearbyPlaces = placesWithDistance
@@ -187,7 +208,7 @@ export default function SearchComponent({
   };
 
   return (
-    <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f9f9f9' }}>
+    <div className='card' style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f9f9f9' }}>
       <div style={{ marginBottom: '15px' }}>
         <h4 style={{ margin: '0 0 10px 0', color: '#333' }}>🔍 더위 피할 곳 찾기</h4>
         
@@ -198,18 +219,6 @@ export default function SearchComponent({
         />
       </div>
       
-      <form onSubmit={handleSubmit}>
-        <label>
-          키워드 검색: 
-          <input 
-            type="text"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            style={{ marginLeft: '10px', marginRight: '10px', padding: '5px' }}
-          />
-        </label>
-        <button type="submit">검색하기</button>
-      </form>
       
       <SearchResults
         places={places}

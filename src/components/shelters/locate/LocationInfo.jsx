@@ -2,13 +2,12 @@ import { CATEGORY_NAMES } from '../search/searchConstants';
 
 export default function LocationInfo({ 
   currentAddress, 
-  getCurrentLocation, 
-  nearbyShelters, 
+  getCurrentLocation,  
   searchCategory 
 }) {
 
   return (
-    <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#e8f5e8' }}>
+    <div className='card' style={{ marginTop: '10px', padding: '10px', backgroundColor: '#e8f5e8' }}>
       <div style={{ marginBottom: '10px' }}>
         <strong>📍 현재 위치:</strong> 
         {currentAddress}
@@ -20,7 +19,10 @@ export default function LocationInfo({
         </button>
       </div>
       <div>
-        <strong>🏠 가장 가까운 {CATEGORY_NAMES[searchCategory]?.replace(/🏠|👴|🏢|🏥|📚|🛍️|☕|🔍/, '').trim() || '시설'}:</strong> {nearbyShelters.length}개 발견
+        <strong>
+          {CATEGORY_NAMES[searchCategory]?.split(' ')[0] || '🏠'} 
+          {CATEGORY_NAMES[searchCategory]?.replace(/🏠|👴|🏢|🏥|📚|🛍️|☕|🔍/, '').trim() || '시설'} 
+          </strong>
       </div>
     </div>
   );
