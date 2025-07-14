@@ -33,7 +33,7 @@ body {
 .side-bar ul > li > a,
 .side-bar ul > li > button {
   display: block;
-  color: #333;
+  color: black;
   font-size: 1.4rem;
   font-weight: bold;
   padding-top: 20px;
@@ -41,7 +41,7 @@ body {
   padding-left: 50px;
 }
 .side-bar ul > li > button i {
-  color: #333;
+  color: black;
 }
 .info-button {
   all: unset;
@@ -55,22 +55,22 @@ body {
 .side-bar ul > li:hover > a {
   background-color:	#FFD1C1;
   border-bottom: 1px solid #999;
-  border-radius: 10px;
+  border-radius: 0 20px 20px 0;
 }
 
 /* 1차 메뉴의 항목이 마우스 인식 시에 2차 메뉴 등장 */
 .side-bar > ul > li:hover > ul {
   display: block;
   position: absolute;
-  background-color: #ffcbc4;
+  background-color: #fda89c;
   top: 0;         /* 2차 메뉴의 상단을 1차 메뉴의 상단에 고정 */
   left: 100%;     /* 2차 메뉴를 1차 메뉴의 너비만큼 이동 */
   width: 100%;    /* 1차 메뉴의 너비를 상속 */
-  border-radius: 10px;
+  border-radius: 0 20px 20px 0; /* 왼쪽 위, 아래 0, 오른쪽 위, 아래 20 */
   overflow: hidden;
 }
 .side-bar {
-  border-radius: 20px;
+  border-radius: 0 20px 20px 0;
   transform: translate(calc(var(--side-bar-width) * -0.8), 0);  /* X축 이동, Y축 고정 */
   transition: .5s;
 }
@@ -86,7 +86,12 @@ body {
 }
 .container{
   min-height: 100vh; /* 화면 전체 높이 채우기 */
-  background-color: #FFE0B2;
+  background-image: 
+  linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),url("./backgroundImage.png");
+  background-size: cover;         /* 이미지 비율 유지하며 채우기 */
+  background-position: center;    /* 가운데 정렬 */
+  background-repeat: no-repeat;
+
 }
 
 .side-bar ul ul li a {
