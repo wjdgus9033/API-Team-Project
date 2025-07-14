@@ -20,7 +20,7 @@ export default function RelatedSite() {
                             <a href="https://www.safekorea.go.kr/idsiSFK/neo/main/main.html" target="_blank">무더위쉼터</a>
                         </td>
                         <td>행정안전부</td>
-                        <td>재난유형 및 국민행동요령, 안전시설 및 민방위 정보, 풍수해 보험, 재난복구 등 <br />다양한 재난안전정보를 종합적으로 제공
+                        <td>재난유형 및 국민행동요령, 안전시설 및 민방위 정보, 풍수해 보험, 재난복구 등 다양한 재난안전정보를 종합적으로 제공
                             <br />* 자연,사회재난 및 생활안전 행동요령, 민방위 대피소, 무더위쉼터, 피해 및 복구 현황 등</td>
                     </tr>
                     <tr>

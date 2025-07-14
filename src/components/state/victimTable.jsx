@@ -2,7 +2,7 @@
 export default function VictimTable({ rows }) {
   return (
     <div style={{ padding: 20 }}>
-      <h1 style={{ textAlign: "center", marginBottom: 20 }}>
+      <h1 style={{ textAlign: "center", marginBottom: 15 }}>
         연도별 폭염으로 인한 피해자 수 (표)
       </h1>
       <div style={{ display: "flex", justifyContent: "space-around", padding: 20, gap: 20, overflowX: "auto" }}>
