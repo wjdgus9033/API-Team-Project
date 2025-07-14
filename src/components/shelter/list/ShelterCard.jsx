@@ -1,10 +1,20 @@
 import React from 'react';
 
-export default function ShelterCard({ shelter }) {
+export default function ShelterCard({ shelter, rank }) {
   return (
     <div className="shelter-item">
       <h4 className="shelter-name">
         <span className="shelter-name-text">
+          {rank && (
+            <span style={{ 
+              color: '#0066CC', 
+              fontWeight: 'bold', 
+              marginRight: '4px',
+              fontSize: '12px'
+            }}>
+              {rank}.
+            </span>
+          )}
           📍 {shelter.name}
         </span>
         {shelter.distance && (

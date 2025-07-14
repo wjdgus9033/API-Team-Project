@@ -6,8 +6,10 @@ export default function useCurrentLocation() {
 
   // 현재 위치 가져오기
   const getCurrentLocation = useCallback(() => {
+    console.log('getCurrentLocation 호출됨');
     return new Promise((resolve, reject) => {
       if (navigator.geolocation) {
+        console.log('geolocation API 사용 가능');
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const lat = position.coords.latitude;
@@ -39,6 +41,7 @@ export default function useCurrentLocation() {
           }
         );
       } else {
+        console.error('geolocation API 지원하지 않음');
         const errorMessage = '이 브라우저는 위치 서비스를 지원하지 않습니다.';
         reject(new Error(errorMessage));
       }

@@ -16,7 +16,10 @@ export default function useDistanceUtils() {
 
   // 거리 정보를 포함한 쉼터 데이터 생성 및 정렬
   const addDistanceAndSort = useCallback((shelters, currentLocation) => {
-    if (!currentLocation) return shelters;
+    if (!currentLocation) {
+      // 현재 위치가 없으면 원본 순서 유지 (거리 정보 없음)
+      return shelters;
+    }
 
     return shelters.map(shelter => ({
       ...shelter,

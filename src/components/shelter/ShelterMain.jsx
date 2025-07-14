@@ -14,7 +14,8 @@ export default function Test() {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('all');
   const [error, setError] = useState(null);
-  const maxItems = 50;
+  const [map, setMap] = useState(null); // 지도 상태를 직접 관리
+  const maxItems = 20; // 50개에서 20개로 변경
 
   // Custom hooks
   const { 
@@ -51,15 +52,20 @@ export default function Test() {
   // 현재 위치 요청 핸들러
   const handleLocationRequest = useCallback(async () => {
     try {
+      console.log('현재 위치 요청 시작...');
       setError(null);
       await getCurrentLocation();
+      console.log('현재 위치 요청 완료');
     } catch (error) {
+      console.error('현재 위치 요청 실패:', error);
       setError(error.message);
     }
   }, [getCurrentLocation]);
 
   // 지도 준비 완료 핸들러
   const handleMapReady = useCallback((mapInstance) => {
+    console.log('지도 준비 완료:', mapInstance);
+    setMap(mapInstance); // 지도 상태 설정
     setError(null); // 지도 초기화 성공 시 에러 상태 제거
     // 지도가 준비되면 현재 위치 가져오기
     handleLocationRequest();
@@ -91,6 +97,7 @@ export default function Test() {
             currentLocation={currentLocation}
             currentAddress={currentAddress}
             error={error}
+            map={map}
             onMapReady={handleMapReady}
           />
 
@@ -121,6 +128,7 @@ export default function Test() {
           <ShelterList 
             shelters={filteredData}
             maxItems={maxItems}
+            currentLocation={currentLocation}
           />
         </div>
       </div>
