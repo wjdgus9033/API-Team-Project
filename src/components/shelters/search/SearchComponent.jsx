@@ -209,65 +209,6 @@ export default function SearchComponent({
     }
   };
 
-  const searchAllCategories = () => {
-    if (!placesService || !currentLocation) return;
-    
-    const allResults = [];
-    const categories = ['senior', 'community', 'welfare', 'library', 'mall', 'cafe'];
-    
-    // 먼저 무더위쉼터 추가
-    if (shelters.length > 0) {
-      const nearbyShelters = filterNearbyShelters(shelters, currentLocation);
-      const sheltersWithCategory = nearbyShelters.map(shelter => ({
-        ...shelter,
-        category: 'shelter'
-      }));
-      allResults.push(...sheltersWithCategory);
-    }
-    
-    // 각 카테고리별로 검색하여 결과 합치기
-    let searchesCompleted = 0;
-    
-    categories.forEach(categoryKey => {
-      const keyword = SEARCH_KEYWORDS[categoryKey];
-      if (keyword) {
-        placesService.keywordSearch(keyword, (data, status) => {
-          if (status === window.kakao.maps.services.Status.OK && data.length > 0) {
-            const placesWithDistance = data.map(place => ({
-              name: place.place_name,
-              address: place.road_address_name || place.address_name,
-              weekday: "운영시간 확인 필요",
-              weekend: "운영시간 확인 필요", 
-              lat: parseFloat(place.y),
-              lon: parseFloat(place.x),
-              distance: calculateDistance(
-                currentLocation.lat,
-                currentLocation.lng,
-                parseFloat(place.y),
-                parseFloat(place.x)
-              ),
-              category: categoryKey
-            }));
-            
-            allResults.push(...placesWithDistance);
-          }
-          
-          searchesCompleted++;
-          if (searchesCompleted === categories.length) {
-            // 모든 검색이 완료되면 거리순으로 정렬하여 상위 20개 표시
-            const sortedResults = allResults
-              .sort((a, b) => a.distance - b.distance)
-              .slice(0, 20);
-            
-            setNearbyShelters(sortedResults);
-          }
-        });
-      } else {
-        searchesCompleted++;
-      }
-    });
-  };
-
   const handlePagination = (page) => {
     if (pagination) {
       pagination.gotoPage(page);

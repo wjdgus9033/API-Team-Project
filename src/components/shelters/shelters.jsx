@@ -4,7 +4,7 @@ import { MapComponent } from './map';
 import { SearchComponent } from './search';
 import { LocationInfo } from './locate';
 import { SheltersList } from './list';
-import './Shelters.css'; // 스타일 파일 추가
+import './Shelters.css'; 
 
 export default function Shelters() {
   const [nearbyShelters, setNearbyShelters] = useState([]);
@@ -16,12 +16,12 @@ export default function Shelters() {
     lng: 127.0107
   };
 
-  // 커스텀 훅들 사용
+  // 커스텀 훅
   const { map, geocoder, placesService, infowindow } = useKakaoMap(mapContainer, defaultLocation);
   const { currentLocation, currentAddress, getCurrentLocation } = useCurrentLocation(geocoder, defaultLocation);
   const { shelters, error } = useSheltersData();
 
-  // 무더위쉼터 및 현재 위치 처리 - 카테고리에 따라 다르게 처리
+  // 무더위쉼터, 현재 위치 - 카테고리에 따라 다르게
   useEffect(() => {
     if (shelters.length > 0 && currentLocation && searchCategory === 'shelter') {
       const nearby = filterNearbyShelters(shelters, currentLocation);
@@ -61,7 +61,7 @@ export default function Shelters() {
         />
       </div>
 
-      {/* 가장 가까운 쉼터 목록 영역 */}
+      {/* 가까운 쉼터 목록 영역 */}
       <SheltersList
         nearbyShelters={nearbyShelters}
         searchCategory={searchCategory}
