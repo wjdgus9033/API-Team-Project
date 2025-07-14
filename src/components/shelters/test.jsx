@@ -648,7 +648,7 @@ export default function Test() {
           {/* 무더위쉼터 목록 */}
           <div className="shelter-list-section">
             <h2 className="shelter-list-title">
-              🏠 무더위쉼터 목록 ({filteredData.length}개소)
+              🏠 무더위쉼터 목록 ({filteredData.length}곳)
             </h2>
             
             {/* 목록 컨테이너 */}
