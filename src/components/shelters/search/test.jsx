@@ -12,6 +12,8 @@ export default function Test() {
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [currentAddress, setCurrentAddress] = useState('');
 
   // 무더위쉼터 데이터 가져오기
   const fetchShelterData = async () => {
@@ -151,6 +153,48 @@ export default function Test() {
     }
   };
 
+  // 현재 위치 가져오기
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          
+          setCurrentLocation({ lat, lng });
+          console.log('현재 위치 가져오기 성공:', { lat, lng });
+          
+          // 지도 중심을 현재 위치로 이동
+          if (map) {
+            const currentPos = new window.kakao.maps.LatLng(lat, lng);
+            map.setCenter(currentPos);
+            map.setLevel(5); // 줌 레벨을 5로 설정하여 더 자세히 보기
+          }
+          
+          // 좌표를 주소로 변환
+          if (window.kakao && window.kakao.maps && window.kakao.maps.services) {
+            const geocoder = new window.kakao.maps.services.Geocoder();
+            const coord = new window.kakao.maps.LatLng(lat, lng);
+            
+            geocoder.coord2Address(coord.getLng(), coord.getLat(), (result, status) => {
+              if (status === window.kakao.maps.services.Status.OK) {
+                const address = result[0].address.address_name;
+                setCurrentAddress(address);
+                console.log('현재 주소:', address);
+              }
+            });
+          }
+        },
+        (error) => {
+          console.error('위치 가져오기 실패:', error);
+          setError('위치 정보를 가져올 수 없습니다. 위치 권한을 확인해주세요.');
+        }
+      );
+    } else {
+      setError('이 브라우저는 위치 서비스를 지원하지 않습니다.');
+    }
+  };
+
   // 카카오지도 초기화
   const initializeMap = () => {
     console.log('지도 초기화 시도...', { 
@@ -167,6 +211,7 @@ export default function Test() {
         };
         const kakaoMap = new window.kakao.maps.Map(mapRef.current, options);
         setMap(kakaoMap);
+        setError(null); // 지도 초기화 성공 시 에러 상태 제거
         console.log('카카오지도 초기화 성공');
       } catch (error) {
         console.error('지도 초기화 오류:', error);
@@ -174,7 +219,10 @@ export default function Test() {
       }
     } else {
       console.error('카카오지도 API가 로드되지 않았습니다.');
-      setError('카카오지도 API 로딩 중 오류가 발생했습니다.');
+      // 지도 API가 로드되지 않은 경우에만 에러 메시지 설정
+      if (!window.kakao || !window.kakao.maps) {
+        setError('카카오지도 API 로딩 중입니다. 잠시만 기다려주세요.');
+      }
     }
   };
 
@@ -189,6 +237,40 @@ export default function Test() {
     const newMarkers = [];
     const bounds = new window.kakao.maps.LatLngBounds();
 
+    // 현재 위치 마커 추가
+    if (currentLocation) {
+      const currentPos = new window.kakao.maps.LatLng(currentLocation.lat, currentLocation.lng);
+      
+      const currentMarker = new window.kakao.maps.Marker({
+        position: currentPos,
+        image: new window.kakao.maps.MarkerImage(
+          'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',
+          new window.kakao.maps.Size(24, 35)
+        )
+      });
+      
+      currentMarker.setMap(map);
+      newMarkers.push(currentMarker);
+      bounds.extend(currentPos);
+
+      // 현재 위치 마커 클릭 이벤트
+      const currentInfoContent = `
+        <div style="padding:8px; min-width:200px; color:red; font-weight:bold;">
+          <div style="margin-bottom:3px;">📍 현재 위치</div>
+          ${currentAddress ? `<div style="font-size:11px; font-weight:normal; color:#666;">${currentAddress}</div>` : ''}
+        </div>
+      `;
+
+      const currentInfoWindow = new window.kakao.maps.InfoWindow({
+        content: currentInfoContent
+      });
+
+      window.kakao.maps.event.addListener(currentMarker, 'click', () => {
+        currentInfoWindow.open(map, currentMarker);
+      });
+    }
+
+    // 쉼터 마커들 추가
     shelters.forEach((shelter, index) => {
       if (shelter.lat && shelter.lon && shelter.lat !== 0 && shelter.lon !== 0) {
         const position = new window.kakao.maps.LatLng(shelter.lat, shelter.lon);
@@ -201,7 +283,10 @@ export default function Test() {
         // 인포윈도우 내용
         const infoContent = `
           <div style="padding:10px; min-width:200px; max-width:300px;">
-            <h4 style="margin:0 0 5px 0; color:#FF6B57; font-size:14px;">${shelter.name}</h4>
+            <h4 style="margin:0 0 5px 0; color:#FF6B57; font-size:14px; display:flex; justify-content:space-between; align-items:center;">
+              <span>${shelter.name}</span>
+              ${shelter.distance ? `<span style="font-size:11px; color:#0066CC; font-weight:normal; background-color:#E8F4FF; padding:2px 6px; border-radius:8px;">${shelter.distance.toFixed(1)}km</span>` : ''}
+            </h4>
             <p style="margin:0 0 3px 0; font-size:12px;"><strong>주소:</strong> ${shelter.roadAddress}</p>
             <p style="margin:0 0 3px 0; font-size:12px;"><strong>운영시간:</strong> ${shelter.weekday}</p>
             <p style="margin:0; font-size:12px;"><strong>전화:</strong> ${shelter.tel}</p>
@@ -230,6 +315,19 @@ export default function Test() {
     }
   };
 
+  // 두 지점 간의 거리 계산 (Haversine formula)
+  const calculateDistance = (lat1, lng1, lat2, lng2) => {
+    const R = 6371; // 지구 반지름 (km)
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  };
+
   // 지역 및 검색 필터링
   const filterData = () => {
     let filtered = [...shelterData];
@@ -250,6 +348,22 @@ export default function Test() {
       );
     }
 
+    // 현재 위치가 있으면 거리 계산 및 정렬
+    if (currentLocation) {
+      filtered = filtered.map(shelter => ({
+        ...shelter,
+        distance: shelter.lat && shelter.lon && shelter.lat !== 0 && shelter.lon !== 0
+          ? calculateDistance(currentLocation.lat, currentLocation.lng, shelter.lat, shelter.lon)
+          : null
+      })).sort((a, b) => {
+        // 거리 정보가 있는 쉼터를 우선적으로, 그 다음은 거리 순으로 정렬
+        if (a.distance === null && b.distance === null) return 0;
+        if (a.distance === null) return 1;
+        if (b.distance === null) return -1;
+        return a.distance - b.distance;
+      });
+    }
+
     // 최대 50개로 제한
     const limitedData = filtered.slice(0, maxItems);
     setFilteredData(limitedData);
@@ -262,6 +376,7 @@ export default function Test() {
     // 이미 스크립트가 로드되어 있는지 확인
     if (window.kakao && window.kakao.maps) {
       console.log('카카오지도 API가 이미 로드되어 있음');
+      setError(null); // 에러 상태 초기화
       initializeMap();
       return;
     }
@@ -273,9 +388,19 @@ export default function Test() {
       const checkKakao = setInterval(() => {
         if (window.kakao && window.kakao.maps) {
           clearInterval(checkKakao);
+          setError(null); // 에러 상태 초기화
           initializeMap();
         }
       }, 100);
+      
+      // 10초 후에도 로드되지 않으면 타임아웃
+      setTimeout(() => {
+        if (!window.kakao || !window.kakao.maps) {
+          clearInterval(checkKakao);
+          setError('카카오지도 API 로딩 시간이 초과되었습니다. 새로고침 해주세요.');
+        }
+      }, 10000);
+      
       return;
     }
 
@@ -290,7 +415,9 @@ export default function Test() {
       console.log('카카오지도 스크립트 로딩 성공');
       window.kakao.maps.load(() => {
         console.log('카카오지도 API 로딩 완료');
+        setError(null); // 에러 상태 초기화
         initializeMap();
+        getCurrentLocation(); // 현재 위치 가져오기
       });
     };
 
@@ -317,12 +444,12 @@ export default function Test() {
     loadData();
   }, []);
 
-  // 지역이나 검색어 변경 시 필터링
+  // 지역이나 검색어, 현재 위치 변경 시 필터링
   useEffect(() => {
     if (shelterData.length > 0) {
       filterData();
     }
-  }, [searchKeyword, selectedRegion, shelterData]);
+  }, [searchKeyword, selectedRegion, shelterData, currentLocation]);
 
   // 지도 초기화 완료 후 마커 표시
   useEffect(() => {
@@ -334,8 +461,11 @@ export default function Test() {
     if (map && filteredData.length > 0) {
       console.log('마커 표시 시작');
       displayMarkersOnMap(filteredData);
+    } else if (map && currentLocation) {
+      // 필터된 데이터가 없어도 현재 위치 마커는 표시
+      displayMarkersOnMap([]);
     }
-  }, [map, filteredData]);
+  }, [map, filteredData, currentLocation]);
 
   const totalPages = Math.ceil(filteredData.length / maxItems);
 
@@ -411,7 +541,7 @@ export default function Test() {
   return (
     <div style={{ display: 'flex', gap: '20px', padding: '20px', maxWidth: '1400px', margin: '0 auto', height: 'calc(100vh - 40px)' }}>
       {/* 왼쪽 영역: 지도와 검색 */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <h1 style={{ 
           textAlign: 'center', 
           color: '#FF6B57', 
@@ -464,7 +594,7 @@ export default function Test() {
                 position: 'relative'
               }}
             >
-              {!map && (
+              {!map && !error && (
                 <div style={{
                   position: 'absolute',
                   top: '50%',
@@ -474,9 +604,35 @@ export default function Test() {
                   color: '#666',
                   zIndex: 1000
                 }}>
-                  <p style={{ margin: '0 0 10px 0', fontSize: '16px' }}>🗺️ 지도를 로딩하는 중...</p>
-                  <p style={{ margin: '0', fontSize: '12px' }}>
+                  <div style={{ 
+                    display: 'inline-block',
+                    width: '30px',
+                    height: '30px',
+                    border: '3px solid #f3f3f3',
+                    borderTop: '3px solid #FF6B57',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite',
+                    marginBottom: '10px'
+                  }}></div>
+                  <p style={{ margin: '0 0 5px 0', fontSize: '14px' }}>🗺️ 지도 로딩 중...</p>
+                  <p style={{ margin: '0', fontSize: '11px', color: '#999' }}>
                     카카오지도 API를 불러오고 있습니다
+                  </p>
+                </div>
+              )}
+              {!map && error && (
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  textAlign: 'center',
+                  color: '#c33',
+                  zIndex: 1000
+                }}>
+                  <p style={{ margin: '0 0 5px 0', fontSize: '14px' }}>⚠️ 지도 로딩 실패</p>
+                  <p style={{ margin: '0', fontSize: '11px' }}>
+                    API 키를 확인하거나 새로고침 해주세요
                   </p>
                 </div>
               )}
@@ -484,20 +640,6 @@ export default function Test() {
           </div>
         </div>
 
-        {/* 검색 결과 정보 */}
-        <div style={{
-          padding: '10px',
-          backgroundColor: '#e8f5e8',
-          borderRadius: '8px',
-          fontSize: '14px',
-          textAlign: 'center'
-        }}>
-          📊 전체 {shelterData.length}개 중 {filteredData.length}개 검색됨 (최대 {maxItems}개 표시)
-        </div>
-      </div>
-
-      {/* 오른쪽 영역: 검색 및 목록 */}
-      <div style={{ width: '400px', display: 'flex', flexDirection: 'column' }}>
         {/* 검색 및 지역 선택 섹션 */}
         <div style={{ marginBottom: '20px' }}>
           <div style={{
@@ -506,13 +648,42 @@ export default function Test() {
             borderRadius: '12px',
             border: '1px solid #e0e0e0'
           }}>
-            <h3 style={{
-              color: '#FF6B57',
-              marginBottom: '15px',
-              fontSize: '16px'
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center',
+              marginBottom: '15px' 
             }}>
-              🔍 검색 및 지역 선택
-            </h3>
+              <h3 style={{
+                color: '#FF6B57',
+                margin: 0,
+                fontSize: '16px'
+              }}>
+                🔍 검색 및 지역 선택
+              </h3>
+              
+              <button
+                onClick={getCurrentLocation}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '20px',
+                  border: '1px solid #FF6B57',
+                  backgroundColor: currentLocation ? '#FF6B57' : '#fff',
+                  color: currentLocation ? 'white' : '#FF6B57',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  transition: 'all 0.2s',
+                  whiteSpace: 'nowrap',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+                title="현재 위치 기준으로 새로고침"
+              >
+                📍 현재 위치
+              </button>
+            </div>
             
             {/* 검색어 입력 */}
             <div style={{ marginBottom: '15px' }}>
@@ -530,6 +701,18 @@ export default function Test() {
                   boxSizing: 'border-box'
                 }}
               />
+              {currentAddress && (
+                <div style={{
+                  marginTop: '8px',
+                  padding: '8px',
+                  backgroundColor: '#e8f5e8',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  color: '#2d5a2d'
+                }}>
+                  📍 현재 위치: {currentAddress}
+                </div>
+              )}
             </div>
             
             {/* 지역 선택 버튼 */}
@@ -540,33 +723,11 @@ export default function Test() {
                   { key: 'seoul', label: '🏛️ 서울' },
                   { key: 'gyeonggi', label: '🌆 경기' },
                   { key: 'incheon', label: '🌊 인천' },
-                  { key: 'busan', label: '🌊 부산' }
-                ].map(region => (
-                  <button
-                    key={region.key}
-                    onClick={() => setSelectedRegion(region.key)}
-                    style={{
-                      padding: '6px 12px',
-                      borderRadius: '16px',
-                      border: '1px solid #ddd',
-                      backgroundColor: selectedRegion === region.key ? '#FF6B57' : '#fff',
-                      color: selectedRegion === region.key ? 'white' : '#333',
-                      cursor: 'pointer',
-                      fontSize: '12px',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    {region.label}
-                  </button>
-                ))}
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
-                {[
+                  { key: 'busan', label: '🌊 부산' },
                   { key: 'daegu', label: '🌸 대구' },
                   { key: 'daejeon', label: '🏢 대전' },
                   { key: 'gwangju', label: '🌿 광주' },
-                  { key: 'ulsan', label: '🏭 울산' },
-                  { key: 'sejong', label: '🏛️ 세종' }
+                  { key: 'ulsan', label: '🏭 울산' }
                 ].map(region => (
                   <button
                     key={region.key}
@@ -588,6 +749,7 @@ export default function Test() {
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 {[
+                  { key: 'sejong', label: '🏛️ 세종' },
                   { key: 'gangwon', label: '⛰️ 강원' },
                   { key: 'chungbuk', label: '🏔️ 충북' },
                   { key: 'chungnam', label: '🌾 충남' },
@@ -619,6 +781,29 @@ export default function Test() {
           </div>
         </div>
 
+        {/* 검색 결과 정보 */}
+        <div style={{
+          padding: '10px',
+          backgroundColor: '#e8f5e8',
+          borderRadius: '8px',
+          fontSize: '14px',
+          textAlign: 'center'
+        }}>
+          📊 전체 {shelterData.length}개 중 {filteredData.length}개 검색됨 (최대 {maxItems}개 표시)
+          {currentLocation && (
+            <div style={{ 
+              fontSize: '12px', 
+              color: '#2d5a2d', 
+              marginTop: '4px' 
+            }}>
+              📍 현재 위치 기준 거리순 정렬
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 오른쪽 영역: 목록 */}
+      <div style={{ width: '400px', display: 'flex', flexDirection: 'column' }}>
         {/* 무더위쉼터 목록 */}
         <div style={{ flex: 1, overflow: 'hidden' }}>
           <h2 style={{ 
@@ -665,9 +850,24 @@ export default function Test() {
                     <h4 style={{ 
                       margin: '0 0 8px 0', 
                       color: '#FF6B57',
-                      fontSize: '14px'
+                      fontSize: '14px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
                     }}>
-                      📍 {shelter.name}
+                      <span>📍 {shelter.name}</span>
+                      {shelter.distance && (
+                        <span style={{
+                          fontSize: '11px',
+                          color: '#0066CC',
+                          fontWeight: 'normal',
+                          backgroundColor: '#E8F4FF',
+                          padding: '2px 6px',
+                          borderRadius: '8px'
+                        }}>
+                          {shelter.distance.toFixed(1)}km
+                        </span>
+                      )}
                     </h4>
                     <p style={{ 
                       margin: '0 0 4px 0', 
