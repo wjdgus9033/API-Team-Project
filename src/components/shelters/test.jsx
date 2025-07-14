@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import './test.css';
 
 export default function Test() {
   const [shelterData, setShelterData] = useState([]);
@@ -475,486 +476,218 @@ export default function Test() {
       : 0;
       
     return (
-      <div style={{ padding: '40px', textAlign: 'center' }}>
-        <div style={{ 
-          display: 'inline-block',
-          width: '40px',
-          height: '40px',
-          border: '4px solid #f3f3f3',
-          borderTop: '4px solid #FF6B57',
-          borderRadius: '50%',
-          animation: 'spin 1s linear infinite'
-        }}></div>
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
         
-        <p style={{ marginTop: '20px', fontSize: '16px', color: '#666' }}>
+        <p className="loading-text">
           전국 무더위쉼터 데이터를 불러오는 중...
         </p>
         
         {loadingProgress.total > 0 && (
-          <div style={{ marginTop: '20px', maxWidth: '400px', margin: '20px auto' }}>
-            <div style={{
-              width: '100%',
-              height: '20px',
-              backgroundColor: '#f0f0f0',
-              borderRadius: '10px',
-              overflow: 'hidden',
-              border: '1px solid #ddd'
-            }}>
-              <div style={{
-                width: `${progressPercentage}%`,
-                height: '100%',
-                backgroundColor: '#FF6B57',
-                transition: 'width 0.3s ease',
-                borderRadius: '9px'
-              }}></div>
+          <div className="loading-progress">
+            <div className="progress-bar">
+              <div 
+                className="progress-fill"
+                style={{ width: `${progressPercentage}%` }}
+              ></div>
             </div>
-            <p style={{ 
-              marginTop: '10px', 
-              fontSize: '14px', 
-              color: '#555',
-              fontWeight: 'bold'
-            }}>
+            <p className="progress-message">
               {loadingProgress.message}
             </p>
-            <p style={{ 
-              marginTop: '5px', 
-              fontSize: '12px', 
-              color: '#888'
-            }}>
+            <p className="progress-percentage">
               진행률: {progressPercentage}% ({loadingProgress.current}/{loadingProgress.total} 페이지)
             </p>
           </div>
         )}
-        
-        <style>
-          {`
-            @keyframes spin {
-              0% { transform: rotate(0deg); }
-              100% { transform: rotate(360deg); }
-            }
-          `}
-        </style>
       </div>
     );
   }
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      gap: '20px', 
-      padding: '20px', 
-      maxWidth: '1600px', 
-      margin: '0 auto', 
-      height: 'calc(100vh - 40px)',
-      '@media (max-width: 768px)': {
-        flexDirection: 'column',
-        gap: '10px',
-        padding: '10px',
-        height: 'auto'
-      }
-    }}>
-      {/* 왼쪽 영역: 지도와 검색 */}
-        <div style={{ 
-          flex: 1, 
-          display: 'flex', 
-          flexDirection: 'column',
-          minWidth: '0'
-        }}>
-        <h1 style={{ 
-          textAlign: 'center', 
-          color: '#FF6B57', 
-          marginBottom: '20px',
-          fontSize: '24px',
-          fontWeight: 'bold'
-        }}>
-          전국 무더위쉼터 정보
-        </h1>
+    <div className="all-container">
+      <div className="shelter-container">
+        {/* 왼쪽 영역: 지도와 검색 */}
+        <div className="left-section">
+          <h1 className="main-title">
+            전국 무더위쉼터 정보
+          </h1>
 
-        {error && (
-          <div style={{
-            backgroundColor: '#fee',
-            color: '#c33',
-            padding: '15px',
-            borderRadius: '8px',
-            marginBottom: '20px',
-            border: '1px solid #fcc'
-          }}>
-            ⚠️ {error}
-          </div>
-        )}
-
-        {/* 카카오지도 섹션 */}
-        <div style={{ marginBottom: '20px', flex: 1, minHeight: '400px' }}>
-          <h2 style={{ 
-            color: '#FF6B57', 
-            marginBottom: '15px', 
-            fontSize: '18px',
-            borderLeft: '4px solid #FF6B57',
-            paddingLeft: '10px'
-          }}>
-            🗺️ 무더위쉼터 위치
-          </h2>
-          
-          <div style={{ 
-            backgroundColor: '#fff',
-            borderRadius: '12px',
-            border: '1px solid #e0e0e0',
-            overflow: 'hidden',
-            height: 'calc(100% - 50px)',
-            minHeight: '350px'
-          }}>
-            <div 
-              ref={mapRef}
-              id="kakao-map" 
-              style={{ 
-                width: '100%', 
-                height: '100%',
-                minHeight: '350px',
-                position: 'relative'
-              }}
-            >
-              {!map && !error && (
-                <div style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  textAlign: 'center',
-                  color: '#666',
-                  zIndex: 1000
-                }}>
-                  <div style={{ 
-                    display: 'inline-block',
-                    width: '30px',
-                    height: '30px',
-                    border: '3px solid #f3f3f3',
-                    borderTop: '3px solid #FF6B57',
-                    borderRadius: '50%',
-                    animation: 'spin 1s linear infinite',
-                    marginBottom: '10px'
-                  }}></div>
-                  <p style={{ margin: '0 0 5px 0', fontSize: '14px' }}>🗺️ 지도 로딩 중...</p>
-                  <p style={{ margin: '0', fontSize: '11px', color: '#999' }}>
-                    카카오지도 API를 불러오고 있습니다
-                  </p>
-                </div>
-              )}
-              {!map && error && (
-                <div style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  textAlign: 'center',
-                  color: '#c33',
-                  zIndex: 1000
-                }}>
-                  <p style={{ margin: '0 0 5px 0', fontSize: '14px' }}>⚠️ 지도 로딩 실패</p>
-                  <p style={{ margin: '0', fontSize: '11px' }}>
-                    API 키를 확인하거나 새로고침 해주세요
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* 검색 및 지역 선택 섹션 */}
-        <div style={{ marginBottom: '20px', flexShrink: 0 }}>
-          <div style={{
-            backgroundColor: '#f8f9fa',
-            padding: '15px',
-            borderRadius: '12px',
-            border: '1px solid #e0e0e0'
-          }}>
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center',
-              marginBottom: '15px',
-              flexWrap: 'wrap',
-              gap: '10px'
-            }}>
-              <h3 style={{
-                color: '#FF6B57',
-                margin: 0,
-                fontSize: '16px'
-              }}>
-                🔍 검색 및 지역 선택
-              </h3>
-              
-              <button
-                onClick={getCurrentLocation}
-                style={{
-                  padding: '8px 12px',
-                  borderRadius: '20px',
-                  border: '1px solid #FF6B57',
-                  backgroundColor: currentLocation ? '#FF6B57' : '#fff',
-                  color: currentLocation ? 'white' : '#FF6B57',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  transition: 'all 0.2s',
-                  whiteSpace: 'nowrap',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
-                title="현재 위치 기준으로 새로고침"
-              >
-                📍 현재 위치
-              </button>
-            </div>
-            
-            {/* 검색어 입력 */}
-            <div style={{ marginBottom: '15px' }}>
-              <input
-                type="text"
-                placeholder="시설명, 주소로 검색..."
-                value={searchKeyword}
-                onChange={(e) => setSearchKeyword(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  fontSize: '14px',
-                  boxSizing: 'border-box'
-                }}
-              />
-              {currentAddress && (
-                <div style={{
-                  marginTop: '8px',
-                  padding: '8px',
-                  backgroundColor: '#e8f5e8',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  color: '#2d5a2d'
-                }}>
-                  📍 현재 위치: {currentAddress}
-                </div>
-              )}
-            </div>
-            
-            {/* 지역 선택 버튼 */}
-            <div style={{ marginBottom: '10px' }}>
-              <div style={{ 
-                display: 'flex', 
-                flexWrap: 'wrap', 
-                gap: '6px', 
-                marginBottom: '8px',
-                justifyContent: 'flex-start'
-              }}>
-                {[
-                  { key: 'all', label: '🏠 전체' },
-                  { key: 'seoul', label: '🏛️ 서울' },
-                  { key: 'gyeonggi', label: '🌆 경기' },
-                  { key: 'incheon', label: '🌊 인천' },
-                  { key: 'busan', label: '🌊 부산' },
-                  { key: 'daegu', label: '🌸 대구' },
-                  { key: 'daejeon', label: '🏢 대전' },
-                  { key: 'gwangju', label: '🌿 광주' },
-                  { key: 'ulsan', label: '🏭 울산' }
-                ].map(region => (
-                  <button
-                    key={region.key}
-                    onClick={() => setSelectedRegion(region.key)}
-                    style={{
-                      padding: '6px 10px',
-                      borderRadius: '16px',
-                      border: '1px solid #ddd',
-                      backgroundColor: selectedRegion === region.key ? '#FF6B57' : '#fff',
-                      color: selectedRegion === region.key ? 'white' : '#333',
-                      cursor: 'pointer',
-                      fontSize: '11px',
-                      transition: 'all 0.2s',
-                      minWidth: '60px',
-                      textAlign: 'center'
-                    }}
-                  >
-                    {region.label}
-                  </button>
-                ))}
-              </div>
-              <div style={{ 
-                display: 'flex', 
-                flexWrap: 'wrap', 
-                gap: '6px',
-                justifyContent: 'flex-start'
-              }}>
-                {[
-                  { key: 'sejong', label: '🏛️ 세종' },
-                  { key: 'gangwon', label: '⛰️ 강원' },
-                  { key: 'chungbuk', label: '🏔️ 충북' },
-                  { key: 'chungnam', label: '🌾 충남' },
-                  { key: 'jeonbuk', label: '🌾 전북' },
-                  { key: 'jeonnam', label: '🌊 전남' },
-                  { key: 'gyeongbuk', label: '🏔️ 경북' },
-                  { key: 'gyeongnam', label: '🌊 경남' },
-                  { key: 'jeju', label: '🏝️ 제주' }
-                ].map(region => (
-                  <button
-                    key={region.key}
-                    onClick={() => setSelectedRegion(region.key)}
-                    style={{
-                      padding: '6px 10px',
-                      borderRadius: '16px',
-                      border: '1px solid #ddd',
-                      backgroundColor: selectedRegion === region.key ? '#FF6B57' : '#fff',
-                      color: selectedRegion === region.key ? 'white' : '#333',
-                      cursor: 'pointer',
-                      fontSize: '11px',
-                      transition: 'all 0.2s',
-                      minWidth: '60px',
-                      textAlign: 'center'
-                    }}
-                  >
-                    {region.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 검색 결과 정보 */}
-        <div style={{
-          padding: '10px',
-          backgroundColor: '#e8f5e8',
-          borderRadius: '8px',
-          fontSize: '14px',
-          textAlign: 'center',
-          flexShrink: 0
-        }}>
-          📊 전체 {shelterData.length}개 중 {filteredData.length}개 검색됨 (최대 {maxItems}개 표시)
-          {currentLocation && (
-            <div style={{ 
-              fontSize: '12px', 
-              color: '#2d5a2d', 
-              marginTop: '4px' 
-            }}>
-              📍 현재 위치 기준 거리순 정렬
+          {error && (
+            <div className="error-message">
+              ⚠️ {error}
             </div>
           )}
-        </div>
-      </div>
 
-      {/* 오른쪽 영역: 목록 */}
-      <div style={{ 
-        width: '450px', 
-        display: 'flex', 
-        flexDirection: 'column',
-        minWidth: '350px',
-        maxWidth: '500px',
-        '@media (max-width: 768px)': {
-          width: '100%',
-          minWidth: 'auto',
-          maxWidth: 'none'
-        }
-      }}>
-        {/* 무더위쉼터 목록 */}
-        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-          <h2 style={{ 
-            color: '#FF6B57', 
-            marginBottom: '15px', 
-            fontSize: '18px',
-            borderLeft: '4px solid #FF6B57',
-            paddingLeft: '10px',
-            flexShrink: 0
-          }}>
-            🏠 무더위쉼터 목록 ({filteredData.length}개소)
-          </h2>
-          
-          {/* 목록 컨테이너 */}
-          <div style={{ 
-            backgroundColor: '#fff',
-            borderRadius: '12px',
-            border: '1px solid #e0e0e0',
-            flex: 1,
-            overflow: 'auto',
-            minHeight: '300px'
-          }}>
-            {filteredData.length === 0 ? (
-              <div style={{
-                padding: '40px',
-                textAlign: 'center',
-                color: '#666'
-              }}>
-                검색 결과가 없습니다.
-              </div>
-            ) : (
-              <div style={{ padding: '10px' }}>
-                {filteredData.map((shelter, index) => (
-                  <div key={index} style={{
-                    padding: '12px',
-                    marginBottom: '8px',
-                    backgroundColor: '#f9f9f9',
-                    borderRadius: '8px',
-                    border: '1px solid #eee',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.2s'
-                  }}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = '#f0f0f0'}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = '#f9f9f9'}
-                  >
-                    <h4 style={{ 
-                      margin: '0 0 6px 0', 
-                      color: '#FF6B57',
-                      fontSize: '13px',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      flexWrap: 'wrap',
-                      gap: '5px'
-                    }}>
-                      <span style={{ flex: 1, minWidth: '0', wordBreak: 'break-word' }}>
-                        📍 {shelter.name}
-                      </span>
-                      {shelter.distance && (
-                        <span style={{
-                          fontSize: '10px',
-                          color: '#0066CC',
-                          fontWeight: 'normal',
-                          backgroundColor: '#E8F4FF',
-                          padding: '2px 6px',
-                          borderRadius: '8px',
-                          flexShrink: 0,
-                          whiteSpace: 'nowrap'
-                        }}>
-                          {shelter.distance.toFixed(1)}km
-                        </span>
-                      )}
-                    </h4>
-                    <p style={{ 
-                      margin: '0 0 3px 0', 
-                      fontSize: '11px',
-                      color: '#666',
-                      lineHeight: '1.3',
-                      wordBreak: 'break-word'
-                    }}>
-                      <strong>주소:</strong> {shelter.roadAddress}
-                    </p>
-                    <p style={{ 
-                      margin: '0 0 3px 0', 
-                      fontSize: '11px',
-                      color: '#666',
-                      lineHeight: '1.3'
-                    }}>
-                      <strong>운영시간:</strong> {shelter.weekday}
-                    </p>
-                    <p style={{ 
-                      margin: '0', 
-                      fontSize: '11px',
-                      color: '#666',
-                      lineHeight: '1.3',
-                      wordBreak: 'break-word'
-                    }}>
-                      <strong>전화:</strong> {shelter.tel}
+          {/* 카카오지도 섹션 */}
+          <div className="map-section">
+            <h2 className="map-title">
+              🗺️ 무더위쉼터 위치
+            </h2>
+            
+            <div className="map-container">
+              <div 
+                ref={mapRef}
+                id="kakao-map" 
+                className="map-area"
+              >
+                {!map && !error && (
+                  <div className="map-loading">
+                    <div className="map-loading-spinner"></div>
+                    <p className="map-loading-text">🗺️ 지도 로딩 중...</p>
+                    <p className="map-loading-subtext">
+                      카카오지도 API를 불러오고 있습니다
                     </p>
                   </div>
-                ))}
+                )}
+                {!map && error && (
+                  <div className="map-error">
+                    <p className="map-error-text">⚠️ 지도 로딩 실패</p>
+                    <p className="map-error-subtext">
+                      API 키를 확인하거나 새로고침 해주세요
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* 검색 및 지역 선택 섹션 */}
+          <div className="search-section">
+            <div className="search-container">
+              <div className="search-header">
+                <h3 className="search-title">
+                  🔍 검색 및 지역 선택
+                </h3>
+                
+                <button
+                  onClick={getCurrentLocation}
+                  className={`location-button ${currentLocation ? 'active' : 'inactive'}`}
+                  title="현재 위치 기준으로 새로고침"
+                >
+                  📍 현재 위치
+                </button>
+              </div>
+              
+              {/* 검색어 입력 */}
+              <div className="search-input-section">
+                <input
+                  type="text"
+                  placeholder="시설명, 주소로 검색..."
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                  className="search-input"
+                />
+                {currentAddress && (
+                  <div className="current-address">
+                    📍 현재 위치: {currentAddress}
+                  </div>
+                )}
+              </div>
+              
+              {/* 지역 선택 버튼 */}
+              <div className="region-section">
+                <div className="region-row">
+                  {[
+                    { key: 'all', label: '🏠 전체' },
+                    { key: 'seoul', label: '🏛️ 서울' },
+                    { key: 'gyeonggi', label: '🌆 경기' },
+                    { key: 'incheon', label: '🌊 인천' },
+                    { key: 'busan', label: '🌊 부산' },
+                    { key: 'daegu', label: '🌸 대구' },
+                    { key: 'daejeon', label: '🏢 대전' },
+                    { key: 'gwangju', label: '🌿 광주' },
+                    { key: 'ulsan', label: '🏭 울산' }
+                  ].map(region => (
+                    <button
+                      key={region.key}
+                      onClick={() => setSelectedRegion(region.key)}
+                      className={`region-button ${selectedRegion === region.key ? 'selected' : 'unselected'}`}
+                    >
+                      {region.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="region-row">
+                  {[
+                    { key: 'sejong', label: '🏛️ 세종' },
+                    { key: 'gangwon', label: '⛰️ 강원' },
+                    { key: 'chungbuk', label: '🏔️ 충북' },
+                    { key: 'chungnam', label: '🌾 충남' },
+                    { key: 'jeonbuk', label: '🌾 전북' },
+                    { key: 'jeonnam', label: '🌊 전남' },
+                    { key: 'gyeongbuk', label: '🏔️ 경북' },
+                    { key: 'gyeongnam', label: '🌊 경남' },
+                    { key: 'jeju', label: '🏝️ 제주' }
+                  ].map(region => (
+                    <button
+                      key={region.key}
+                      onClick={() => setSelectedRegion(region.key)}
+                      className={`region-button ${selectedRegion === region.key ? 'selected' : 'unselected'}`}
+                    >
+                      {region.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 검색 결과 정보 */}
+          <div className="search-result-info">
+            📊 전체 {shelterData.length}개 중 {filteredData.length}개 검색됨 (최대 {maxItems}개 표시)
+            {currentLocation && (
+              <div className="search-result-subtext">
+                📍 현재 위치 기준 거리순 정렬
               </div>
             )}
+          </div>
+        </div>
+
+        {/* 오른쪽 영역: 목록 */}
+        <div className="right-section">
+          {/* 무더위쉼터 목록 */}
+          <div className="shelter-list-section">
+            <h2 className="shelter-list-title">
+              🏠 무더위쉼터 목록 ({filteredData.length}개소)
+            </h2>
+            
+            {/* 목록 컨테이너 */}
+            <div className="shelter-list-container">
+              {filteredData.length === 0 ? (
+                <div className="no-results">
+                  검색 결과가 없습니다.
+                </div>
+              ) : (
+                <div className="shelter-list">
+                  {filteredData.map((shelter, index) => (
+                    <div 
+                      key={index} 
+                      className="shelter-item"
+                    >
+                      <h4 className="shelter-name">
+                        <span className="shelter-name-text">
+                          📍 {shelter.name}
+                        </span>
+                        {shelter.distance && (
+                          <span className="shelter-distance">
+                            {shelter.distance.toFixed(1)}km
+                          </span>
+                        )}
+                      </h4>
+                      <p className="shelter-info address">
+                        <strong>주소:</strong> {shelter.roadAddress}
+                      </p>
+                      <p className="shelter-info">
+                        <strong>운영시간:</strong> {shelter.weekday}
+                      </p>
+                      <p className="shelter-info last">
+                        <strong>전화:</strong> {shelter.tel}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
