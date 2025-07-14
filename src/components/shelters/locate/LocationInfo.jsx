@@ -2,8 +2,7 @@ import { CATEGORY_NAMES } from '../search/searchConstants';
 
 export default function LocationInfo({ 
   currentAddress, 
-  getCurrentLocation, 
-  nearbyShelters, 
+  getCurrentLocation,  
   searchCategory 
 }) {
 

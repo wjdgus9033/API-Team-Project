@@ -21,6 +21,18 @@ export default function Shelters() {
   const { currentLocation, currentAddress, getCurrentLocation } = useCurrentLocation(geocoder, defaultLocation);
   const { shelters, error } = useSheltersData();
 
+  useEffect(() => {
+    const hasShownLocationAlert = sessionStorage.getItem('locationAlertShown');
+    
+    if (!hasShownLocationAlert) {
+      alert("위치 권한 허용해주세요");
+      getCurrentLocation();
+      
+      // 세션 동안 alert가 다시 뜨지 않도록 설정
+      sessionStorage.setItem('locationAlertShown', 'true');
+    }
+  }, []); // 빈 dependency array로 컴포넌트 마운트 시에만 실행
+
   // 무더위쉼터, 현재 위치 - 카테고리에 따라 다르게
   useEffect(() => {
     if (shelters.length > 0 && currentLocation && searchCategory === 'shelter') {
