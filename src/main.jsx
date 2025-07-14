@@ -15,6 +15,7 @@ import HeatWave from "./components/about/heat wave.jsx";
 import Precautions from "./components/about/precautions.jsx";
 import Symptoms from "./components/about/symptoms.jsx";
 import RelatedSite from "./components/about/relatedsite.jsx";
+import Test from "./components/shelters/search/test.jsx";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "state", element: <State /> },
       { path: "shelters", element: <Shelters /> },
+      { path: "test", element: <Test /> },
       {
         path: "about",
         children: [
