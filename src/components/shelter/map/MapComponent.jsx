@@ -6,7 +6,8 @@ export default function MapComponent({
   currentAddress, 
   error, 
   map,
-  onMapReady 
+  onMapReady,
+  selectedShelter // 선택된 쉼터 추가
 }) {
   const mapRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
@@ -96,10 +97,59 @@ export default function MapComponent({
         const currentPos = new window.kakao.maps.LatLng(currentLocation.lat, currentLocation.lng);
         map.setCenter(currentPos);
         map.setLevel(5);
+        // 지도 크기 재조정
+        setTimeout(() => {
+          map.relayout();
+        }, 100);
       };
       moveMap();
     }
   }, [currentLocation, map]);
+
+  // 지도 크기 변경 감지 및 relayout 호출
+  useEffect(() => {
+    if (map) {
+      const handleResize = () => {
+        map.relayout();
+      };
+      
+      window.addEventListener('resize', handleResize);
+      
+      // 컴포넌트 마운트 후 지도 크기 재조정
+      setTimeout(() => {
+        map.relayout();
+      }, 100);
+      
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }
+  }, [map]);
+
+  // 선택된 쉼터로 지도 이동
+  useEffect(() => {
+    if (selectedShelter && map && selectedShelter.lat && selectedShelter.lon && selectedShelter.lat !== 0 && selectedShelter.lon !== 0) {
+      console.log('선택된 쉼터로 지도 이동:', selectedShelter.name);
+      const selectedPos = new window.kakao.maps.LatLng(selectedShelter.lat, selectedShelter.lon);
+      map.setCenter(selectedPos);
+      map.setLevel(3); // 더 자세한 레벨로 줌인
+      
+      // 해당 마커에 대한 인포윈도우를 자동으로 열기
+      setTimeout(() => {
+        // 모든 마커 중에서 선택된 쉼터의 마커 찾기
+        const targetMarker = markersRef.current.find(marker => {
+          const markerPos = marker.getPosition();
+          return Math.abs(markerPos.getLat() - selectedShelter.lat) < 0.0001 && 
+                 Math.abs(markerPos.getLng() - selectedShelter.lon) < 0.0001;
+        });
+        
+        if (targetMarker) {
+          // 마커의 인포윈도우 열기 (mouseover 이벤트 트리거)
+          window.kakao.maps.event.trigger(targetMarker, 'mouseover');
+        }
+      }, 100);
+    }
+  }, [selectedShelter, map]);
 
   // 필터된 데이터 변경 시 마커 업데이트
   useEffect(() => {
@@ -137,8 +187,13 @@ export default function MapComponent({
           content: currentInfoContent
         });
 
-        window.kakao.maps.event.addListener(currentMarker, 'click', () => {
+        // 마우스 호버 이벤트로 변경
+        window.kakao.maps.event.addListener(currentMarker, 'mouseover', () => {
           currentInfoWindow.open(map, currentMarker);
+        });
+
+        window.kakao.maps.event.addListener(currentMarker, 'mouseout', () => {
+          currentInfoWindow.close();
         });
 
         console.log('현재 위치 마커 추가 완료:', currentLocation);
@@ -174,9 +229,13 @@ export default function MapComponent({
               content: infoContent
             });
 
-            // 마커 클릭 이벤트
-            window.kakao.maps.event.addListener(marker, 'click', () => {
+            // 마우스 호버 이벤트로 변경
+            window.kakao.maps.event.addListener(marker, 'mouseover', () => {
               infoWindow.open(map, marker);
+            });
+
+            window.kakao.maps.event.addListener(marker, 'mouseout', () => {
+              infoWindow.close();
             });
           }
         });

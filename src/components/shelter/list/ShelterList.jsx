@@ -1,7 +1,7 @@
 import React from 'react';
 import ShelterCard from './ShelterCard';
 
-export default function ShelterList({ shelters, maxItems = 20, currentLocation }) {
+export default function ShelterList({ shelters, maxItems = 20, currentLocation, onShelterClick }) {
   const displayedShelters = shelters.slice(0, maxItems);
   
   return (
@@ -27,6 +27,7 @@ export default function ShelterList({ shelters, maxItems = 20, currentLocation }
                 key={index} 
                 shelter={shelter} 
                 rank={index + 1} // 순위 추가
+                onCardClick={onShelterClick} // 클릭 이벤트 전달
               />
             ))}
             {shelters.length > maxItems && (

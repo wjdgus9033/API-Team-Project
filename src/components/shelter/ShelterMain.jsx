@@ -15,6 +15,7 @@ export default function Test() {
   const [selectedRegion, setSelectedRegion] = useState('all');
   const [error, setError] = useState(null);
   const [map, setMap] = useState(null); // 지도 상태를 직접 관리
+  const [selectedShelter, setSelectedShelter] = useState(null); // 선택된 쉼터 상태 추가
   const maxItems = 20; // 50개에서 20개로 변경
 
   // Custom hooks
@@ -71,6 +72,12 @@ export default function Test() {
     handleLocationRequest();
   }, [handleLocationRequest]);
 
+  // 쉼터 카드 클릭 핸들러
+  const handleShelterClick = useCallback((shelter) => {
+    console.log('쉼터 카드 클릭:', shelter.name);
+    setSelectedShelter(shelter);
+  }, []);
+
   // 로딩 중일 때
   if (loading) {
     return <LoadingComponent loadingProgress={loadingProgress} />;
@@ -99,6 +106,7 @@ export default function Test() {
             error={error}
             map={map}
             onMapReady={handleMapReady}
+            selectedShelter={selectedShelter} // 선택된 쉼터 전달
           />
 
           {/* 검색 및 지역 선택 섹션 */}
@@ -129,6 +137,7 @@ export default function Test() {
             shelters={filteredData}
             maxItems={maxItems}
             currentLocation={currentLocation}
+            onShelterClick={handleShelterClick} // 클릭 핸들러 전달
           />
         </div>
       </div>
