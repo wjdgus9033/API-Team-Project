@@ -8,14 +8,14 @@ function getGradientForTemp(val) {
   if (val >= 35) {
     return `linear-gradient(
       to bottom,
-      rgba(229, 57, 53, 0.95),
-      rgba(255, 87, 34, 0.9)
+      rgba(237, 45, 42, 0.8),
+      rgba(224, 101, 64, 0.7)
     )`;
   } else if (val >= 32) {
     return `linear-gradient(
       to bottom,
-      rgba(255, 167, 38, 0.9),
-      rgba(255, 229, 127, 0.8)
+      rgba(255, 171, 45, 0.8),
+      rgba(255, 217, 127, 0.7)
     )`;
   } else {
     return `linear-gradient(
@@ -26,6 +26,18 @@ function getGradientForTemp(val) {
   }
 }
 
+const getFontColorForTemp = (val) => {
+  if (!val) return "black";
+
+  if (val >= 35) {
+    return `rgba(248, 49, 46, 0.9)`;
+  } else if (val >= 32) {
+    return `rgba(252, 158, 16, 0.9)`;
+  } else {
+    return `rgba(0, 89, 255, 0.7)`;
+  }
+};
+
 const WarningCardImage = styled.img`
   width: 100%;
   top: auto;
@@ -34,6 +46,7 @@ const WarningCardImage = styled.img`
 
 const TextTitle = styled.h1`
   font-size: 4.5rem;
+  color: ${({ val }) => getFontColorForTemp(val)};
 `;
 const TextContent = styled.p`
   font-size: 1.5rem;
@@ -96,11 +109,11 @@ function getImage(val) {
 
 export default function WarningCard({ items, convertedItems }) {
   const converedtNowItems = Object.values(convertWeatherItems(items, "live"));
-  const temp = converedtNowItems[0]?.data?.T1H ?? 0;
-  const humid = converedtNowItems[0]?.data?.REH ?? 0;
-
   const tmpTemp = convertedItems?.data?.TMP ?? 0;
   const tmpHumid = convertedItems?.data?.REH ?? 0;
+
+  const temp = converedtNowItems[0]?.data?.T1H ?? tmpTemp;
+  const humid = converedtNowItems[0]?.data?.REH ?? tmpHumid;
 
   const value = calcHeatIndexSimple(temp, humid);
 

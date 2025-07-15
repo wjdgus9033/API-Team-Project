@@ -77,11 +77,9 @@ export default function Weather({ nowWeatherData, hourWeatherData }) {
     <>
       <WeatherCardSection>
         <WeatherCardGrid>
-          <PText mVal={"20px"}>오늘의 폭염주의보</PText>
           <WarningCard />
         </WeatherCardGrid>
         <WeatherCardGrid>
-          <PText mVal={"20px"}>오늘의 날씨</PText>
           <WeatherLiveCard
             items={nowWeatherData}
             convertedItems={getNowSkyAndTempData()}

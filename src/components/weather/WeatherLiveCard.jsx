@@ -1,3 +1,4 @@
+import { PText } from "./WeatherStyled";
 import {
   convertPTY,
   getImageFile,
@@ -49,8 +50,6 @@ export default function WeatherLiveCard({ items, convertedItems }) {
   const convertItem = Object.values(convertWeatherItems(items, "live"));
   const now = new Date();
   const minute = now.getMinutes();
-  console.log("convertedddd ==", convertedItems);
-  console.log(convertItem);
 
   // baseDate, baseTime, category, fcstDate, fcstTime, fcstValue, nx, ny
   function createCard({ time, data }) {
@@ -72,8 +71,8 @@ export default function WeatherLiveCard({ items, convertedItems }) {
           </h3>
         </LeftWrapper>
         <RightWrapper>
-          <h1>
-            현재 시간 : {time}:{minute}
+          <h1 style={{margin: "10px", fontSize: "3rem"}}>
+            {time}:{minute.toString().padStart(2, "0")}
           </h1>
           <LivePText mVal="3px">
             습도:{" "}
