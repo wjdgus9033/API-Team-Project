@@ -1,34 +1,13 @@
-import React from 'react';
+import "./shelterloading.css";
 
-export default function LoadingComponent({ loadingProgress }) {
-  const progressPercentage = loadingProgress.total > 0 
-    ? Math.round((loadingProgress.current / loadingProgress.total) * 100) 
-    : 0;
-    
+export default function Loading() {
   return (
-    <div className="loading-container">
-      <div className="loading-spinner"></div>
-      
-      <p className="loading-text">
-        전국 무더위쉼터 데이터를 불러오는 중...
-      </p>
-      
-      {loadingProgress.total > 0 && (
-        <div className="loading-progress">
-          <div className="progress-bar">
-            <div 
-              className="progress-fill"
-              style={{ width: `${progressPercentage}%` }}
-            ></div>
-          </div>
-          <p className="progress-message">
-            {loadingProgress.message}
-          </p>
-          <p className="progress-percentage">
-            진행률: {progressPercentage}% ({loadingProgress.current}/{loadingProgress.total} 페이지)
-          </p>
-        </div>
-      )}
+    <div className="loading-backdrop">
+      <div className="loading-modal">
+        <div className="loading-spinner"></div>
+        <h3 style={{ marginTop: 20 }}>연도별 폭염으로 인한 데이터 준비중.</h3>
+        <p>잠시 기다려 주세요.</p>
+      </div>
     </div>
   );
 }
