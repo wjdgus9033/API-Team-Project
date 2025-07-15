@@ -14,6 +14,7 @@ export default function Root() {
             <div></div><div></div><div></div>
           </section>
         </section>
+
         <ul>
           <li>
             <Link to="/">
@@ -43,11 +44,6 @@ export default function Root() {
                 <li><Link to="/about/relatedsite">관련 사이트 안내</Link></li>
               </ul>
             )}
-          </li>
-          <li>
-            <Link to="/news">
-              <i className="fa-solid fa-building-shield"></i>📰 폭염 뉴스
-            </Link>
           </li>
         </ul>
       </aside>

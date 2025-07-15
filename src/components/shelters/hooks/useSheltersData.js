@@ -7,7 +7,9 @@ export const useSheltersData = () => {
   const fetchShelters = async () => {
     try {
       const key = import.meta.env.VITE_SHELTER_API_KEY;
+      console.log(key);
       const res = await fetch(`/shelter1?serviceKey=${key}&pageNo=1&numOfRows=1000&returnType=JSON`);
+      console.log(res)
       const data = await res.json();
 
       const items = data.body || [];

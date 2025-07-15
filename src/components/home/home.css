@@ -18,6 +18,7 @@
 
 .card.full {
   margin-bottom: 2rem;
+  padding: 10px 0 30px;
 }
 
 .card-grid {
@@ -29,9 +30,60 @@
 
 .card h1 {
   color: #FF6B57;
-  margin-bottom: 1rem;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 70px;
 }
 
 .card ul {
   padding-left: 1.2rem;
+}
+
+a.more-link {
+  color: black;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  font-size: 15px;
+}
+
+a.more-link:hover {
+  color: #333;
+  text-decoration: underline;
+}
+
+.heat-table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.heat-table th,
+.heat-table td {
+  padding: 12px;
+  word-break: break-word;
+  white-space: normal;
+  line-height: 1.4;
+  border: 1px solid #ccc;
+  vertical-align: top;
+}
+
+.heat-table th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.table-footer {
+  text-align: right;
+  margin-top: auto;
+}
+
+.table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  display: block;
 }

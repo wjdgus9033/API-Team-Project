@@ -20,7 +20,7 @@ export default function State() {
       </h1>
 
       <div style={{ display: "flex", justifyContent: "space-around", padding: 20, gap: 20 }}>
-        <Total data={rows} />
+        <Total data={rows} style={{ width: "30%"}} />
         <InOutChart data={rows} />
       </div>
 

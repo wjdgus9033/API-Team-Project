@@ -1,6 +1,6 @@
 // 네이버 뉴스 API 관련 함수들
 
-// 환경변수에서 API 키 가져오기 (나중에 설정)
+// 환경변수에서 API 키 가져오기
 const CLIENT_ID = import.meta.env.VITE_NAVER_CLIENT_ID;
 const CLIENT_SECRET = import.meta.env.VITE_NAVER_CLIENT_SECRET;
 
@@ -39,8 +39,8 @@ export const fetchHeatwaveNews = async () => {
   try {
     console.log('폭염 뉴스 API 호출 시작...');
     
-    // 일반 폭염 뉴스 키워드들
-    const keywords = ['폭염', '무더위', '폭염주의보', '폭염경보'];
+    // 일반 폭염 뉴스 키워드들 (개수 줄임)
+    const keywords = ['폭염', '무더위'];
     const allNews = [];
 
     for (let i = 0; i < keywords.length; i++) {
@@ -48,7 +48,7 @@ export const fetchHeatwaveNews = async () => {
       console.log(`키워드 "${keyword}" 검색 중...`);
       
       try {
-        const news = await fetchNaverNews(keyword, 5);
+        const news = await fetchNaverNews(keyword, 10);
         console.log(`키워드 "${keyword}" 결과:`, news.length, '개');
         allNews.push(...news);
         
@@ -90,8 +90,8 @@ export const fetchHealthNews = async () => {
   try {
     console.log('건강 뉴스 API 호출 시작...');
     
-    // 건강 관련 키워드들
-    const keywords = ['온열질환', '폭염 대처', '폭염 건강', '열사병', '일사병'];
+    // 건강 관련 키워드들 (개수 줄임)
+    const keywords = ['온열질환', '폭염 대처'];
     const allNews = [];
 
     for (let i = 0; i < keywords.length; i++) {
@@ -99,7 +99,7 @@ export const fetchHealthNews = async () => {
       console.log(`키워드 "${keyword}" 검색 중...`);
       
       try {
-        const news = await fetchNaverNews(keyword, 5);
+        const news = await fetchNaverNews(keyword, 10);
         console.log(`키워드 "${keyword}" 결과:`, news.length, '개');
         allNews.push(...news);
         

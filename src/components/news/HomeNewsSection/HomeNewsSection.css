@@ -20,9 +20,10 @@
   transition: transform 0.2s ease;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
+/* 카드를 위로 띄움 */
 .news-brief-card:hover {
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
+   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 .news-header {
@@ -107,9 +108,6 @@
 }
 
 /* 건강 뉴스 카드 특별 스타일 */
-.health-news-card {
-  border-left: 4px solid #27ae60;
-}
 
 .health-news-card .news-header h3 {
   color: #27ae60;
