@@ -27,8 +27,7 @@ export default function Root() {
           </li>
           <li>
             <Link to="/shelters">
-              <i className="fa-solid fa-building-shield"></i> 쉼
-              터 찾기
+              <i className="fa-solid fa-building-shield"></i> 쉼 터 찾기
             </Link>
           </li>
           <li>
