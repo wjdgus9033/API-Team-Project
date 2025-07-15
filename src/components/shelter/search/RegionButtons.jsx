@@ -27,20 +27,24 @@ const REGIONS = [
   ]
 ];
 
-export default function RegionButtons({ selectedRegion, setSelectedRegion }) {
+export default function RegionButtons({ selectedRegion, setSelectedRegion, regionStats = {} }) {
   return (
     <div className="region-section">
       {REGIONS.map((regionRow, rowIndex) => (
         <div key={rowIndex} className="region-row">
-          {regionRow.map(region => (
-            <button
-              key={region.key}
-              onClick={() => setSelectedRegion(region.key)}
-              className={`region-button ${selectedRegion === region.key ? 'selected' : 'unselected'}`}
-            >
-              {region.label}
-            </button>
-          ))}
+          {regionRow.map(region => {
+            const count = regionStats[region.key] || 0;
+            return (
+              <button
+                key={region.key}
+                onClick={() => setSelectedRegion(region.key)}
+                className={`region-button ${selectedRegion === region.key ? 'selected' : 'unselected'}`}
+              >
+                <div className="region-label">{region.label}</div>
+                <div className="region-count">({count}개)</div>
+              </button>
+            );
+          })}
         </div>
       ))}
     </div>

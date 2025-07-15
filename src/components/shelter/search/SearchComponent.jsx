@@ -8,7 +8,8 @@ export default function SearchComponent({
   setSelectedRegion, 
   currentLocation, 
   currentAddress, 
-  onLocationRequest 
+  onLocationRequest,
+  regionStats // 지역별 통계 추가
 }) {
   return (
     <div className="search-section">
@@ -47,6 +48,7 @@ export default function SearchComponent({
         <RegionButtons 
           selectedRegion={selectedRegion}
           setSelectedRegion={setSelectedRegion}
+          regionStats={regionStats} // 지역별 통계 전달
         />
       </div>
     </div>

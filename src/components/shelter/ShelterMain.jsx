@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import './test.css';
 
 // Hooks
@@ -16,7 +16,6 @@ export default function Test() {
   const [error, setError] = useState(null);
   const [map, setMap] = useState(null); // 지도 상태를 직접 관리
   const [selectedShelter, setSelectedShelter] = useState(null); // 선택된 쉼터 상태 추가
-  const maxItems = 20; // 50개에서 20개로 변경
 
   // Custom hooks
   const { 
@@ -39,6 +38,20 @@ export default function Test() {
     searchKeyword, 
     currentLocation
   );
+
+  // 모든 카테고리에서 전체 데이터를 표시 (지역별 제한 제거)
+  const maxItems = filteredData.length;
+
+  // 지역별 쉼터 개수 계산
+  const regionStats = useMemo(() => {
+    const stats = {};
+    shelterData.forEach(shelter => {
+      const region = shelter.region;
+      stats[region] = (stats[region] || 0) + 1;
+    });
+    stats.all = shelterData.length; // 전체 개수
+    return stats;
+  }, [shelterData]);
 
   // 에러 상태 통합 관리
   useEffect(() => {
@@ -108,7 +121,7 @@ export default function Test() {
 
           {/* 카카오지도 섹션 */}
           <MapComponent 
-            filteredData={filteredData.slice(0, maxItems)}
+            filteredData={filteredData}
             currentLocation={currentLocation}
             currentAddress={currentAddress}
             error={error}
@@ -126,11 +139,12 @@ export default function Test() {
             currentLocation={currentLocation}
             currentAddress={currentAddress}
             onLocationRequest={handleLocationRequest}
+            regionStats={regionStats} // 지역별 통계 전달
           />
 
           {/* 검색 결과 정보 */}
           <div className="search-result-info">
-            📊 전체 {shelterData.length}개 중 {filteredData.length}개 검색됨 (최대 {maxItems}개 표시)
+            📊 전체 {shelterData.length}개 중 {filteredData.length}개 검색됨 (전체 표시)
             {currentLocation && (
               <div className="search-result-subtext">
                 📍 현재 위치 기준 거리순 정렬
