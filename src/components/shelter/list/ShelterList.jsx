@@ -1,3 +1,4 @@
+import React from 'react';
 import ShelterCard from './ShelterCard';
 
 export default function ShelterList({ shelters, maxItems = 20, currentLocation, onShelterClick }) {

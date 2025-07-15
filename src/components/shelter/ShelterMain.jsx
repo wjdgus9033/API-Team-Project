@@ -24,7 +24,7 @@ export default function Test() {
     loading, 
     error: dataError, 
     loadingProgress, 
-    fetchShelterDataByRegion 
+    fetchShelterData 
   } = useShelterData();
 
   const { 
@@ -40,17 +40,6 @@ export default function Test() {
     currentLocation
   );
 
-  // 디버깅을 위한 로그
-  useEffect(() => {
-    console.log('🔍 데이터 현황:', {
-      shelterData: shelterData.length,
-      selectedRegion,
-      searchKeyword,
-      filteredData: filteredData.length,
-      currentLocation
-    });
-  }, [shelterData, selectedRegion, searchKeyword, filteredData, currentLocation]);
-
   // 에러 상태 통합 관리
   useEffect(() => {
     setError(dataError);
@@ -64,17 +53,9 @@ export default function Test() {
     }
   }, [selectedRegion, searchKeyword]);
 
-  // 지역 변경 시 해당 지역 데이터 로드
-  useEffect(() => {
-    if (selectedRegion) {
-      console.log(`지역 변경: ${selectedRegion} 데이터 로드 시작`);
-      fetchShelterDataByRegion(selectedRegion);
-    }
-  }, [selectedRegion, fetchShelterDataByRegion]);
-
   // 초기 데이터 로드
   useEffect(() => {
-    fetchShelterDataByRegion('all'); // 전국 데이터 로드
+    fetchShelterData();
   }, []); // 빈 배열로 변경하여 컴포넌트 마운트 시에만 실행
 
   // 현재 위치 요청 핸들러
