@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function ShelterCard({ shelter, rank, onCardClick }) {
   // 시간 포맷팅 함수
   const formatOperatingHours = (timeString) => {
