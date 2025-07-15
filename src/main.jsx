@@ -10,12 +10,12 @@ import "./common.css";
 import Root from "./components/root/root.jsx";
 import Home from "./components/home/home.jsx";
 import State from "./components/state/state.jsx";
-import Shelters from "./components/shelters/shelters.jsx";
 import HeatWave from "./components/about/heat wave.jsx";
 import Precautions from "./components/about/precautions.jsx";
 import Symptoms from "./components/about/symptoms.jsx";
 import News from "./components/news/News.jsx";
 import RelatedSite from "./components/about/relatedsite.jsx";
+import Test from "./components/shelter/test.jsx";
 
 const router = createBrowserRouter([
   {
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: "state", element: <State /> },
-      { path: "shelters", element: <Shelters /> },
+      { path: "shelters", element: <Test /> },
       {
         path: "about",
         children: [

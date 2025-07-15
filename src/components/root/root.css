@@ -81,8 +81,8 @@ body {
 }
 
 .main-content {
-  margin-left: 30px;
   padding: 2rem;
+  background-color: antiquewhite;
 }
 .container{
   min-height: 100vh; /* 화면 전체 높이 채우기 */
