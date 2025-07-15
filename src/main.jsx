@@ -10,7 +10,6 @@ import "./common.css";
 import Root from "./components/root/root.jsx";
 import Home from "./components/home/home.jsx";
 import State from "./components/state/state.jsx";
-import Shelters from "./components/shelters/shelters.jsx";
 import HeatWave from "./components/about/heat wave.jsx";
 import Precautions from "./components/about/precautions.jsx";
 import Symptoms from "./components/about/symptoms.jsx";
@@ -24,8 +23,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: "state", element: <State /> },
-      { path: "shelters", element: <Shelters /> },
-      { path: "test", element: <Test /> },
+      { path: "shelters", element: <Test /> },
       {
         path: "about",
         children: [
