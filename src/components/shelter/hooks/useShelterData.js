@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 export default function useShelterData() {
   const [shelterData, setShelterData] = useState([]);
@@ -325,6 +325,12 @@ export default function useShelterData() {
       return [];
     }
   };
+
+  // 페이지 로드 시 전국 데이터 자동 로딩
+  useEffect(() => {
+    console.log('🚀 페이지 로드 - 전국 무더위쉼터 데이터 자동 로딩 시작');
+    fetchShelterDataByRegion('all');
+  }, []); // 빈 dependency array로 최초 1회만 실행
 
   return {
     shelterData,
