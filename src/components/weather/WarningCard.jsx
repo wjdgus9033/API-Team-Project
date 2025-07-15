@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import "./weather.css";
-import { convertWeatherItems, calcSummerHeatIndex } from "./weatherUtility";
+import { convertWeatherItems, calcHeatIndexSimple } from "./weatherUtility";
 import tmpimage2 from "./weather-assets/tmpimage2.png";
 
 function getGradientForTemp(val) {
@@ -26,9 +25,7 @@ function getGradientForTemp(val) {
 }
 
 const WarningCardImage = styled.img`
-  width: 200px;
-  height: 200px;
-  position: absolute;
+  width: 100%;
   top: auto;
   left: 0;
 `;
@@ -51,15 +48,15 @@ const WarningCardWrapper = styled.div`
 `;
 
 const WarningImageWrapper = styled.div`
-    width: 40%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 const WarningTextWrapper = styled.div`
-width: 60%;
+  width: 60%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -73,9 +70,8 @@ export default function WarningCard({ items, convertedItems }) {
 
   const tmpTemp = convertedItems?.data?.TMP ?? 0;
   const tmpHumid = convertedItems?.data?.REH ?? 0;
-  const wind = convertedItems?.data?.WSD ?? 0;
 
-  const value = calcSummerHeatIndex(temp, humid, wind);
+  const value = calcHeatIndexSimple(temp, humid);
 
   return (
     <WarningCardWrapper val={value}>
@@ -83,7 +79,7 @@ export default function WarningCard({ items, convertedItems }) {
         <WarningCardImage src={tmpimage2} alt="" />
       </WarningImageWrapper>
       <WarningTextWrapper>
-        <TextTitle>폭염주의</TextTitle>
+        <TextTitle val={value}>폭염주의</TextTitle>
         <TextContent>더우니까 나가지마세요</TextContent>
       </WarningTextWrapper>
     </WarningCardWrapper>

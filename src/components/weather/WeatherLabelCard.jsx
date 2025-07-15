@@ -1,4 +1,21 @@
-import { LabelCard, PText, WeatherImageLabel, TempTextLabel } from "./WeatherStyled";
+import { PText, WeatherImageLabel, TempTextLabel } from "./WeatherStyled";
+import styled from "styled-components";
+
+const LabelCard = styled.div`
+  padding-top: 1rem;
+  flex-shrink: 0;
+  width: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  border-right: 1px solid rgba(0, 0, 0, 0.4);
+  background-color: white;
+  z-index: 1;
+  position: sticky;
+  left: 0;
+  top: 0;
+`;
 
 export default function WeatherLabelCard() {
     return (

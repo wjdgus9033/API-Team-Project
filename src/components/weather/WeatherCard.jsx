@@ -1,29 +1,31 @@
 import styled from "styled-components";
-import { convertPTY, convertSky, convertWeatherItems } from "./weatherUtility";
+import { convertPTY, convertSky, convertWeatherItems, getImageFile } from "./weatherUtility";
 import {
   CardContainer,
   Temperature,
   WeatherImage,
   PText,
-  DateLabel,
   CardContainerWrapper,
 } from "./WeatherStyled";
-import tempImage from './weather-assets/tempImage.png';
+import tempImage from './weather-assets/sunny.png';
 import tempImage1 from './weather-assets/test1.png';
 import React from "react";
 
-function getImageCard(sky, pty) {
-  if(sky === "1") return tempImage;
-  if(sky === "3") return tempImage;
-  if(sky === "4") return tempImage;
 
-  if(pty === "1") return tempImage;
-  if(pty === "2") return tempImage;
-  if(pty === "3") return tempImage;
-  if(pty === "4") return tempImage;
-  if(pty === "5") return tempImage;
-  if(pty === "6") return tempImage;
-}
+
+const DateLabel = styled.div`
+  width: 3rem;
+  height: 1.2rem;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  left: -40%;
+  color: #494848;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  background-color: #ff6b57;
+`;
+
 
 export default function WeatherCard({ items }) {
   const convertItem = Object.values(convertWeatherItems(items, "day"));
@@ -34,8 +36,8 @@ export default function WeatherCard({ items }) {
       <CardContainerWrapper time={time}>
         {time === "00시" && <DateLabel>{date}</DateLabel>}
         <CardContainer>
-          <PText mVal={"3px"}>{time}</PText>
-          <WeatherImage src={getImageCard(data.SKY, data.PTY)} alt="asd"/>
+          <PText mVal={"3px"}>{time}시</PText>
+          <WeatherImage src={getImageFile(data.SKY, data.PTY, time)} alt="asd"/>
           <Temperature>{data.TMP}°</Temperature>
           <PText mVal={"5px"}>{data.REH}%</PText>
           <PText mVal={"5px"}>{data.POP}%</PText>

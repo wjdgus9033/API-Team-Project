@@ -2,10 +2,10 @@ import {
   convertPTY,
   convertSky,
   convertWeatherItems,
-  calcSummerHeatIndex,
+  calcHeatIndexSimple,
 } from "./weatherUtility";
 import styled from "styled-components";
-import { Temperature, PText, CardDate, WeatherImage } from "./WeatherStyled";
+import { Temperature, PText} from "./WeatherStyled";
 
 import tempImage from "./weather-assets/tempImage.png";
 
@@ -17,11 +17,11 @@ export const LiveCardContainer = styled.div`
   align-items: center;
   position: absolute;
   top: 0;
-  /* background: linear-gradient(
+  background: linear-gradient(
     to bottom,
     rgba(0, 89, 255, 0.7),
     rgba(66, 131, 252, 0.4)
-  ); */
+  );
 `;
 
 const LeftWrapper = styled.div`
@@ -38,7 +38,7 @@ const RightWrapper = styled.div`
 `;
 
 const LiveWeatherImage = styled.img`
-  width: 120px;
+  width:  calc(100% - 4rem);
 `;
 const LiveTemp = styled.h1`
   margin-top: 0.5rem;
@@ -55,10 +55,9 @@ export default function WeatherLiveCard({ items, convertedItems }) {
 
   // baseDate, baseTime, category, fcstDate, fcstTime, fcstValue, nx, ny
   function createCard({ time, data }) {
-    const get1 = calcSummerHeatIndex(
+    const get1 = calcHeatIndexSimple(
       parseFloat(data.T1H ?? convertedItems?.data?.TMP ?? 0),
-      parseFloat(data.REH ?? convertedItems?.data?.REH ?? 0),
-      parseFloat(convertedItems?.data?.WSD ?? 0)
+      parseFloat(data.REH ?? convertedItems?.data?.REH ?? 0)
     );
     const styledCard = (
       <>

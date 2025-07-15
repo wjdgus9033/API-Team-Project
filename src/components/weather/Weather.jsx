@@ -7,13 +7,30 @@ import WeatherLiveCard from "./WeatherLiveCard";
 import WarningCard from "./WarningCard";
 import styled from "styled-components";
 
+const WeatherCardSection = styled.section`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+`;
+
 const WeatherCardGrid = styled.div`
   background-color: #fff;
-  padding: 1.5rem;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
+  position: relative;
+  height: 20rem;
+  &:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  ${({ full }) => full && `
+    margin-bottom: 2rem;
+    padding: 10px 0 30px;
+  `}
 `;
+
 
 export default function Weather({ nowWeatherData, hourWeatherData }) {
   function getNowSkyAndTempData() {
@@ -29,26 +46,26 @@ export default function Weather({ nowWeatherData, hourWeatherData }) {
 
   return (
     <>
-      <section className="weather-card-section">
-        <div className="weather-card">
+      <WeatherCardSection>
+        <WeatherCardGrid>
           <PText mVal={"20px"}>오늘의 폭염주의보</PText>
           <WarningCard />
-        </div>
-        <div className="weather-card">
+        </WeatherCardGrid>
+        <WeatherCardGrid>
           <PText mVal={"20px"}>오늘의 날씨</PText>
           <WeatherLiveCard
             items={nowWeatherData}
             convertedItems={getNowSkyAndTempData()}
           />
-        </div>
-      </section>
-      <section className="weather-card full">
-        <PText mVal={"5px"}>오늘의 일간 날씨</PText>
+        </WeatherCardGrid>
+      </WeatherCardSection>
+      <WeatherCardGrid full>
+        <PText mVal={"10px"}>오늘의 일간 날씨</PText>
         <WeatherCardWrapper>
           <WeatherLabelCard />
           <WeatherCard items={hourWeatherData} />
         </WeatherCardWrapper>
-      </section>
+      </WeatherCardGrid>
     </>
   );
 }

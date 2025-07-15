@@ -16,9 +16,16 @@ export const useLocationStore = create((set) => ({
           loc.coords.latitude,
           loc.coords.longitude
         );
-        const parseLoc = parseInt(convertLoc.nx, 10) + parseInt(convertLoc.ny, 10);
+        const parseLoc =
+          parseInt(convertLoc.nx, 10) + parseInt(convertLoc.ny, 10);
 
-        if(parseVal === parseLoc) return console.log("좌표가 동일합니다.");
+        if (parseVal === parseLoc) return console.log("좌표가 동일합니다.");
+        if (sessionStorage.getItem("updateLocation"))
+          return sessionStorage.setItem(
+            "lastLocation",
+            sessionStorage.getItem("updatedLocation")
+          );
+        console.log(sessionStorage.getItem("lastLocation"));
         set({ location: convertLoc });
         sessionStorage.setItem("updatedLocation", JSON.stringify(convertLoc));
       },

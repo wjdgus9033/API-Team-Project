@@ -86,60 +86,6 @@ export const CardContainer = styled.div`
   height: 100%;
 `;
 
-export const LiveCardContainer = styled.div`
-  border-radius: inherit;
-  width: 100%;
-  height: 15rem;
-  display: flex;
-  align-items: center;
-  position: relative;
-  /* background: linear-gradient(
-    to bottom,
-    rgba(0, 89, 255, 0.7),
-    rgba(66, 131, 252, 0.4)
-  ); */
-`;
-export const LabelCard = styled.div`
-  padding-top: 1rem;
-  flex-shrink: 0;
-  width: 4rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  border-right: 1px solid rgba(0, 0, 0, 0.4);
-  background-color: white;
-  z-index: 1;
-  position: sticky;
-  left: 0;
-  top: 0;
-`;
-
-export const DateLabel = styled.div`
-  width: 3rem;
-  height: 1.2rem;
-  position: absolute;
-  text-align: center;
-  top: 0;
-  left: -40%;
-  color: #494848;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
-  background-color: #ff6b57;
-`;
-
-export const CardDate = styled.p`
-  /* font-size: 0.5rem; */
-`;
-
-export const LineContainer = styled.div`
-  /* display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    height: 2rem; */
-`;
 
 export const WeatherImage = styled.img`
   width: 50px;

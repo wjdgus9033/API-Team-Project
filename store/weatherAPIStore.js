@@ -32,11 +32,10 @@ export async function fetchHourWeatherData(position) {
       },
     });
 
-    sessionStorage.setItem(
-      "hourWeatherData",
-      JSON.stringify(response.data.response.body.items.item)
-    );
-    return response.data.response.body.items.item;
+    const item = response.data.response.body.items.item;
+
+    sessionStorage.setItem("hourWeatherData", JSON.stringify(item));
+    return item;
   } catch (error) {
     console.error("API 호출 에러:", error);
   }
@@ -56,11 +55,9 @@ export async function fetchNowWeatherData(position) {
         ny: position.ny,
       },
     });
-    sessionStorage.setItem(
-      "nowWeatherData",
-      JSON.stringify(response.data.response.body.items.item)
-    );
-    return response.data.response.body.items.item;
+    const item = response.data.response.body.items.item;
+    sessionStorage.setItem("nowWeatherData", JSON.stringify(item));
+    return item;
   } catch (error) {
     console.error("API 호출 에러:", error);
   }

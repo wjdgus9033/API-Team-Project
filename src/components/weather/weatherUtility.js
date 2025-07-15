@@ -1,3 +1,32 @@
+import { getHour } from "../../../utility/util";
+
+import sunny from "./weather-assets/sunny.png";
+import cloudyDay from "./weather-assets/cloudy-day.png";
+import cloudy from "./weather-assets/cloudy.png";
+import overCast from "./weather-assets/overcast.png";
+import showerDay from "./weather-assets/shower-day.png";
+import sleet from "./weather-assets/sleet.png";
+import sleetNight from "./weather-assets/sleet-night.png";
+import drizzle from "./weather-assets/drizzle.png";
+import rain from "./weather-assets/rain.png";
+import snow from "./weather-assets/snow.png";
+import clearNight from "./weather-assets/clear-night.png";
+import cloudyNight from "./weather-assets/cloudy-night.png";
+import rainNight from "./weather-assets/rain-night.png"; 
+import overCastNight from "./weather-assets/overcast-night.png";
+
+const ptyRecord = {
+  1: rain,
+  2: sleet,
+  3: snow,
+  4: showerDay,
+  5: drizzle,
+  6: "drizzleAndSnow",
+};
+const skyDayRecord = { 1: sunny, 3: cloudy, 4: overCast };
+const skyNightReconds = {
+  1: clearNight, 3: cloudyNight, 4: overCastNight
+};
 
 export function convertSky(num) {
   switch (num) {
@@ -33,6 +62,18 @@ export function convertPTY(num) {
   }
 }
 
+export function getImageFile(sky, pty, time) {
+  if (time >= 6 && time < 21) {
+    if (ptyRecord[pty]) return ptyRecord[pty];
+    if (skyDayRecord[sky]) return skyDayRecord[sky];
+    return null;
+  } else {
+    if (ptyRecord[pty]) return ptyRecord[pty];
+    if (skyNightReconds[sky]) return skyNightReconds[sky];
+    return null;
+  }
+}
+
 export function convertWeatherItems(items, category) {
   const groups = {};
 
@@ -42,9 +83,7 @@ export function convertWeatherItems(items, category) {
 
       if (!groups[key]) {
         groups[key] = {
-          time:
-            item.baseTime.slice(0, 2) +
-            "시",
+          time: item.baseTime.slice(0, 2),
           data: {},
         };
       }
@@ -58,27 +97,25 @@ export function convertWeatherItems(items, category) {
 
       if (!groups[key]) {
         groups[key] = {
-          date:item.fcstDate.slice(6,8) + "일" ,
-          time:
-            item.fcstTime.slice(0, 2) +
-            "시",
+          date: item.fcstDate.slice(6, 8) + "일",
+          time: item.fcstTime.slice(0, 2),
           data: {},
         };
       }
       groups[key].data[item.category] = item.fcstValue;
     });
   }
-   //console.log("groups ============== " ,groups);
+  //console.log("groups ============== " ,groups);
   return groups;
 }
 
-export function calcSummerHeatIndex(temp, humidity, windSpeed) {
-  const t = parseFloat(temp);
-  const h = parseFloat(humidity);
-  const w = parseFloat(windSpeed);
+export function calcHeatIndexSimple(temp, humidity) {
+  const T = parseFloat(temp);
+  const RH = parseFloat(humidity);
 
-  if (isNaN(t) || isNaN(h) || isNaN(w)) return "-";
+  if (isNaN(T) || isNaN(RH)) return "-";
 
-  const hi = t + 0.33 * h - 0.70 * w - 4.00;
-  return hi.toFixed(1);
+  // 한국에서 자주 쓰는 간단 체감온도 근사식
+  const HI = T + 0.55 * (1 - RH / 100) * (T - 14.5);
+  return HI.toFixed(1);
 }
