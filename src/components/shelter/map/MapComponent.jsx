@@ -177,14 +177,15 @@ export default function MapComponent({
 
         // 현재 위치 마커 클릭 이벤트
         const currentInfoContent = `
-          <div style="padding:8px; min-width:200px; color:red; font-weight:bold;">
-            <div style="margin-bottom:3px;">📍 현재 위치</div>
-            ${currentAddress ? `<div style="font-size:11px; font-weight:normal; color:#666;">${currentAddress}</div>` : ''}
+          <div style="padding:8px; width:180px; max-width:180px; color:red; font-weight:bold; box-sizing:border-box; overflow:hidden;">
+            <div style="margin-bottom:3px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">📍 현재 위치</div>
+            ${currentAddress ? `<div style="font-size:11px; font-weight:normal; color:#666; word-wrap:break-word; line-height:1.3;">${currentAddress}</div>` : ''}
           </div>
         `;
 
         const currentInfoWindow = new window.kakao.maps.InfoWindow({
-          content: currentInfoContent
+          content: currentInfoContent,
+          removable: false
         });
 
         // 마우스 호버 이벤트로 변경
@@ -214,19 +215,20 @@ export default function MapComponent({
 
             // 인포윈도우 내용
             const infoContent = `
-              <div style="padding:10px; min-width:200px; max-width:300px;">
-                <h4 style="margin:0 0 5px 0; color:#FF6B57; font-size:14px; display:flex; justify-content:space-between; align-items:center;">
-                  <span>${shelter.name}</span>
-                  ${shelter.distance ? `<span style="font-size:11px; color:#0066CC; font-weight:normal; background-color:#E8F4FF; padding:2px 6px; border-radius:8px;">${shelter.distance.toFixed(1)}km</span>` : ''}
+              <div style="padding:8px; width:250px; max-width:250px; box-sizing:border-box; overflow:hidden;">
+                <h4 style="margin:0 0 5px 0; color:#FF6B57; font-size:13px; display:flex; justify-content:space-between; align-items:flex-start; line-height:1.2;">
+                  <span style="flex:1; margin-right:5px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; max-width:180px;" title="${shelter.name}">${shelter.name}</span>
+                  ${shelter.distance ? `<span style="font-size:10px; color:#0066CC; font-weight:normal; background-color:#E8F4FF; padding:2px 4px; border-radius:6px; white-space:nowrap; flex-shrink:0;">${shelter.distance.toFixed(1)}km</span>` : ''}
                 </h4>
-                <p style="margin:0 0 3px 0; font-size:12px;"><strong>주소:</strong> ${shelter.roadAddress}</p>
-                <p style="margin:0 0 3px 0; font-size:12px;"><strong>운영시간:</strong> ${shelter.weekday}</p>
-                <p style="margin:0; font-size:12px;"><strong>전화:</strong> ${shelter.tel}</p>
+                <p style="margin:0 0 3px 0; font-size:11px; word-wrap:break-word; line-height:1.3;"><strong>주소:</strong> ${shelter.roadAddress}</p>
+                <p style="margin:0 0 3px 0; font-size:11px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;"><strong>운영시간:</strong> ${shelter.weekday}</p>
+                <p style="margin:0; font-size:11px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;"><strong>전화:</strong> ${shelter.tel}</p>
               </div>
             `;
 
             const infoWindow = new window.kakao.maps.InfoWindow({
-              content: infoContent
+              content: infoContent,
+              removable: false
             });
 
             // 마우스 호버 이벤트로 변경
