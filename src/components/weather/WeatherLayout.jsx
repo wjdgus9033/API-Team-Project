@@ -49,15 +49,6 @@ export default function WeatherLayout() {
           setHourWeatherData(parseStorageItem("hourWeatherData"));
           console.log("Debug hour data is false");
         }
-
-        console.log(
-          "parsed Storage Now Weather Item === ",
-          parseStorageItem("nowWeatherData")
-        );
-        console.log(
-          "parsed Storage Hour Weather Item === ",
-          parseStorageItem("hourWeatherData")
-        );
       } catch (error) {
         console.error("API 호출 에러:", error);
       }

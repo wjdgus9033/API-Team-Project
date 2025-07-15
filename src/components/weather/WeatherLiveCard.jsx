@@ -1,13 +1,10 @@
 import {
   convertPTY,
-  convertSky,
+  getImageFile,
   convertWeatherItems,
   calcHeatIndexSimple,
 } from "./weatherUtility";
 import styled from "styled-components";
-import { Temperature, PText} from "./WeatherStyled";
-
-import tempImage from "./weather-assets/tempImage.png";
 
 export const LiveCardContainer = styled.div`
   border-radius: inherit;
@@ -38,7 +35,7 @@ const RightWrapper = styled.div`
 `;
 
 const LiveWeatherImage = styled.img`
-  width:  calc(100% - 4rem);
+  width: calc(100% - 4rem);
 `;
 const LiveTemp = styled.h1`
   margin-top: 0.5rem;
@@ -50,6 +47,8 @@ const LivePText = styled.p`
 
 export default function WeatherLiveCard({ items, convertedItems }) {
   const convertItem = Object.values(convertWeatherItems(items, "live"));
+  const now = new Date();
+  const minute = now.getMinutes();
   console.log("convertedddd ==", convertedItems);
   console.log(convertItem);
 
@@ -65,14 +64,17 @@ export default function WeatherLiveCard({ items, convertedItems }) {
           <PText>{time || "-"} 날씨</PText>
         </CardLine1> */}
         <LeftWrapper>
-          <LiveWeatherImage src={tempImage} alt="Weather" />
+          <LiveWeatherImage src={getImageFile(convertedItems?.data?.SKY ?? "0", data?.PTY ?? "0", time)} alt="Weather" />
+          {console.log("data type ===========", data.SKY, data.PTY)}
           <LiveTemp>{data.T1H ?? convertedItems?.data?.TMP ?? "-"}°</LiveTemp>
           <h3>
             체감온도: <strong>{get1}</strong>
           </h3>
         </LeftWrapper>
         <RightWrapper>
-          {" "}
+          <h1>
+            현재 시간 : {time}:{minute}
+          </h1>
           <LivePText mVal="3px">
             습도:{" "}
             <strong>{data.REH ?? convertedItems?.data?.REH ?? "-"}</strong>%
@@ -84,7 +86,7 @@ export default function WeatherLiveCard({ items, convertedItems }) {
             풍속: {convertedItems?.data?.WSD ?? "-"}m/s
           </LivePText>
           <LivePText mVal="6px">
-            강수형태: 
+            강수형태:
             {convertPTY(data.PTY) ?? "-"}
           </LivePText>
         </RightWrapper>

@@ -1,11 +1,41 @@
 import WeatherCard from "./WeatherCard";
 import { convertWeatherItems } from "./weatherUtility";
 import { getToday, getHour } from "../../../utility/util";
-import { WeatherCardWrapper, PText } from "./WeatherStyled";
+import { PText } from "./WeatherStyled";
 import WeatherLabelCard from "./WeatherLabelCard";
 import WeatherLiveCard from "./WeatherLiveCard";
 import WarningCard from "./WarningCard";
 import styled from "styled-components";
+
+export const WeatherCardWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  overflow-x: auto;
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+
+  &:hover {
+    scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
+  }
+
+  &::-webkit-scrollbar {
+    height: 8px;
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+`;
 
 const WeatherCardSection = styled.section`
   display: grid;
@@ -27,7 +57,7 @@ const WeatherCardGrid = styled.div`
 
   ${({ full }) => full && `
     margin-bottom: 2rem;
-    padding: 10px 0 30px;
+    padding: 0.5rem 0;
   `}
 `;
 
@@ -38,7 +68,6 @@ export default function Weather({ nowWeatherData, hourWeatherData }) {
       return null;
     }
     const convertItem = convertWeatherItems(hourWeatherData, "day");
-    console.log("converted ============ ", convertItem);
     const key = getToday() + getHour();
     const data = convertItem[key];
     return data;

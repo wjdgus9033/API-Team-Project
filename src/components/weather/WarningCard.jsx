@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { convertWeatherItems, calcHeatIndexSimple } from "./weatherUtility";
-import tmpimage2 from "./weather-assets/tmpimage2.png";
+import hot from "./weather-assets/hot.png";
+import warm from "./weather-assets/warm.png";
+import cool from "./weather-assets/cool.png";
 
 function getGradientForTemp(val) {
   if (val >= 35) {
@@ -9,7 +11,7 @@ function getGradientForTemp(val) {
       rgba(229, 57, 53, 0.95),
       rgba(255, 87, 34, 0.9)
     )`;
-  } else if (val >= 33) {
+  } else if (val >= 32) {
     return `linear-gradient(
       to bottom,
       rgba(255, 167, 38, 0.9),
@@ -44,7 +46,7 @@ const WarningCardWrapper = styled.div`
   border-radius: inherit;
   position: absolute;
   top: 0;
-  /* background: ${({ val }) => getGradientForTemp(val)}; */
+  background: ${({ val }) => getGradientForTemp(val)};
 `;
 
 const WarningImageWrapper = styled.div`
@@ -63,6 +65,35 @@ const WarningTextWrapper = styled.div`
   align-items: center;
 `;
 
+function getTitle(val) {
+  if (val >= 35) {
+    return "폭염!";
+  } else if (val >= 32) {
+    return "폭염주의!";
+  } else {
+    return "선선함";
+  }
+}
+function getContent(val) {
+  if (val >= 35) {
+    return "열사병에 주의하세요!";
+  } else if (val >= 32) {
+    return "외출 시 주의하세요!";
+  } else {
+    return "날씨가 시원합니다.";
+  }
+}
+
+function getImage(val) {
+  if (val >= 35) {
+    return hot;
+  } else if (val >= 32) {
+    return warm;
+  } else {
+    return cool;
+  }
+}
+
 export default function WarningCard({ items, convertedItems }) {
   const converedtNowItems = Object.values(convertWeatherItems(items, "live"));
   const temp = converedtNowItems[0]?.data?.T1H ?? 0;
@@ -76,11 +107,11 @@ export default function WarningCard({ items, convertedItems }) {
   return (
     <WarningCardWrapper val={value}>
       <WarningImageWrapper>
-        <WarningCardImage src={tmpimage2} alt="" />
+        <WarningCardImage src={getImage(value)} alt="" />
       </WarningImageWrapper>
       <WarningTextWrapper>
-        <TextTitle val={value}>폭염주의</TextTitle>
-        <TextContent>더우니까 나가지마세요</TextContent>
+        <TextTitle val={value}>{getTitle(value)}</TextTitle>
+        <TextContent>{getContent(value)}</TextContent>
       </WarningTextWrapper>
     </WarningCardWrapper>
   );

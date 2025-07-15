@@ -12,20 +12,21 @@ import rain from "./weather-assets/rain.png";
 import snow from "./weather-assets/snow.png";
 import clearNight from "./weather-assets/clear-night.png";
 import cloudyNight from "./weather-assets/cloudy-night.png";
-import rainNight from "./weather-assets/rain-night.png"; 
+import rainNight from "./weather-assets/rain-night.png";
 import overCastNight from "./weather-assets/overcast-night.png";
-
+const skyDayRecord = { 1: sunny, 3: cloudy, 4: overCast };
 const ptyRecord = {
   1: rain,
   2: sleet,
   3: snow,
   4: showerDay,
   5: drizzle,
-  6: "drizzleAndSnow",
+  6: "drizzleAndSnow", //이미지 데이터 없음
 };
-const skyDayRecord = { 1: sunny, 3: cloudy, 4: overCast };
 const skyNightReconds = {
-  1: clearNight, 3: cloudyNight, 4: overCastNight
+  1: clearNight,
+  3: cloudyNight,
+  4: overCastNight,
 };
 
 export function convertSky(num) {
@@ -64,11 +65,11 @@ export function convertPTY(num) {
 
 export function getImageFile(sky, pty, time) {
   if (time >= 6 && time < 21) {
-    if (ptyRecord[pty]) return ptyRecord[pty];
+    if (ptyRecord[pty] && pty > 0) return ptyRecord[pty];
     if (skyDayRecord[sky]) return skyDayRecord[sky];
     return null;
   } else {
-    if (ptyRecord[pty]) return ptyRecord[pty];
+    if (ptyRecord[pty] && pty > 0) return ptyRecord[pty];
     if (skyNightReconds[sky]) return skyNightReconds[sky];
     return null;
   }
@@ -115,7 +116,6 @@ export function calcHeatIndexSimple(temp, humidity) {
 
   if (isNaN(T) || isNaN(RH)) return "-";
 
-  // 한국에서 자주 쓰는 간단 체감온도 근사식
   const HI = T + 0.55 * (1 - RH / 100) * (T - 14.5);
   return HI.toFixed(1);
 }

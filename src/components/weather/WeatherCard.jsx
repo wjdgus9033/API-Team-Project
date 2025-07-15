@@ -1,17 +1,38 @@
 import styled from "styled-components";
-import { convertPTY, convertSky, convertWeatherItems, getImageFile } from "./weatherUtility";
+import { convertWeatherItems, getImageFile } from "./weatherUtility";
 import {
-  CardContainer,
   Temperature,
-  WeatherImage,
   PText,
-  CardContainerWrapper,
+  getGradientForTime,
+  getFontColorForTime,
 } from "./WeatherStyled";
-import tempImage from './weather-assets/sunny.png';
-import tempImage1 from './weather-assets/test1.png';
 import React from "react";
 
+const CardContainerWrapper = styled.div`
+  display: flex;
+  padding-top: 1rem;
+  flex-direction: column;
+  flex: 0 0 4rem;
+  position: relative;
+  border-right: 1px dotted rgba(0, 0, 0, 0.4);
+  background: ${({ time }) => getGradientForTime(time)};
+  color: ${({ time }) => getFontColorForTime(time)};
+`;
 
+const CardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+`;
+
+
+const WeatherImage = styled.img`
+  width: 50px;
+`;
 
 const DateLabel = styled.div`
   width: 3rem;
