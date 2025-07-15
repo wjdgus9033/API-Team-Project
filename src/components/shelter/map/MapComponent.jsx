@@ -12,6 +12,7 @@ export default function MapComponent({
   const mapRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
   const markersRef = useRef([]); // 마커들을 관리하기 위한 ref
+  const infoWindowsRef = useRef([]); // 인포윈도우들을 관리하기 위한 ref 추가
 
   // 카카오지도 스크립트 로드 및 초기화
   useEffect(() => {
@@ -156,6 +157,10 @@ export default function MapComponent({
     if (map && window.kakao && window.kakao.maps) {
       console.log('마커 업데이트 시작:', filteredData?.length || 0);
       
+      // 기존 인포윈도우들 닫기
+      infoWindowsRef.current.forEach(infoWindow => infoWindow.close());
+      infoWindowsRef.current = [];
+      
       // 기존 마커들 제거
       markersRef.current.forEach(marker => marker.setMap(null));
       markersRef.current = [];
@@ -188,6 +193,9 @@ export default function MapComponent({
           removable: false
         });
 
+        // 인포윈도우 관리 배열에 추가
+        infoWindowsRef.current.push(currentInfoWindow);
+
         // 마우스 호버 이벤트로 변경
         window.kakao.maps.event.addListener(currentMarker, 'mouseover', () => {
           currentInfoWindow.open(map, currentMarker);
@@ -201,6 +209,7 @@ export default function MapComponent({
       }
       
       // 쉼터 마커 추가
+      const shelterMarkers = [];
       if (filteredData && filteredData.length > 0) {
         filteredData.forEach((shelter, index) => {
           if (shelter.lat && shelter.lon && shelter.lat !== 0 && shelter.lon !== 0) {
@@ -212,6 +221,7 @@ export default function MapComponent({
             });
 
             markersRef.current.push(marker);
+            shelterMarkers.push(marker);
 
             // 인포윈도우 내용
             const infoContent = `
@@ -231,6 +241,9 @@ export default function MapComponent({
               removable: false
             });
 
+            // 인포윈도우 관리 배열에 추가
+            infoWindowsRef.current.push(infoWindow);
+
             // 마우스 호버 이벤트로 변경
             window.kakao.maps.event.addListener(marker, 'mouseover', () => {
               infoWindow.open(map, marker);
@@ -241,11 +254,43 @@ export default function MapComponent({
             });
           }
         });
+        
+        // 필터된 쉼터 마커들이 모두 보이도록 지도 범위 조정 (선택된 쉼터가 없을 때만)
+        if (shelterMarkers.length > 0 && !selectedShelter) {
+          const bounds = new window.kakao.maps.LatLngBounds();
+          
+          // 모든 쉼터 마커의 위치를 bounds에 추가
+          shelterMarkers.forEach(marker => {
+            bounds.extend(marker.getPosition());
+          });
+          
+          // 현재 위치가 있으면 bounds에 포함
+          if (currentLocation) {
+            bounds.extend(new window.kakao.maps.LatLng(currentLocation.lat, currentLocation.lng));
+          }
+          
+          // 지도를 bounds에 맞게 조정
+          setTimeout(() => {
+            map.setBounds(bounds, 50); // 50px 여백
+            
+            // 너무 가까이 줌인된 경우 최대 줌 레벨 제한
+            setTimeout(() => {
+              if (map.getLevel() < 3) {
+                map.setLevel(3);
+              }
+            }, 100);
+          }, 100);
+        }
+      } else if (!currentLocation && !selectedShelter) {
+        // 필터된 데이터가 없고 현재 위치도 없고 선택된 쉼터도 없으면 기본 위치로 이동
+        const defaultCenter = new window.kakao.maps.LatLng(37.5665, 126.9780);
+        map.setCenter(defaultCenter);
+        map.setLevel(8);
       }
 
       console.log('마커 업데이트 완료 - 현재위치:', !!currentLocation, '쉼터:', filteredData?.length || 0, '총 마커:', markersRef.current.length);
     }
-  }, [map, filteredData, currentLocation, currentAddress]);
+  }, [map, filteredData, currentLocation, currentAddress, selectedShelter]);
 
   return (
     <div className="map-section">

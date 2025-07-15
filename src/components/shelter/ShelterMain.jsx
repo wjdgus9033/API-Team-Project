@@ -45,6 +45,14 @@ export default function Test() {
     setError(dataError);
   }, [dataError]);
 
+  // 카테고리나 검색어 변경 시 선택된 쉼터 초기화
+  useEffect(() => {
+    if (selectedShelter) {
+      console.log('카테고리/검색어 변경으로 선택된 쉼터 초기화');
+      setSelectedShelter(null);
+    }
+  }, [selectedRegion, searchKeyword]);
+
   // 초기 데이터 로드
   useEffect(() => {
     fetchShelterData();
