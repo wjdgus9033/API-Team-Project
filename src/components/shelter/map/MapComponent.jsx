@@ -14,6 +14,30 @@ export default function MapComponent({
   const markersRef = useRef([]); // 마커들을 관리하기 위한 ref
   const infoWindowsRef = useRef([]); // 인포윈도우들을 관리하기 위한 ref 추가
 
+  // 시간 포맷팅 함수
+  const formatOperatingHours = (timeString) => {
+    if (!timeString) return '운영시간 정보 없음';
+    
+    // 숫자만 추출하여 시간 범위 찾기 (예: "0900 ~ 1600" -> ["0900", "1600"])
+    const timeMatches = timeString.match(/\d{4}/g);
+    if (!timeMatches || timeMatches.length < 2) return timeString;
+    
+    const formatTime = (time) => {
+      const hour = parseInt(time.substring(0, 2));
+      const minute = time.substring(2, 4);
+      
+      if (hour === 0) return `오전 12시${minute !== '00' ? ` ${minute}분` : ''}`;
+      if (hour < 12) return `오전 ${hour}시${minute !== '00' ? ` ${minute}분` : ''}`;
+      if (hour === 12) return `오후 12시${minute !== '00' ? ` ${minute}분` : ''}`;
+      return `오후 ${hour - 12}시${minute !== '00' ? ` ${minute}분` : ''}`;
+    };
+    
+    const startTime = formatTime(timeMatches[0]);
+    const endTime = formatTime(timeMatches[1]);
+    
+    return `${startTime} ~ ${endTime}`;
+  };
+
   // 카카오지도 스크립트 로드 및 초기화
   useEffect(() => {
     // 이미 지도가 초기화되어 있으면 리턴
@@ -231,7 +255,7 @@ export default function MapComponent({
                   ${shelter.distance ? `<span style="font-size:10px; color:#0066CC; font-weight:normal; background-color:#E8F4FF; padding:2px 4px; border-radius:6px; white-space:nowrap; flex-shrink:0;">${shelter.distance.toFixed(1)}km</span>` : ''}
                 </h4>
                 <p style="margin:0 0 3px 0; font-size:11px; word-wrap:break-word; line-height:1.3;"><strong>주소:</strong> ${shelter.roadAddress}</p>
-                <p style="margin:0 0 3px 0; font-size:11px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;"><strong>운영시간:</strong> ${shelter.weekday}</p>
+                <p style="margin:0 0 3px 0; font-size:11px; word-wrap:break-word; line-height:1.3;"><strong>운영시간:</strong> ${formatOperatingHours(shelter.weekday)}</p>
                 <p style="margin:0; font-size:11px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;"><strong>전화:</strong> ${shelter.tel}</p>
               </div>
             `;
