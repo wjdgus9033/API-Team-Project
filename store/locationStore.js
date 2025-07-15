@@ -20,6 +20,7 @@ export const useLocationStore = create((set) => ({
           parseInt(convertLoc.nx, 10) + parseInt(convertLoc.ny, 10);
 
         if (parseVal === parseLoc) return console.log("좌표가 동일합니다.");
+        //이 부분 수정해라
         if (sessionStorage.getItem("updateLocation"))
           return sessionStorage.setItem(
             "lastLocation",

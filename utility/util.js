@@ -16,16 +16,12 @@ export function getHour() {
 
   const hour = now.getHours().toString().padStart(2, "0") + "00";
 
-
-  console.log("hour ========== ", hour);
-
   return hour;
 }
 
 export function getBaseHour() {
   const baseHour = parseInt(getHour(), 10) / 100;
   //0200, 0500, 0800, 1100, 1400, 1700, 2000, 2300
-  console.log("baseTime : ", baseHour);
 
   if (baseHour <= 2) return "2300";
   if (baseHour <= 5) return "0200";
@@ -37,15 +33,14 @@ export function getBaseHour() {
   return "2000";
 }
 
-
 export function parseStorageItem(key) {
   const val = sessionStorage.getItem(key);
 
-  if(!val) return console.log("세션스토리지에 값이 없습니다.");
+  if (!val) return console.log("세션스토리지에 값이 없습니다.");
 
   try {
     return JSON.parse(val);
-  } catch(e) {
+  } catch (e) {
     return console.warn("parse 실패 ===", e);
   }
 }

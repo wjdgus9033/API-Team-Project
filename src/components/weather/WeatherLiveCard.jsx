@@ -59,12 +59,8 @@ export default function WeatherLiveCard({ items, convertedItems }) {
     );
     const styledCard = (
       <>
-        {/* <CardLine1>
-          <PText>{time || "-"} 날씨</PText>
-        </CardLine1> */}
         <LeftWrapper>
           <LiveWeatherImage src={getImageFile(convertedItems?.data?.SKY ?? "0", data?.PTY ?? "0", time)} alt="Weather" />
-          {console.log("data type ===========", data.SKY, data.PTY)}
           <LiveTemp>{data.T1H ?? convertedItems?.data?.TMP ?? "-"}°</LiveTemp>
           <h3>
             체감온도: <strong>{get1}</strong>
