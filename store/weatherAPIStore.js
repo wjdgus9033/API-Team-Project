@@ -62,3 +62,49 @@ export async function fetchNowWeatherData(position) {
     console.error("API 호출 에러:", error);
   }
 }
+
+async function fetchTempHourWeatherData(position) {
+  try {
+    const response = await axios.get(API_URL, {
+      params: {
+        serviceKey: SERVICE_KEY,
+        pageNo: 1,
+        numOfRows: 736,
+        dataType: "JSON",
+        base_date: getToday(),
+        base_time: getBaseHour(),
+        nx: position.nx,
+        ny: position.ny,
+      },
+    });
+
+    const item = response.data.response.body.items.item;
+
+    sessionStorage.setItem("hourWeatherData", JSON.stringify(item));
+    return item;
+  } catch (error) {
+    console.error("API 호출 에러:", error);
+  }
+}
+
+export async function fetchTempNowWeatherData(position) {
+  try {
+    const response = await axios.get(URL, {
+      params: {
+        serviceKey: SERVICE_KEY,
+        pageNo: 1,
+        numOfRows: 7,
+        dataType: "JSON",
+        base_date: getToday(),
+        base_time: getHour("temp"),
+        nx: position.nx,
+        ny: position.ny,
+      },
+    });
+    const item = response.data.response.body.items.item;
+    sessionStorage.setItem("nowWeatherData", JSON.stringify(item));
+    return item;
+  } catch (error) {
+    console.error("API 호출 에러:", error);
+  }
+}

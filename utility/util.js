@@ -10,12 +10,14 @@ export function getToday() {
   return yyyymmdd;
 }
 
-export function getHour() {
+export function getHour(category) {
   const now = new Date();
-  now.setHours(now.getHours());
 
+  if(category === "temp") {
+    now.setHours(now.getHours() - 1);
+  }
   const hour = now.getHours().toString().padStart(2, "0") + "00";
-  console.log(hour);
+  
   return hour;
 }
 
@@ -32,7 +34,6 @@ export function getBaseHour() {
   if (baseHour <= 20) return "1700";
   return "2000";
 }
-
 export function parseStorageItem(key) {
   const val = sessionStorage.getItem(key);
 

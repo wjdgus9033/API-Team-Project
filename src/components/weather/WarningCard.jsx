@@ -115,7 +115,6 @@ export default function WarningCard({ items, convertedItems }) {
   const temp = converedtNowItems[0]?.data?.T1H ?? tmpTemp;
   const humid = converedtNowItems[0]?.data?.REH ?? tmpHumid;
 
-  console.log("temp and humid ===========", temp, humid);
 
   const value = calcHeatIndexSimple(temp, humid);
 
