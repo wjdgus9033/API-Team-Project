@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './test.css';
 
 // Hooks
@@ -41,17 +41,6 @@ export default function Test() {
 
   // 모든 카테고리에서 전체 데이터를 표시 (지역별 제한 제거)
   const maxItems = filteredData.length;
-
-  // 지역별 쉼터 개수 계산
-  const regionStats = useMemo(() => {
-    const stats = {};
-    shelterData.forEach(shelter => {
-      const region = shelter.region;
-      stats[region] = (stats[region] || 0) + 1;
-    });
-    stats.all = shelterData.length; // 전체 개수
-    return stats;
-  }, [shelterData]);
 
   // 에러 상태 통합 관리
   useEffect(() => {
@@ -139,7 +128,6 @@ export default function Test() {
             currentLocation={currentLocation}
             currentAddress={currentAddress}
             onLocationRequest={handleLocationRequest}
-            regionStats={regionStats} // 지역별 통계 전달
           />
 
           {/* 검색 결과 정보 */}
