@@ -22,9 +22,8 @@ export const useLocationStore = create((set) => ({
         if (isFirst || parseVal !== parseLoc) {
           sessionStorage.setItem(
             "lastLocation",
-            sessionStorage.getItem("updatedLocation") ?? ""
+            sessionStorage.getItem("updatedLocation") ?? JSON.stringify(convertLoc)
           );
-          console.log(sessionStorage.getItem("lastLocation"));
           set({ location: convertLoc });
           sessionStorage.setItem("updatedLocation", JSON.stringify(convertLoc));
           isFirst = false;
