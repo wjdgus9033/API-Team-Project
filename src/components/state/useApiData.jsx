@@ -1,41 +1,46 @@
 import { useState, useEffect } from "react";
+import $ from "jquery";
 
-// 차트, 표 API따로 빼서 커스텀 훅으로 만들어서 전역으로 사용
 export default function useApiData() {
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const key = import.meta.env.VITE_STATE_API_KEY;
-      const res = await fetch(`/state1?serviceKey=${key}&pageNo=1&numOfRows=14&type=xml`);
-      try {
-        const xmlText = await res.text();
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(xmlText, "application/xml");
-        const rowElements = xml.getElementsByTagName("row");
+    const key = import.meta.env.VITE_STATE_API_KEY;
+    const apiURL = `https://apis.data.go.kr/1741000/CasualtiesFromHeatwaveByYear/getCasualtiesFromHeatwaveByYear?serviceKey=${key}&pageNo=1&numOfRows=14&type=xml`;
+    const url = `/proxy.php?getUrl=${(apiURL)}`;
 
-        const parsed = Array.from(rowElements).map(row => {
-          const get = (tag) => row.getElementsByTagName(tag)[0]?.textContent || "0";
-          return {
-            year: get("wrttimeid"),
-            total: get("tot"),
-            outdoor: get("otdoor_subtot"),
-            indoor: get("indoor_subtot"),
-          };
-        });
-
-        setRows(parsed);
-      } catch (err) {
-        console.error("에러 발생:", err);
-        setError("데이터를 불러오지 못했습니다.");
-      } finally {
+    $.ajax({
+      url,
+      type: "GET",
+      dataType: "xml",
+      success: function (xml) {
+        try {
+          const parsed = [];
+          $(xml).find("row").each(function () {
+            parsed.push({
+              year: $(this).find("wrttimeid").text() || "0",
+              total: Number($(this).find("tot").text()) || 0,
+              outdoor: Number($(this).find("otdoor_subtot").text()) || 0,
+              indoor: Number($(this).find("indoor_subtot").text()) || 0,
+            });
+          });
+          setRows(parsed);
+          console.log(parsed); 
+          setLoading(false);
+        } catch (err) {
+          console.error("파싱 에러:", err);
+          setError("데이터 파싱 중 문제 발생");
+          setLoading(false);
+        }
+      },
+      error: function (xhr, status, errorThrown) {
+        console.error("데이터 요청 실패:", status, errorThrown);
+        setError("데이터 요청 중 문제 발생");
         setLoading(false);
-      }
-    };
-
-    fetchData();
+      },
+    });
   }, []);
 
   return { rows, loading, error };
