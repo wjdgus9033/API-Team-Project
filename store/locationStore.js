@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { parseStorageItem } from "../utility/util";
 
 const defaultLoc = convertLocation(37.2914844, 127.012561);
+let isFirst = true;
 
 export const useLocationStore = create((set) => ({
   location: defaultLoc,
@@ -18,17 +19,18 @@ export const useLocationStore = create((set) => ({
         );
         const parseLoc =
           parseInt(convertLoc.nx, 10) + parseInt(convertLoc.ny, 10);
-
-        if (parseVal === parseLoc) return console.log("좌표가 동일합니다.");
-        //이 부분 수정해라
-
-        sessionStorage.setItem(
-          "lastLocation",
-          sessionStorage.getItem("updatedLocation")
-        );
-        console.log(sessionStorage.getItem("lastLocation"));
-        set({ location: convertLoc });
-        sessionStorage.setItem("updatedLocation", JSON.stringify(convertLoc));
+        if (isFirst || parseVal !== parseLoc) {
+          sessionStorage.setItem(
+            "lastLocation",
+            sessionStorage.getItem("updatedLocation") ?? ""
+          );
+          console.log(sessionStorage.getItem("lastLocation"));
+          set({ location: convertLoc });
+          sessionStorage.setItem("updatedLocation", JSON.stringify(convertLoc));
+          isFirst = false;
+        } else {
+          return console.log("좌표가 동일합니다.");
+        }
       },
       (error) => {
         console.warn(error);
