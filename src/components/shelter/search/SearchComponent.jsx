@@ -1,4 +1,3 @@
-import React from 'react';
 import RegionButtons from './RegionButtons';
 
 export default function SearchComponent({ 

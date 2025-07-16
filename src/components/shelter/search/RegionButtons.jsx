@@ -1,5 +1,3 @@
-import React from 'react';
-
 const REGIONS = [
   // 첫 번째 줄
   [
