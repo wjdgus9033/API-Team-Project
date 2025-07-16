@@ -24,7 +24,7 @@ export default function Home() {
 
       {/* 3. 간단한 뉴스 2개 */}
       <section>
-        {/* <HomeNewsSection /> */}
+        <HomeNewsSection />
       </section>
 
       {/* 4. 온열질환 / 피해자 차트 */}
