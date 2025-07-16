@@ -10,7 +10,6 @@ export default function useApiData() {
     const fetchData = async () => {
       const key = import.meta.env.VITE_STATE_API_KEY;
       const res = await fetch(`/state1?serviceKey=${key}&pageNo=1&numOfRows=14&type=xml`);
-      console.log(res);
       try {
         const xmlText = await res.text();
         const parser = new DOMParser();

@@ -6,6 +6,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    base:"/HeatGuard/",
     server: {
       proxy: {
         '/shelter1': {
