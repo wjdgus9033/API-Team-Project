@@ -12,7 +12,7 @@ export default function useApiData() {
     const url = `/proxy.php?getUrl=${(apiURL)}`;
 
     $.ajax({
-      url,
+      url: url,
       type: "GET",
       dataType: "xml",
       success: function (xml) {
