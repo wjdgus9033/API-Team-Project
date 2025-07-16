@@ -107,7 +107,7 @@ export default function Weather({ nowWeatherData, hourWeatherData, loading }) {
         </WeatherCardGrid>
       </WeatherCardSection>
       <WeatherCardGrid full>
-        <PText mVal={"10px"}>오늘의 일간 날씨</PText>
+        <PText $mVal={"10px"}>오늘의 일간 날씨</PText>
         {loading ? (
           <CustomSpinner />
         ) : hourWeatherData ? (

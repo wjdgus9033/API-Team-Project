@@ -20,8 +20,8 @@ export default function WeatherLayout() {
   const [ _loading, setLoading ] = useState(true);
 
   function chkLocation() {
-    const updatedLoc = parseStorageItem("updatedLocation") ?? null;
-    const lastLoc = parseStorageItem("lastLocation") ?? null;
+    const updatedLoc = parseStorageItem("updatedLocation") ?? location;
+    const lastLoc = parseStorageItem("lastLocation") ?? location;
 
     const updatedLocResult = parseInt(updatedLoc.nx) + parseInt(updatedLoc.ny);
     const lastLocResult = parseInt(lastLoc.nx) + parseInt(lastLoc.ny);
@@ -47,8 +47,10 @@ export default function WeatherLayout() {
         const cachedNow = parseStorageItem("nowWeatherData")?.[0]?.baseTime;
         const cachedHour = parseStorageItem("hourWeatherData")?.[0]?.baseTime;
         const checkedLoc = chkLocation();
-        
-        if ((cachedNow !== getHour() || !cachedNow) || !checkedLoc) {
+
+        const debugNow = (parseInt(cachedNow) + 15).toString();
+        //정각때 바로 업데이트 불가능해서(api문제) 정각 + 15분 이후에 변경되게 바꿈
+        if ((debugNow !== getHour("check") || !cachedNow) || !checkedLoc) {
           let nowData = await fetchNowWeatherData(location);
           nowData = nowData ? nowData : await fetchTempNowWeatherData(location); 
           nowData && setNowWeatherData(nowData);

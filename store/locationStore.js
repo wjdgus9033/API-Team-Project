@@ -11,7 +11,7 @@ export const useLocationStore = create((set) => ({
     const watchId = navigator.geolocation.watchPosition(
       (loc) => {
         if (!loc) return;
-        const val = parseStorageItem("updatedLocation");
+        const val = parseStorageItem("updatedLocation") ?? defaultLoc;
         const parseVal = parseInt(val.nx, 10) + parseInt(val.ny, 10);
         const convertLoc = convertLocation(
           loc.coords.latitude,

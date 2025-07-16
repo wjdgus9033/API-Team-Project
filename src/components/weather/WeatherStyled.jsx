@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const getMargin = (props) => `${props.mVal ?? 0}`;
+const getMargin = (props) => `${props.$mVal ?? 0}`;
 
 const getTime = (props) => `${props.time ?? "0000"}`;
 

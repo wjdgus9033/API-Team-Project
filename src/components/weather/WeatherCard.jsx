@@ -57,12 +57,12 @@ export default function WeatherCard({ items }) {
       <CardContainerWrapper time={time}>
         {time === "00시" && <DateLabel>{date}</DateLabel>}
         <CardContainer>
-          <PText mVal={"3px"}>{time}시</PText>
+          <PText $mVal={"3px"}>{time}시</PText>
           <WeatherImage src={getImageFile(data.SKY, data.PTY, time)} alt="asd"/>
           <Temperature>{data.TMP}°</Temperature>
-          <PText mVal={"5px"}>{data.REH}%</PText>
-          <PText mVal={"5px"}>{data.POP}%</PText>
-          <PText mVal={"5px"}>{data.WSD}m/s</PText>
+          <PText $mVal={"5px"}>{data.REH}%</PText>
+          <PText $mVal={"5px"}>{data.POP}%</PText>
+          <PText $mVal={"5px"}>{data.WSD}m/s</PText>
         </CardContainer>
       </CardContainerWrapper>
     );

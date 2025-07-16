@@ -15,10 +15,16 @@ export function getHour(category) {
 
   if(category === "temp") {
     now.setHours(now.getHours() - 1);
+
+    return now.getHours().toString().padStart(2, "0") + "00";
   }
-  const hour = now.getHours().toString().padStart(2, "0") + "00";
-  
-  return hour;
+
+  if(category === "check") {
+    return now.getHours().toString().padStart(2, "0") + "15";
+  }
+
+
+  return now.getHours().toString().padStart(2, "0") + "00";;
 }
 
 export function getBaseHour() {
@@ -36,7 +42,6 @@ export function getBaseHour() {
 }
 export function parseStorageItem(key) {
   const val = sessionStorage.getItem(key);
-
   if (!val) return console.log("세션스토리지에 값이 없습니다.");
 
   try {
