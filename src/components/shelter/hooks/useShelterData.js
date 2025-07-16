@@ -66,71 +66,131 @@ export default function useShelterData() {
     return `${formatTime(beginTime)} ~ ${formatTime(endTime)}`;
   }, [formatTime]);
 
-  // 무더위쉼터 데이터 가져오기
+  // 무더위쉼터 데이터 가져오기 (페이지별 조회)
   const fetchShelterData = useCallback(async () => {
     setLoading(true);
     try {
       const key = import.meta.env.VITE_SHELTER_API_KEY;
+      let allData = [];
+      let currentPage = 1;
+      let hasMoreData = true;
+      let retryCount = 0;
+      const maxRetries = 3;
       
-      setLoadingProgress({ 
-        current: 1, 
-        total: 1, 
-        message: '전국 무더위쉼터 데이터 요청 중... (500개 일괄 조회)' 
-      });
-      
-      console.log('전국 무더위쉼터 500개 데이터 요청 중...');
-      const res = await fetch(`/shelter1?serviceKey=${key}&pageNo=1&numOfRows=500&returnType=JSON`, {
-        timeout: 30000,
-        headers: {
-          'Accept': 'application/json',
-          'Cache-Control': 'no-cache'
+      while (hasMoreData) {
+        try {
+          setLoadingProgress({ 
+            current: currentPage, 
+            total: 3, 
+            message: `페이지 ${currentPage} 데이터 요청 중... (300개씩 요청)` 
+          });
+          
+          console.log(`페이지 ${currentPage} 데이터 요청 중... (300개)`);
+          const res = await fetch(`/shelter1?serviceKey=${key}&pageNo=${currentPage}&numOfRows=300&returnType=JSON`, {
+            timeout: 30000,
+            headers: {
+              'Accept': 'application/json',
+              'Cache-Control': 'no-cache'
+            }
+          });
+          
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          
+          const data = await res.json();
+          const items = data.body || [];
+          
+          if (!Array.isArray(items)) {
+            throw new Error('API 응답 형식이 올바르지 않습니다.');
+          }
+          
+          if (items.length === 0 && currentPage === 1) {
+            throw new Error('API에서 데이터를 받아오지 못했습니다.');
+          }
+
+          const parsed = items.map(item => {
+            const roadAddress = item.RN_DTL_ADRES || '';
+            const detailAddress = item.DTL_ADRES || '';
+            const address = roadAddress || detailAddress;
+            const region = getRegionFromAddress(address);
+            
+            return {
+              name: item.RSTR_NM,
+              address: address,
+              region: region,
+              weekday: formatOperatingHours(item.WKDAY_OPER_BEGIN_TIME, item.WKDAY_OPER_END_TIME),
+              weekend: item.CHCK_MATTER_WKEND_HDAY_OPN_AT === "N" ||
+                !item.WKEND_HDAY_OPER_BEGIN_TIME ||
+                !item.WKEND_HDAY_OPER_END_TIME
+                ? "주말 휴일"
+                : formatOperatingHours(item.WKEND_HDAY_OPER_BEGIN_TIME, item.WKEND_HDAY_OPER_END_TIME),
+              lat: item.LA ?? 0,
+              lon: item.LO ?? 0,
+              tel: item.TELNO || item.TEL || '정보 없음',
+              roadAddress: item.RN_DTL_ADRES || '정보 없음',
+              detailAddress: item.DTL_ADRES || '정보 없음',
+              weekendHolidayOpen: item.CHCK_MATTER_WKEND_HDAY_OPN_AT === "Y" ? "운영" : "휴무"
+            };
+          });
+          
+          allData.push(...parsed);
+          
+          console.log(`페이지 ${currentPage} 완료: ${parsed.length}개 항목 추가됨 (누적: ${allData.length}개)`);
+          
+          setLoadingProgress({ 
+            current: currentPage, 
+            total: 3, 
+            message: `페이지 ${currentPage} 완료: 전국 ${allData.length}개 무더위쉼터 로드됨` 
+          });
+          
+          // 페이지당 300개씩, 300개 미만이면 마지막 페이지
+          if (items.length < 300) {
+            hasMoreData = false;
+          } else {
+            currentPage++;
+          }
+          
+          // 최대 900개까지만 로드 (3페이지)
+          if (allData.length >= 900 || currentPage > 3) {
+            hasMoreData = false;
+          }
+          
+          // 요청 간 잠시 대기 (서버 부하 감소)
+          if (hasMoreData) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+          
+          retryCount = 0; // 성공 시 재시도 카운터 리셋
+          
+        } catch (pageError) {
+          console.error(`페이지 ${currentPage} 요청 실패:`, pageError);
+          
+          if (retryCount < maxRetries) {
+            retryCount++;
+            console.log(`페이지 ${currentPage} 재시도 중... (${retryCount}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, 2000 * retryCount)); // 지수 백오프
+            continue; // 같은 페이지 재시도
+          } else {
+            console.error(`페이지 ${currentPage} 최대 재시도 횟수 초과, 다음 페이지로 이동`);
+            currentPage++;
+            retryCount = 0;
+            
+            // 첫 페이지에서 실패하면 전체 실패 처리
+            if (currentPage === 2 && allData.length === 0) {
+              throw pageError;
+            }
+            
+            // 3페이지 이상 연속 실패하면 중단
+            if (currentPage > 6) {
+              hasMoreData = false; // 최대 재시도 후에도 실패하면 중단
+            }
+          }
         }
-      });
-      
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      
-      const data = await res.json();
-      
-      const items = data.body || [];
-      if (!Array.isArray(items) || items.length === 0) {
-        throw new Error('API에서 데이터를 받아오지 못했습니다.');
       }
 
-      const parsed = items.map(item => {
-        const roadAddress = item.RN_DTL_ADRES || '';
-        const detailAddress = item.DTL_ADRES || '';
-        const address = roadAddress || detailAddress;
-        const region = getRegionFromAddress(address);
-        
-        return {
-          name: item.RSTR_NM,
-          address: address,
-          region: region,
-          weekday: formatOperatingHours(item.WKDAY_OPER_BEGIN_TIME, item.WKDAY_OPER_END_TIME),
-          weekend: item.CHCK_MATTER_WKEND_HDAY_OPN_AT === "N" ||
-            !item.WKEND_HDAY_OPER_BEGIN_TIME ||
-            !item.WKEND_HDAY_OPER_END_TIME
-            ? "주말 휴일"
-            : formatOperatingHours(item.WKEND_HDAY_OPER_BEGIN_TIME, item.WKEND_HDAY_OPER_END_TIME),
-          lat: item.LA ?? 0,
-          lon: item.LO ?? 0,
-          tel: item.TELNO || item.TEL || '정보 없음',
-          roadAddress: item.RN_DTL_ADRES || '정보 없음',
-          detailAddress: item.DTL_ADRES || '정보 없음',
-          weekendHolidayOpen: item.CHCK_MATTER_WKEND_HDAY_OPN_AT === "Y" ? "운영" : "휴무"
-        };
-      });
-
-      setLoadingProgress({ 
-        current: 1, 
-        total: 1, 
-        message: `완료: 전국 ${parsed.length}개 무더위쉼터 로드됨` 
-      });
-
-      console.log(`총 ${parsed.length}개의 전국 무더위쉼터 데이터를 로드했습니다.`);
-      setShelterData(parsed);
+      console.log(`총 ${allData.length}개의 전국 무더위쉼터 데이터를 로드했습니다.`);
+      setShelterData(allData);
       setError(null);
     } catch (err) {
       console.error("무더위쉼터 데이터 에러:", err);
