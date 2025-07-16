@@ -11,7 +11,7 @@ export const useLocationStore = create((set) => ({
     const watchId = navigator.geolocation.watchPosition(
       (loc) => {
         if (!loc) return;
-        const val = parseStorageItem("updatedLocation");
+        const val = parseStorageItem("updatedLocation") ?? defaultLoc;
         const parseVal = parseInt(val.nx, 10) + parseInt(val.ny, 10);
         const convertLoc = convertLocation(
           loc.coords.latitude,
@@ -22,9 +22,8 @@ export const useLocationStore = create((set) => ({
         if (isFirst || parseVal !== parseLoc) {
           sessionStorage.setItem(
             "lastLocation",
-            sessionStorage.getItem("updatedLocation") ?? ""
+            sessionStorage.getItem("updatedLocation") ?? JSON.stringify(convertLoc)
           );
-          console.log(sessionStorage.getItem("lastLocation"));
           set({ location: convertLoc });
           sessionStorage.setItem("updatedLocation", JSON.stringify(convertLoc));
           isFirst = false;

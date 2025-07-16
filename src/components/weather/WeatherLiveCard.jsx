@@ -65,17 +65,17 @@ export default function WeatherLiveCard({ items, convertedItems }) {
           <h1 style={{margin: "10px", fontSize: "3rem"}}>
             <Time hour={time}/>
           </h1>
-          <PText mVal="3px">
+          <PText $mVal="3px">
             습도:{" "}
             <strong>{data.REH ?? convertedItems?.data?.REH ?? "-"}</strong>%
           </PText>
-          <PText mVal="6px">
+          <PText $mVal="6px">
             비 올 확률: {convertedItems?.data?.POP ?? "-"}%
           </PText>
-          <PText mVal="6px">
+          <PText $mVal="6px">
             풍속: {convertedItems?.data?.WSD ?? "-"}m/s
           </PText>
-          <PText mVal="6px">
+          <PText $mVal="6px">
             강수형태:
             {convertPTY(data.PTY) ?? "-"}
           </PText>

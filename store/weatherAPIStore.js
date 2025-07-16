@@ -32,7 +32,7 @@ export async function fetchHourWeatherData(position) {
       },
     });
 
-    const item = response.data.response.body.items.item;
+    const item = response?.data?.response?.body?.items?.item ?? null;
 
     sessionStorage.setItem("hourWeatherData", JSON.stringify(item));
     return item;
@@ -55,7 +55,7 @@ export async function fetchNowWeatherData(position) {
         ny: position.ny,
       },
     });
-    const item = response.data.response.body.items.item;
+    const item = response?.data?.response?.body?.items?.item ?? null;
     sessionStorage.setItem("nowWeatherData", JSON.stringify(item));
     return item;
   } catch (error) {
@@ -78,7 +78,7 @@ async function fetchTempHourWeatherData(position) {
       },
     });
 
-    const item = response.data.response.body.items.item;
+    const item = response?.data?.response?.body?.items?.item ?? null;
 
     sessionStorage.setItem("hourWeatherData", JSON.stringify(item));
     return item;
