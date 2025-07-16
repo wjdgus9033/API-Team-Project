@@ -11,19 +11,44 @@ export default function MapComponent({
 }) {
   const mapRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
+  const [loadingError, setLoadingError] = useState(null); // 로딩 에러 상태 추가
   const markersRef = useRef([]); // 마커들을 관리하기 위한 ref
   const infoWindowsRef = useRef([]); // 인포윈도우들을 관리하기 위한 ref 추가
+  const loadingTimeoutRef = useRef(null); // 로딩 타임아웃 ref 추가
 
   // 카카오지도 스크립트 로드 및 초기화
   useEffect(() => {
     // 이미 지도가 초기화되어 있으면 리턴
-    if (map) return;
+    if (map) {
+      setIsLoading(false);
+      return;
+    }
+
+    // 이전 타임아웃 클리어
+    if (loadingTimeoutRef.current) {
+      clearTimeout(loadingTimeoutRef.current);
+    }
+
+    // 15초 후 타임아웃 처리
+    loadingTimeoutRef.current = setTimeout(() => {
+      console.error('카카오지도 로딩 시간 초과 (15초)');
+      setLoadingError('지도 로딩에 시간이 너무 오래 걸립니다. 페이지를 새로고침해 주세요.');
+      setIsLoading(false);
+    }, 15000);
 
     const initMap = () => {
       if (window.kakao && window.kakao.maps && mapRef.current) {
         try {
           console.log('지도 초기화 시작...');
+          
+          // 타임아웃 클리어
+          if (loadingTimeoutRef.current) {
+            clearTimeout(loadingTimeoutRef.current);
+          }
+          
           setIsLoading(false); // 로딩 완료
+          setLoadingError(null); // 에러 상태 초기화
+          
           const options = {
             center: new window.kakao.maps.LatLng(37.5665, 126.9780),
             level: 8
@@ -35,7 +60,13 @@ export default function MapComponent({
           console.log('지도 초기화 완료');
         } catch (error) {
           console.error('지도 초기화 실패:', error);
+          setLoadingError('지도 초기화에 실패했습니다. 페이지를 새로고침해 주세요.');
           setIsLoading(false); // 에러 시에도 로딩 완료
+          
+          // 타임아웃 클리어
+          if (loadingTimeoutRef.current) {
+            clearTimeout(loadingTimeoutRef.current);
+          }
         }
       }
     };
@@ -51,22 +82,33 @@ export default function MapComponent({
     const existingScript = document.querySelector('script[src*="dapi.kakao.com"]');
     if (existingScript) {
       console.log('카카오지도 스크립트가 이미 존재함, 로딩 대기 중...');
+      let checkCount = 0;
+      const maxChecks = 100; // 10초 (100ms * 100)
+      
       const checkKakao = setInterval(() => {
+        checkCount++;
         if (window.kakao && window.kakao.maps) {
           clearInterval(checkKakao);
           initMap();
+        } else if (checkCount >= maxChecks) {
+          clearInterval(checkKakao);
+          console.error('카카오지도 API 로딩 시간 초과');
+          setLoadingError('지도 API 로딩에 실패했습니다. 페이지를 새로고침해 주세요.');
+          setIsLoading(false);
+          
+          // 타임아웃 클리어
+          if (loadingTimeoutRef.current) {
+            clearTimeout(loadingTimeoutRef.current);
+          }
         }
       }, 100);
       
-      // 10초 후에도 로드되지 않으면 타임아웃
-      setTimeout(() => {
-        if (!window.kakao || !window.kakao.maps) {
-          clearInterval(checkKakao);
-          console.error('카카오지도 API 로딩 시간 초과');
+      return () => {
+        clearInterval(checkKakao);
+        if (loadingTimeoutRef.current) {
+          clearTimeout(loadingTimeoutRef.current);
         }
-      }, 10000);
-      
-      return;
+      };
     }
 
     // 새 스크립트 태그 생성
@@ -78,17 +120,42 @@ export default function MapComponent({
     
     script.onload = () => {
       console.log('카카오지도 스크립트 로딩 성공');
-      window.kakao.maps.load(() => {
-        console.log('카카오지도 API 로딩 완료');
-        initMap();
-      });
+      try {
+        window.kakao.maps.load(() => {
+          console.log('카카오지도 API 로딩 완료');
+          initMap();
+        });
+      } catch (error) {
+        console.error('카카오지도 API 로드 실패:', error);
+        setLoadingError('지도 API 로드에 실패했습니다.');
+        setIsLoading(false);
+        
+        // 타임아웃 클리어
+        if (loadingTimeoutRef.current) {
+          clearTimeout(loadingTimeoutRef.current);
+        }
+      }
     };
 
     script.onerror = () => {
       console.error('카카오지도 스크립트 로딩 실패');
+      setLoadingError('지도 스크립트 로딩에 실패했습니다. 인터넷 연결을 확인해 주세요.');
+      setIsLoading(false);
+      
+      // 타임아웃 클리어
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+      }
     };
 
     document.head.appendChild(script);
+
+    // cleanup 함수
+    return () => {
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+      }
+    };
   }, [map, onMapReady]);
 
   // 현재 위치 변경 시 지도 중심 이동
@@ -304,7 +371,7 @@ export default function MapComponent({
           id="kakao-map" 
           className="map-area"
         >
-          {(isLoading || !map) && !error && (
+          {(isLoading || !map) && !error && !loadingError && (
             <div className="map-loading">
               <div className="map-loading-spinner"></div>
               <p className="map-loading-text">🗺️ 지도 로딩 중...</p>
@@ -313,12 +380,27 @@ export default function MapComponent({
               </p>
             </div>
           )}
-          {!map && error && (
+          {!map && (error || loadingError) && (
             <div className="map-error">
               <p className="map-error-text">⚠️ 지도 로딩 실패</p>
               <p className="map-error-subtext">
-                API 키를 확인하거나 새로고침 해주세요
+                {loadingError || 'API 키를 확인하거나 새로고침 해주세요'}
               </p>
+              <button 
+                className="map-reload-button" 
+                onClick={() => window.location.reload()}
+                style={{
+                  marginTop: '10px',
+                  padding: '8px 16px',
+                  backgroundColor: '#4a90e2',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                페이지 새로고침
+              </button>
             </div>
           )}
         </div>
