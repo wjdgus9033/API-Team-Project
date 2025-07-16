@@ -199,8 +199,16 @@ export default function MapComponent({
     if (selectedShelter && map && selectedShelter.lat && selectedShelter.lon && selectedShelter.lat !== 0 && selectedShelter.lon !== 0) {
       console.log('선택된 쉼터로 지도 이동:', selectedShelter.name);
       const selectedPos = new window.kakao.maps.LatLng(selectedShelter.lat, selectedShelter.lon);
+      
+      // 지도 중심 이동하고 줌 레벨
       map.setCenter(selectedPos);
-      map.setLevel(3); // 더 자세한 레벨로 줌인
+      map.setLevel(2); // 더 자세한 레벨로 줌인
+      
+      // 지도 크기 재조정을 통해  중심 배치
+      setTimeout(() => {
+        map.relayout();
+        map.setCenter(selectedPos); // 다시 한번 중심 설정
+      }, 100);
       
       // 해당 마커에 대한 인포윈도우를 자동으로 열기
       setTimeout(() => {
@@ -212,10 +220,10 @@ export default function MapComponent({
         });
         
         if (targetMarker) {
-          // 마커의 인포윈도우 열기 (mouseover 이벤트 트리거)
+          // 마커의 인포윈도우 열기 (마유스 호버)
           window.kakao.maps.event.trigger(targetMarker, 'mouseover');
         }
-      }, 100);
+      }, 200);
     }
   }, [selectedShelter, map]);
 
