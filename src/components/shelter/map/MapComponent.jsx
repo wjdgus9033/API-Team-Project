@@ -15,6 +15,8 @@ export default function MapComponent({
   const markersRef = useRef([]); // 마커들을 관리하기 위한 ref
   const infoWindowsRef = useRef([]); // 인포윈도우들을 관리하기 위한 ref 추가
   const loadingTimeoutRef = useRef(null); // 로딩 타임아웃 ref 추가
+  const lastActionRef = useRef(null); // 마지막 액션을 추적하기 위한 ref
+  const prevFilteredDataRef = useRef(null); // 이전 필터된 데이터를 저장하기 위한 ref
 
   // 카카오지도 스크립트 로드 및 초기화
   useEffect(() => {
@@ -158,9 +160,11 @@ export default function MapComponent({
     };
   }, [map, onMapReady]);
 
-  // 현재 위치 변경 시 지도 중심 이동
+  // 현재 위치 변경 시 지도 중심 이동 (항상 우선)
   useEffect(() => {
     if (currentLocation && map) {
+      console.log('현재 위치 변경으로 지도 중심 이동:', currentLocation);
+      lastActionRef.current = 'currentLocation'; // 마지막 액션 기록
       const moveMap = () => {
         const currentPos = new window.kakao.maps.LatLng(currentLocation.lat, currentLocation.lng);
         map.setCenter(currentPos);
@@ -168,6 +172,7 @@ export default function MapComponent({
         // 지도 크기 재조정
         setTimeout(() => {
           map.relayout();
+          map.setCenter(currentPos); // 다시 한번 중심 설정으로 확실히 이동
         }, 100);
       };
       moveMap();
@@ -194,10 +199,11 @@ export default function MapComponent({
     }
   }, [map]);
 
-  // 선택된 쉼터로 지도 이동
+  // 선택된 쉼터로 지도 이동 (현재 위치 변경이 아닌 경우에만)
   useEffect(() => {
     if (selectedShelter && map && selectedShelter.lat && selectedShelter.lon && selectedShelter.lat !== 0 && selectedShelter.lon !== 0) {
       console.log('선택된 쉼터로 지도 이동:', selectedShelter.name);
+      lastActionRef.current = 'selectedShelter'; // 마지막 액션 기록
       const selectedPos = new window.kakao.maps.LatLng(selectedShelter.lat, selectedShelter.lon);
       
       // 지도 중심 이동하고 줌 레벨
@@ -226,6 +232,16 @@ export default function MapComponent({
       }, 200);
     }
   }, [selectedShelter, map]);
+
+  // 필터된 데이터 변경 감지 (카테고리 변경 감지용)
+  useEffect(() => {
+    const isDataChanged = JSON.stringify(prevFilteredDataRef.current) !== JSON.stringify(filteredData);
+    if (isDataChanged && filteredData) {
+      console.log('필터된 데이터 변경 감지');
+      lastActionRef.current = 'categoryFilter';
+      prevFilteredDataRef.current = filteredData;
+    }
+  }, [filteredData]);
 
   // 필터된 데이터 변경 시 마커 업데이트
   useEffect(() => {
@@ -330,8 +346,20 @@ export default function MapComponent({
           }
         });
         
-        // 필터된 쉼터 마커들이 모두 보이도록 지도 범위 조정 (선택된 쉼터가 없을 때만)
-        if (shelterMarkers.length > 0 && !selectedShelter) {
+        // 마지막 액션에 따라 지도 범위 조정 결정
+        const shouldAdjustBounds = () => {
+          // 선택된 쉼터가 있으면 범위 조정하지 않음
+          if (selectedShelter) return false;
+          
+          // 마지막 액션이 현재 위치였으면 범위 조정하지 않음
+          if (lastActionRef.current === 'currentLocation') return false;
+          
+          // 마지막 액션이 카테고리 필터였거나 아무 액션이 없으면 범위 조정
+          return lastActionRef.current === 'categoryFilter' || !lastActionRef.current;
+        };
+        
+        // 필터된 쉼터 마커들이 모두 보이도록 지도 범위 조정
+        if (shelterMarkers.length > 0 && shouldAdjustBounds()) {
           const bounds = new window.kakao.maps.LatLngBounds();
           
           // 모든 쉼터 마커의 위치를 bounds에 추가
@@ -339,8 +367,8 @@ export default function MapComponent({
             bounds.extend(marker.getPosition());
           });
           
-          // 현재 위치가 있으면 bounds에 포함
-          if (currentLocation) {
+          // 현재 위치가 있고 마지막 액션이 현재 위치가 아니면 bounds에 포함
+          if (currentLocation && lastActionRef.current !== 'currentLocation') {
             bounds.extend(new window.kakao.maps.LatLng(currentLocation.lat, currentLocation.lng));
           }
           
@@ -363,7 +391,7 @@ export default function MapComponent({
         map.setLevel(8);
       }
 
-      console.log('마커 업데이트 완료 - 현재위치:', !!currentLocation, '쉼터:', filteredData?.length || 0, '총 마커:', markersRef.current.length);
+      console.log('마커 업데이트 완료 - 현재위치:', !!currentLocation, '쉼터:', filteredData?.length || 0, '총 마커:', markersRef.current.length, '마지막 액션:', lastActionRef.current);
     }
   }, [map, filteredData, currentLocation, currentAddress, selectedShelter]);
 
