@@ -6,6 +6,7 @@ import {
   calcHeatIndexSimple,
 } from "./weatherUtility";
 import styled from "styled-components";
+import Time from "./custum/Time";
 
 export const LiveCardContainer = styled.div`
   border-radius: inherit;
@@ -42,14 +43,8 @@ const LiveTemp = styled.h1`
   margin-top: 0.5rem;
 `;
 
-const LivePText = styled.p`
-  margin: ${({ mVal }) => mVal ?? 0};
-`;
-
 export default function WeatherLiveCard({ items, convertedItems }) {
   const convertItem = Object.values(convertWeatherItems(items, "live"));
-  const now = new Date();
-  const minute = now.getMinutes();
 
   // baseDate, baseTime, category, fcstDate, fcstTime, fcstValue, nx, ny
   function createCard({ time, data }) {
@@ -68,22 +63,22 @@ export default function WeatherLiveCard({ items, convertedItems }) {
         </LeftWrapper>
         <RightWrapper>
           <h1 style={{margin: "10px", fontSize: "3rem"}}>
-            {time}:{minute.toString().padStart(2, "0")}
+            <Time hour={time}/>
           </h1>
-          <LivePText mVal="3px">
+          <PText mVal="3px">
             습도:{" "}
             <strong>{data.REH ?? convertedItems?.data?.REH ?? "-"}</strong>%
-          </LivePText>
-          <LivePText mVal="6px">
+          </PText>
+          <PText mVal="6px">
             비 올 확률: {convertedItems?.data?.POP ?? "-"}%
-          </LivePText>
-          <LivePText mVal="6px">
+          </PText>
+          <PText mVal="6px">
             풍속: {convertedItems?.data?.WSD ?? "-"}m/s
-          </LivePText>
-          <LivePText mVal="6px">
+          </PText>
+          <PText mVal="6px">
             강수형태:
             {convertPTY(data.PTY) ?? "-"}
-          </LivePText>
+          </PText>
         </RightWrapper>
       </>
     );
@@ -91,8 +86,8 @@ export default function WeatherLiveCard({ items, convertedItems }) {
   }
   return (
     convertItem &&
-    convertItem.map((group, groupIdx) => (
-      <LiveCardContainer key={groupIdx}>{createCard(group)}</LiveCardContainer>
+    convertItem.map((item, itemIdx) => (
+      <LiveCardContainer key={itemIdx}>{createCard(item)}</LiveCardContainer>
     ))
   );
 }

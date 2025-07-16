@@ -21,11 +21,11 @@ export const useLocationStore = create((set) => ({
 
         if (parseVal === parseLoc) return console.log("좌표가 동일합니다.");
         //이 부분 수정해라
-        if (sessionStorage.getItem("updateLocation"))
-          return sessionStorage.setItem(
-            "lastLocation",
-            sessionStorage.getItem("updatedLocation")
-          );
+
+        sessionStorage.setItem(
+          "lastLocation",
+          sessionStorage.getItem("updatedLocation")
+        );
         console.log(sessionStorage.getItem("lastLocation"));
         set({ location: convertLoc });
         sessionStorage.setItem("updatedLocation", JSON.stringify(convertLoc));

@@ -6,6 +6,8 @@ import WeatherLabelCard from "./WeatherLabelCard";
 import WeatherLiveCard from "./WeatherLiveCard";
 import WarningCard from "./WarningCard";
 import styled from "styled-components";
+import CustomSpinner from "./custum/CustumSpinner";
+import Error from "./custum/Error";
 
 export const WeatherCardWrapper = styled.div`
   display: flex;
@@ -55,14 +57,15 @@ const WeatherCardGrid = styled.div`
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   }
 
-  ${({ full }) => full && `
+  ${({ full }) =>
+    full &&
+    `
     margin-bottom: 2rem;
     padding: 0.5rem 0;
   `}
 `;
 
-
-export default function Weather({ nowWeatherData, hourWeatherData }) {
+export default function Weather({ nowWeatherData, hourWeatherData, loading }) {
   function getNowSkyAndTempData() {
     if (!hourWeatherData) {
       return null;
@@ -73,25 +76,48 @@ export default function Weather({ nowWeatherData, hourWeatherData }) {
     return data;
   }
 
+  const skyAndTempData = getNowSkyAndTempData();
+
   return (
     <>
       <WeatherCardSection>
         <WeatherCardGrid>
-          <WarningCard />
+          {loading ? (
+            <CustomSpinner />
+          ) : nowWeatherData && skyAndTempData ? (
+            <WarningCard
+              items={nowWeatherData}
+              convertedItems={skyAndTempData}
+            />
+          ) : (
+            <Error />
+          )}
         </WeatherCardGrid>
         <WeatherCardGrid>
-          <WeatherLiveCard
-            items={nowWeatherData}
-            convertedItems={getNowSkyAndTempData()}
-          />
+          {loading ? (
+            <CustomSpinner />
+          ) : nowWeatherData && skyAndTempData ? (
+            <WeatherLiveCard
+              items={nowWeatherData}
+              convertedItems={skyAndTempData}
+            />
+          ) : (
+            <Error />
+          )}
         </WeatherCardGrid>
       </WeatherCardSection>
       <WeatherCardGrid full>
         <PText mVal={"10px"}>오늘의 일간 날씨</PText>
-        <WeatherCardWrapper>
-          <WeatherLabelCard />
-          <WeatherCard items={hourWeatherData} />
-        </WeatherCardWrapper>
+        {loading ? (
+          <CustomSpinner />
+        ) : hourWeatherData ? (
+          <WeatherCardWrapper>
+            <WeatherLabelCard />
+            <WeatherCard items={hourWeatherData} />{" "}
+          </WeatherCardWrapper>
+        ) : (
+          <Error />
+        )}
       </WeatherCardGrid>
     </>
   );

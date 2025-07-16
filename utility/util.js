@@ -12,10 +12,10 @@ export function getToday() {
 
 export function getHour() {
   const now = new Date();
-  now.setHours(now.getHours() - 1);
+  now.setHours(now.getHours());
 
   const hour = now.getHours().toString().padStart(2, "0") + "00";
-
+  console.log(hour);
   return hour;
 }
 

@@ -30,13 +30,6 @@ export const getFontColorForTime = (time) => {
   }
 };
 
-export const WeatherWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: calc(100% - 2rem);
-  justify-content: center;
-`;
-
 
 export const Temperature = styled.h3`
   margin: 5px 0;

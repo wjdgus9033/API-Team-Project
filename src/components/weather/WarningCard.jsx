@@ -22,7 +22,7 @@ function getGradientForTemp(val) {
       to bottom,
       rgba(165, 214, 167, 0.8),
       rgba(200, 230, 201, 0.7)
-    )`; // 옅은 연두색 안전 느낌
+    )`;
   }
 }
 
@@ -114,6 +114,8 @@ export default function WarningCard({ items, convertedItems }) {
 
   const temp = converedtNowItems[0]?.data?.T1H ?? tmpTemp;
   const humid = converedtNowItems[0]?.data?.REH ?? tmpHumid;
+
+  console.log("temp and humid ===========", temp, humid);
 
   const value = calcHeatIndexSimple(temp, humid);
 
