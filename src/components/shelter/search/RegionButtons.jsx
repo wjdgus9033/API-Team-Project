@@ -1,5 +1,3 @@
-import React from 'react';
-
 const REGIONS = [
   // 첫 번째 줄
   [
@@ -27,7 +25,7 @@ const REGIONS = [
   ]
 ];
 
-export default function RegionButtons({ selectedRegion, setSelectedRegion }) {
+export default function RegionButtons({ selectedRegion, setSelectedRegion, regionStats = {} }) {
   return (
     <div className="region-section">
       {REGIONS.map((regionRow, rowIndex) => (

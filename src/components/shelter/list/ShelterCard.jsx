@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function ShelterCard({ shelter, rank, onCardClick }) {
   const handleClick = () => {
     if (onCardClick && shelter.lat && shelter.lon && shelter.lat !== 0 && shelter.lon !== 0) {

@@ -1,4 +1,3 @@
-import React from 'react';
 import RegionButtons from './RegionButtons';
 
 export default function SearchComponent({ 
@@ -8,7 +7,7 @@ export default function SearchComponent({
   setSelectedRegion, 
   currentLocation, 
   currentAddress, 
-  onLocationRequest 
+  onLocationRequest
 }) {
   return (
     <div className="search-section">

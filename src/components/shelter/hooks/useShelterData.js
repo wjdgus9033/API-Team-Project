@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
 export default function useShelterData() {
   const [shelterData, setShelterData] = useState([]);
@@ -9,147 +9,223 @@ export default function useShelterData() {
     total: 0, 
     message: '데이터 로드 시작...' 
   });
+  const [lastFetchTime, setLastFetchTime] = useState(null);
 
-  // 지역별 분류 함수
+  // 지역 매핑을 상수로 분리하여 성능 향상
+  const REGION_MAPPING = useMemo(() => [
+    { keys: ['경기도', '경기'], value: 'gyeonggi' },
+    { keys: ['서울특별시', '서울'], value: 'seoul' },
+    { keys: ['인천광역시', '인천'], value: 'incheon' },
+    { keys: ['부산광역시', '부산'], value: 'busan' },
+    { keys: ['대구광역시', '대구'], value: 'daegu' },
+    { keys: ['대전광역시', '대전'], value: 'daejeon' },
+    { keys: ['광주광역시', '광주'], value: 'gwangju' },
+    { keys: ['울산광역시', '울산'], value: 'ulsan' },
+    { keys: ['세종특별자치시', '세종'], value: 'sejong' },
+    { keys: ['강원도', '강원특별자치도'], value: 'gangwon' },
+    { keys: ['충청북도', '충북'], value: 'chungbuk' },
+    { keys: ['충청남도', '충남'], value: 'chungnam' },
+    { keys: ['전라북도', '전북', '전북특별자치도'], value: 'jeonbuk' },
+    { keys: ['전라남도', '전남'], value: 'jeonnam' },
+    { keys: ['경상북도', '경북'], value: 'gyeongbuk' },
+    { keys: ['경상남도', '경남'], value: 'gyeongnam' },
+    { keys: ['제주특별자치도', '제주'], value: 'jeju' }
+  ], []);
+
+  // 최적화된 지역 분류 함수
   const getRegionFromAddress = useCallback((address) => {
-    if (address.startsWith('경기도') || address.startsWith('경기')) return 'gyeonggi';
-    if (address.startsWith('서울특별시') || address.startsWith('서울')) return 'seoul';
-    if (address.startsWith('인천광역시') || address.startsWith('인천')) return 'incheon';
-    if (address.startsWith('부산광역시') || address.startsWith('부산')) return 'busan';
-    if (address.startsWith('대구광역시') || address.startsWith('대구')) return 'daegu';
-    if (address.startsWith('대전광역시') || address.startsWith('대전')) return 'daejeon';
-    if (address.startsWith('광주광역시') || address.startsWith('광주')) return 'gwangju';
-    if (address.startsWith('울산광역시') || address.startsWith('울산')) return 'ulsan';
-    if (address.startsWith('세종특별자치시') || address.startsWith('세종')) return 'sejong';
-    if (address.startsWith('강원도') || address.startsWith('강원특별자치도')) return 'gangwon';
-    if (address.startsWith('충청북도') || address.startsWith('충북')) return 'chungbuk';
-    if (address.startsWith('충청남도') || address.startsWith('충남')) return 'chungnam';
-    if (address.startsWith('전라북도') || address.startsWith('전북') || address.startsWith('전북특별자치도')) return 'jeonbuk';
-    if (address.startsWith('전라남도') || address.startsWith('전남')) return 'jeonnam';
-    if (address.startsWith('경상북도') || address.startsWith('경북')) return 'gyeongbuk';
-    if (address.startsWith('경상남도') || address.startsWith('경남')) return 'gyeongnam';
-    if (address.startsWith('제주특별자치도') || address.startsWith('제주')) return 'jeju';
+    if (!address) return 'other';
+    
+    for (const region of REGION_MAPPING) {
+      if (region.keys.some(key => address.startsWith(key))) {
+        return region.value;
+      }
+    }
     return 'other';
+  }, [REGION_MAPPING]);
+
+  // 최적화된 시간 포맷팅 함수
+  const formatTime = useCallback((timeStr) => {
+    if (!timeStr || timeStr === "-" || timeStr.trim() === "") {
+      return "-";
+    }
+    
+    // 정규표현식으로 4자리 숫자 검증
+    if (!/^\d{4}$/.test(timeStr)) {
+      return timeStr;
+    }
+    
+    const hour = parseInt(timeStr.slice(0, 2), 10);
+    const minute = timeStr.slice(2, 4);
+    
+    // 조건문 최적화
+    if (hour === 0) return `오전 12:${minute}`;
+    if (hour < 12) return `오전 ${hour}:${minute}`;
+    if (hour === 12) return `오후 12:${minute}`;
+    return `오후 ${hour - 12}:${minute}`;
   }, []);
 
-  // 무더위쉼터 데이터 가져오기
-  const fetchShelterData = useCallback(async () => {
+  // 운영시간 형식 변환 함수
+  const formatOperatingHours = useCallback((beginTime, endTime) => {
+    if (!beginTime || !endTime || beginTime === "-" || endTime === "-") {
+      return "-";
+    }
+    return `${formatTime(beginTime)} ~ ${formatTime(endTime)}`;
+  }, [formatTime]);
+
+  // 최적화된 API 호출 함수 (병렬 처리 + 캐싱)
+  const fetchShelterData = useCallback(async (forceRefresh = false) => {
+    const CACHE_DURATION = 5 * 60 * 1000; // 5분 캐시
+    const now = Date.now();
+    
+    // 캐시 유효성 검사
+    if (!forceRefresh && 
+        lastFetchTime && 
+        shelterData.length > 0 && 
+        (now - lastFetchTime) < CACHE_DURATION) {
+      console.log('캐시된 데이터 사용');
+      return;
+    }
+
     setLoading(true);
+    setError(null);
+    
     try {
       const key = import.meta.env.VITE_SHELTER_API_KEY;
-      let allData = [];
-      let currentPage = 1;
-      let hasMoreData = true;
-      let retryCount = 0;
-      const maxRetries = 3;
+      const MAX_PAGES = 3;
+      const ITEMS_PER_PAGE = 300;
       
-      while (hasMoreData) {
+      setLoadingProgress({ 
+        current: 0, 
+        total: MAX_PAGES, 
+        message: '데이터 요청 준비 중...' 
+      });
+
+      // AbortController로 요청 취소 기능 추가
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60초 타임아웃
+
+      // 개별 페이지 요청 함수
+      const fetchPage = async (pageNo, retryCount = 0) => {
         try {
-          setLoadingProgress({ 
-            current: currentPage, 
-            total: Math.min(5, Math.ceil(500/100)), 
-            message: `페이지 ${currentPage} 데이터 요청 중... (전국 무더위쉼터 검색)` 
-          });
+          setLoadingProgress(prev => ({ 
+            ...prev,
+            current: pageNo, 
+            message: `페이지 ${pageNo} 데이터 요청 중... (300개)` 
+          }));
+
+          console.log(`페이지 ${pageNo} 데이터 요청 중... (300개)`);
           
-          console.log(`페이지 ${currentPage} 데이터 요청 중...`);
-          const res = await fetch(`/shelter1?serviceKey=${key}&pageNo=${currentPage}&numOfRows=100&returnType=JSON`, {
-            timeout: 30000,
-            headers: {
-              'Accept': 'application/json',
-              'Cache-Control': 'no-cache'
+          const response = await fetch(
+            `/shelter1?serviceKey=${key}&pageNo=${pageNo}&numOfRows=${ITEMS_PER_PAGE}&returnType=JSON`,
+            {
+              signal: controller.signal,
+              headers: {
+                'Accept': 'application/json',
+                'Cache-Control': 'no-cache'
+              }
             }
-          });
-          
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
+          );
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
           }
-          
-          const data = await res.json();
-          
+
+          const data = await response.json();
           const items = data.body || [];
-          if (!Array.isArray(items) || items.length === 0) {
-            hasMoreData = false;
-            break;
+          
+          if (!Array.isArray(items)) {
+            throw new Error('API 응답 형식이 올바르지 않습니다.');
           }
 
-          const parsed = items.map(item => {
-            const roadAddress = item.RN_DTL_ADRES || '';
-            const detailAddress = item.DTL_ADRES || '';
-            const address = roadAddress || detailAddress;
-            const region = getRegionFromAddress(address);
-            
-            return {
-              name: item.RSTR_NM,
-              address: address,
-              region: region,
-              weekday: `${item.WKDAY_OPER_BEGIN_TIME || "-"} ~ ${item.WKDAY_OPER_END_TIME || "-"}`,
-              weekend: item.CHCK_MATTER_WKEND_HDAY_OPN_AT === "N" ||
-                !item.WKEND_HDAY_OPER_BEGIN_TIME ||
-                !item.WKEND_HDAY_OPER_END_TIME
-                ? "주말 휴일"
-                : `${item.WKEND_HDAY_OPER_BEGIN_TIME} ~ ${item.WKEND_HDAY_OPER_END_TIME}`,
-              lat: item.LA ?? 0,
-              lon: item.LO ?? 0,
-              tel: item.TELNO || item.TEL || '정보 없음',
-              roadAddress: item.RN_DTL_ADRES || '정보 없음',
-              detailAddress: item.DTL_ADRES || '정보 없음',
-              weekendHolidayOpen: item.CHCK_MATTER_WKEND_HDAY_OPN_AT === "Y" ? "운영" : "휴무"
-            };
-          });
+          console.log(`페이지 ${pageNo} 완료: ${items.length}개 항목 로드됨`);
+          return items;
 
-          allData = [...allData, ...parsed];
-          console.log(`페이지 ${currentPage} 완료: ${parsed.length}개 항목 추가됨 (누적: ${allData.length}개)`);
-          
-          setLoadingProgress({ 
-            current: currentPage, 
-            total: Math.min(5, Math.ceil(500/100)), 
-            message: `페이지 ${currentPage} 완료: 전국 ${allData.length}개 무더위쉼터 로드됨` 
-          });
-          
-          // 페이지당 100개씩, 100개 미만이면 마지막 페이지
-          if (items.length < 100) {
-            hasMoreData = false;
-          } else {
-            currentPage++;
+        } catch (error) {
+          if (error.name === 'AbortError') {
+            throw new Error('요청이 시간 초과되었습니다.');
           }
           
-          // 최대 500개까지만 로드 (5페이지)
-          if (allData.length >= 500 || currentPage > 5) {
-            hasMoreData = false;
+          if (retryCount < 2) {
+            console.warn(`페이지 ${pageNo} 재시도 (${retryCount + 1}/2)`);
+            await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+            return fetchPage(pageNo, retryCount + 1);
           }
-          
-          // 요청 간 잠시 대기 (서버 부하 감소)
-          if (hasMoreData) {
-            await new Promise(resolve => setTimeout(resolve, 500));
-          }
-          
-          retryCount = 0; // 성공 시 재시도 카운터 리셋
-          
-        } catch (pageError) {
-          console.error(`페이지 ${currentPage} 요청 실패:`, pageError);
-          
-          if (retryCount < maxRetries) {
-            retryCount++;
-            console.log(`페이지 ${currentPage} 재시도 중... (${retryCount}/${maxRetries})`);
-            await new Promise(resolve => setTimeout(resolve, 2000 * retryCount)); // 지수 백오프
-            continue; // 같은 페이지 재시도
-          } else {
-            console.error(`페이지 ${currentPage} 최대 재시도 횟수 초과, 다음 페이지로 이동`);
-            hasMoreData = false; // 최대 재시도 후에도 실패하면 중단
-          }
+          throw error;
         }
+      };
+
+      try {
+        // 첫 번째 페이지로 데이터 존재 여부 확인
+        const firstPageData = await fetchPage(1);
+        if (firstPageData.length === 0) {
+          throw new Error('API에서 데이터를 받아오지 못했습니다.');
+        }
+
+        // 나머지 페이지들을 병렬로 처리
+        const remainingPagePromises = [];
+        for (let page = 2; page <= MAX_PAGES; page++) {
+          remainingPagePromises.push(
+            fetchPage(page).catch(err => {
+              console.warn(`페이지 ${page} 실패:`, err.message);
+              return []; // 실패한 페이지는 빈 배열 반환
+            })
+          );
+        }
+
+        const remainingPagesData = await Promise.all(remainingPagePromises);
+        const allPagesData = [firstPageData, ...remainingPagesData];
+
+        clearTimeout(timeoutId);
+
+        // 데이터 변환 최적화
+        const allData = allPagesData.flat().map(item => {
+          const roadAddress = item.RN_DTL_ADRES || '';
+          const detailAddress = item.DTL_ADRES || '';
+          const address = roadAddress || detailAddress;
+          
+          return {
+            name: item.RSTR_NM,
+            address,
+            region: getRegionFromAddress(address),
+            weekday: formatOperatingHours(item.WKDAY_OPER_BEGIN_TIME, item.WKDAY_OPER_END_TIME),
+            weekend: item.CHCK_MATTER_WKEND_HDAY_OPN_AT === "N" ||
+              !item.WKEND_HDAY_OPER_BEGIN_TIME ||
+              !item.WKEND_HDAY_OPER_END_TIME
+              ? "주말 휴일"
+              : formatOperatingHours(item.WKEND_HDAY_OPER_BEGIN_TIME, item.WKEND_HDAY_OPER_END_TIME),
+            lat: item.LA ?? 0,
+            lon: item.LO ?? 0,
+            tel: item.TELNO || item.TEL || '정보 없음',
+            roadAddress: item.RN_DTL_ADRES || '정보 없음',
+            detailAddress: item.DTL_ADRES || '정보 없음',
+            weekendHolidayOpen: item.CHCK_MATTER_WKEND_HDAY_OPN_AT === "Y" ? "운영" : "휴무"
+          };
+        });
+
+        console.log(`총 ${allData.length}개의 전국 무더위쉼터 데이터를 로드했습니다.`);
+        setShelterData(allData);
+        setLastFetchTime(now);
+        setError(null);
+        
+        setLoadingProgress({ 
+          current: MAX_PAGES, 
+          total: MAX_PAGES, 
+          message: `완료: ${allData.length}개 데이터 로드됨` 
+        });
+
+      } catch (error) {
+        clearTimeout(timeoutId);
+        throw error;
       }
 
-      console.log(`총 ${allData.length}개의 전국 무더위쉼터 데이터를 로드했습니다.`);
-      setShelterData(allData);
-      setError(null);
     } catch (err) {
       console.error("무더위쉼터 데이터 에러:", err);
       setError(`무더위쉼터 데이터 로드 실패: ${err.message}`);
     } finally {
       setLoading(false);
     }
-  }, [getRegionFromAddress]);
+  }, [getRegionFromAddress, formatOperatingHours, lastFetchTime, shelterData.length]);
 
   return {
     shelterData,
@@ -158,6 +234,16 @@ export default function useShelterData() {
     loadingProgress,
     fetchShelterData,
     setShelterData,
-    setError
+    setError,
+    clearCache: () => {
+      setLastFetchTime(null);
+      setShelterData([]);
+      setError(null);
+    },
+    isCacheValid: () => {
+      if (!lastFetchTime || shelterData.length === 0) return false;
+      const CACHE_DURATION = 5 * 60 * 1000; // 5분
+      return (Date.now() - lastFetchTime) < CACHE_DURATION;
+    }
   };
 }
