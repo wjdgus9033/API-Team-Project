@@ -132,7 +132,7 @@ export default function Test() {
 
           {/* 검색 결과 정보 */}
           <div className="search-result-info">
-            📊 전체 {shelterData.length}개 중 {filteredData.length}개 검색됨 (전체 표시)
+            📊 전국데이터에서 {filteredData.length}곳 검색됨
             {currentLocation && (
               <div className="search-result-subtext">
                 📍 현재 위치 기준 거리순 정렬
