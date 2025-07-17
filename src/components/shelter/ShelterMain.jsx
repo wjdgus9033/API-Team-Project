@@ -50,7 +50,7 @@ export default function Test() {
   // 카테고리나 검색어 변경 시 선택된 쉼터 초기화
   useEffect(() => {
     if (selectedShelter) {
-      console.log('카테고리/검색어 변경으로 선택된 쉼터 초기화');
+      // ...existing code...
       setSelectedShelter(null);
     }
   }, [selectedRegion, searchKeyword]);
@@ -63,19 +63,19 @@ export default function Test() {
   // 현재 위치 요청 핸들러
   const handleLocationRequest = useCallback(async () => {
     try {
-      console.log('현재 위치 요청 시작...');
+      // ...existing code...
       setError(null);
       await getCurrentLocation();
-      console.log('현재 위치 요청 완료');
+      // ...existing code...
     } catch (error) {
-      console.error('현재 위치 요청 실패:', error);
+      // ...existing code...
       setError(error.message);
     }
   }, [getCurrentLocation]);
 
   // 지도 준비 완료 핸들러
   const handleMapReady = useCallback((mapInstance) => {
-    console.log('지도 준비 완료:', mapInstance);
+    // ...existing code...
     setMap(mapInstance); // 지도 상태 설정
     setError(null); // 지도 초기화 성공 시 에러 상태 제거
     // 지도가 준비되면 현재 위치 가져오기
@@ -84,7 +84,7 @@ export default function Test() {
 
   // 쉼터 카드 클릭 핸들러
   const handleShelterClick = useCallback((shelter) => {
-    console.log('쉼터 카드 클릭:', shelter.name);
+    // ...existing code...
     setSelectedShelter(shelter);
   }, []);
 

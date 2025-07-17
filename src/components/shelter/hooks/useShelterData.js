@@ -83,7 +83,7 @@ export default function useShelterData() {
         lastFetchTime && 
         shelterData.length > 0 && 
         (now - lastFetchTime) < CACHE_DURATION) {
-      console.log('캐시된 데이터 사용');
+      // ...existing code...
       return;
     }
 
@@ -114,7 +114,7 @@ export default function useShelterData() {
             message: `페이지 ${pageNo} 데이터 요청 중... (300개)` 
           }));
 
-          console.log(`페이지 ${pageNo} 데이터 요청 중... (300개)`);
+          // ...existing code...
           
           const response = await fetch(
             `/shelter1?serviceKey=${key}&pageNo=${pageNo}&numOfRows=${ITEMS_PER_PAGE}&returnType=JSON`,
@@ -138,7 +138,7 @@ export default function useShelterData() {
             throw new Error('API 응답 형식이 올바르지 않습니다.');
           }
 
-          console.log(`페이지 ${pageNo} 완료: ${items.length}개 항목 로드됨`);
+          // ...existing code...
           return items;
 
         } catch (error) {
@@ -147,7 +147,7 @@ export default function useShelterData() {
           }
           
           if (retryCount < 2) {
-            console.warn(`페이지 ${pageNo} 재시도 (${retryCount + 1}/2)`);
+            // ...existing code...
             await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
             return fetchPage(pageNo, retryCount + 1);
           }
@@ -167,7 +167,7 @@ export default function useShelterData() {
         for (let page = 2; page <= MAX_PAGES; page++) {
           remainingPagePromises.push(
             fetchPage(page).catch(err => {
-              console.warn(`페이지 ${page} 실패:`, err.message);
+              // ...existing code...
               return []; // 실패한 페이지는 빈 배열 반환
             })
           );
@@ -203,7 +203,7 @@ export default function useShelterData() {
           };
         });
 
-        console.log(`총 ${allData.length}개의 전국 무더위쉼터 데이터를 로드했습니다.`);
+        // ...existing code...
         setShelterData(allData);
         setLastFetchTime(now);
         setError(null);
@@ -220,7 +220,7 @@ export default function useShelterData() {
       }
 
     } catch (err) {
-      console.error("무더위쉼터 데이터 에러:", err);
+      // ...existing code...
       setError(`무더위쉼터 데이터 로드 실패: ${err.message}`);
     } finally {
       setLoading(false);

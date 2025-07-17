@@ -33,7 +33,7 @@ export default function MapComponent({
 
     // 15초 후 타임아웃 처리
     loadingTimeoutRef.current = setTimeout(() => {
-      console.error('카카오지도 로딩 시간 초과 (15초)');
+      // ...existing code...
       setLoadingError('지도 로딩에 시간이 너무 오래 걸립니다. 페이지를 새로고침해 주세요.');
       setIsLoading(false);
     }, 15000);
@@ -41,7 +41,7 @@ export default function MapComponent({
     const initMap = () => {
       if (window.kakao && window.kakao.maps && mapRef.current) {
         try {
-          console.log('지도 초기화 시작...');
+          // ...existing code...
           
           // 타임아웃 클리어
           if (loadingTimeoutRef.current) {
@@ -59,9 +59,9 @@ export default function MapComponent({
           
           // useKakaoMap 훅의 setMap 함수 대신 직접 설정
           if (onMapReady) onMapReady(kakaoMap);
-          console.log('지도 초기화 완료');
+          // ...existing code...
         } catch (error) {
-          console.error('지도 초기화 실패:', error);
+          // ...existing code...
           setLoadingError('지도 초기화에 실패했습니다. 페이지를 새로고침해 주세요.');
           setIsLoading(false); // 에러 시에도 로딩 완료
           
@@ -75,7 +75,7 @@ export default function MapComponent({
 
     // 이미 스크립트가 로드되어 있는지 확인
     if (window.kakao && window.kakao.maps) {
-      console.log('카카오지도 API가 이미 로드되어 있음');
+      // ...existing code...
       initMap();
       return;
     }
@@ -83,7 +83,7 @@ export default function MapComponent({
     // 기존 스크립트 태그가 있는지 확인
     const existingScript = document.querySelector('script[src*="dapi.kakao.com"]');
     if (existingScript) {
-      console.log('카카오지도 스크립트가 이미 존재함, 로딩 대기 중...');
+      // ...existing code...
       let checkCount = 0;
       const maxChecks = 100; // 10초 (100ms * 100)
       
@@ -94,7 +94,7 @@ export default function MapComponent({
           initMap();
         } else if (checkCount >= maxChecks) {
           clearInterval(checkKakao);
-          console.error('카카오지도 API 로딩 시간 초과');
+          // ...existing code...
           setLoadingError('지도 API 로딩에 실패했습니다. 페이지를 새로고침해 주세요.');
           setIsLoading(false);
           
@@ -121,14 +121,14 @@ export default function MapComponent({
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoApiKey}&autoload=false&libraries=services`;
     
     script.onload = () => {
-      console.log('카카오지도 스크립트 로딩 성공');
+      // ...existing code...
       try {
         window.kakao.maps.load(() => {
-          console.log('카카오지도 API 로딩 완료');
+          // ...existing code...
           initMap();
         });
       } catch (error) {
-        console.error('카카오지도 API 로드 실패:', error);
+        // ...existing code...
         setLoadingError('지도 API 로드에 실패했습니다.');
         setIsLoading(false);
         
@@ -140,7 +140,7 @@ export default function MapComponent({
     };
 
     script.onerror = () => {
-      console.error('카카오지도 스크립트 로딩 실패');
+      // ...existing code...
       setLoadingError('지도 스크립트 로딩에 실패했습니다. 인터넷 연결을 확인해 주세요.');
       setIsLoading(false);
       
@@ -163,7 +163,7 @@ export default function MapComponent({
   // 현재 위치 변경 시 지도 중심 이동 (항상 우선)
   useEffect(() => {
     if (currentLocation && map) {
-      console.log('현재 위치 변경으로 지도 중심 이동:', currentLocation);
+      // ...existing code...
       lastActionRef.current = 'currentLocation'; // 마지막 액션 기록
       const moveMap = () => {
         const currentPos = new window.kakao.maps.LatLng(currentLocation.lat, currentLocation.lng);
@@ -202,7 +202,7 @@ export default function MapComponent({
   // 선택된 쉼터로 지도 이동 (현재 위치 변경이 아닌 경우에만)
   useEffect(() => {
     if (selectedShelter && map && selectedShelter.lat && selectedShelter.lon && selectedShelter.lat !== 0 && selectedShelter.lon !== 0) {
-      console.log('선택된 쉼터로 지도 이동:', selectedShelter.name);
+      // ...existing code...
       lastActionRef.current = 'selectedShelter'; // 마지막 액션 기록
       const selectedPos = new window.kakao.maps.LatLng(selectedShelter.lat, selectedShelter.lon);
       
@@ -237,7 +237,7 @@ export default function MapComponent({
   useEffect(() => {
     const isDataChanged = JSON.stringify(prevFilteredDataRef.current) !== JSON.stringify(filteredData);
     if (isDataChanged && filteredData) {
-      console.log('필터된 데이터 변경 감지');
+      // ...existing code...
       lastActionRef.current = 'categoryFilter';
       prevFilteredDataRef.current = filteredData;
     }
@@ -246,7 +246,7 @@ export default function MapComponent({
   // 필터된 데이터 변경 시 마커 업데이트
   useEffect(() => {
     if (map && window.kakao && window.kakao.maps) {
-      console.log('마커 업데이트 시작:', filteredData?.length || 0);
+      // ...existing code...
       
       // 기존 인포윈도우들 닫기
       infoWindowsRef.current.forEach(infoWindow => infoWindow.close());
@@ -296,7 +296,7 @@ export default function MapComponent({
           currentInfoWindow.close();
         });
 
-        console.log('현재 위치 마커 추가 완료:', currentLocation);
+        // ...existing code...
       }
       
       // 쉼터 마커 추가
@@ -391,7 +391,7 @@ export default function MapComponent({
         map.setLevel(8);
       }
 
-      console.log('마커 업데이트 완료 - 현재위치:', !!currentLocation, '쉼터:', filteredData?.length || 0, '총 마커:', markersRef.current.length, '마지막 액션:', lastActionRef.current);
+      // ...existing code...
     }
   }, [map, filteredData, currentLocation, currentAddress, selectedShelter]);
 
