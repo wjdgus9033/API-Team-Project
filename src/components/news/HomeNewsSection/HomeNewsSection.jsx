@@ -36,7 +36,7 @@ export default function HomeNewsSection() {
         const news = await fetchHeatwaveNews();
         setNewsData(news.slice(0, 3));
       } catch (error) {
-        console.error('뉴스 로딩 실패:', error);
+        // 뉴스 로딩 실패 시 더미 데이터 사용
       } finally {
         setNewsLoading(false);
       }
@@ -48,7 +48,7 @@ export default function HomeNewsSection() {
         const healthNews = await fetchHealthNews();
         setHealthNewsData(healthNews.slice(0, 3));
       } catch (error) {
-        console.error('건강 뉴스 로딩 실패:', error);
+        // 건강 뉴스 로딩 실패 시 더미 데이터 사용
       } finally {
         setHealthNewsLoading(false);
       }

@@ -1,35 +1,37 @@
 // 네이버 뉴스 API 관련 함수들
 
 // 환경변수에서 API 키 가져오기
-const CLIENT_ID = import.meta.env.VITE_NAVER_CLIENT_ID;
-const CLIENT_SECRET = import.meta.env.VITE_NAVER_CLIENT_SECRET;
+const CLIENT_ID = import.meta.env.VITE_NAVER_CLIENT_ID || 'ARau3rZczpU9SAykMPYH';
+const CLIENT_SECRET = import.meta.env.VITE_NAVER_CLIENT_SECRET || 'zKdT_CpOzO';
 
 // 지연 함수 (API 속도 제한 방지)
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// 네이버 뉴스 API 호출 함수
+// 네이버 뉴스 API 호출 함수 (환경별 분기)
 export const fetchNaverNews = async (query = '폭염', display = 20) => {
   try {
-    const url = `/api/naver/v1/search/news.json?query=${encodeURIComponent(query)}&display=${display}&sort=date`;
-    console.log('API 호출 URL:', url);
+    // 개발환경: Vite 프록시, 배포환경: PHP 프록시
+    const isDevelopment = import.meta.env.MODE === 'development';
+    const baseUrl = isDevelopment 
+      ? `/api/naver/v1/search/news.json` 
+      : `/proxy.php`;
+    
+    const url = isDevelopment
+      ? `${baseUrl}?query=${encodeURIComponent(query)}&display=${display}&sort=date`
+      : `${baseUrl}?query=${encodeURIComponent(query)}&display=${display}&sort=date`;
     
     const response = await fetch(url, {
       method: 'GET'
     });
 
-    console.log('응답 상태:', response.status, response.statusText);
-
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('API 에러 응답:', errorText);
       throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
     }
 
     const data = await response.json();
-    console.log('API 응답 데이터:', data);
     return data.items || [];
   } catch (error) {
-    console.error('네이버 뉴스 API 에러:', error);
     throw error;
   }
 };
@@ -37,19 +39,15 @@ export const fetchNaverNews = async (query = '폭염', display = 20) => {
 // 폭염 관련 뉴스 가져오기 (일반 뉴스)
 export const fetchHeatwaveNews = async () => {
   try {
-    console.log('폭염 뉴스 API 호출 시작...');
-    
     // 일반 폭염 뉴스 키워드들 (개수 줄임)
     const keywords = ['폭염', '무더위'];
     const allNews = [];
 
     for (let i = 0; i < keywords.length; i++) {
       const keyword = keywords[i];
-      console.log(`키워드 "${keyword}" 검색 중...`);
       
       try {
         const news = await fetchNaverNews(keyword, 10);
-        console.log(`키워드 "${keyword}" 결과:`, news.length, '개');
         allNews.push(...news);
         
         // 다음 요청 전 1초 대기 (속도 제한 방지)
@@ -57,17 +55,14 @@ export const fetchHeatwaveNews = async () => {
           await delay(1000);
         }
       } catch (keywordError) {
-        console.error(`키워드 "${keyword}" 검색 실패:`, keywordError);
         // 429 에러 시 더 긴 대기
         if (keywordError.message.includes('429')) {
-          console.log('속도 제한 감지, 5초 대기...');
           await delay(5000);
         }
       }
     }
 
     if (allNews.length === 0) {
-      console.log('모든 API 호출 실패, 더미 데이터 사용');
       return getDummyHeatwaveNews();
     }
 
@@ -76,11 +71,9 @@ export const fetchHeatwaveNews = async () => {
       index === self.findIndex(item => item.title === news.title)
     );
 
-    console.log('최종 폭염 뉴스:', uniqueNews.length, '개');
     // 최신순 정렬
     return uniqueNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
   } catch (error) {
-    console.error('폭염 뉴스 가져오기 실패:', error);
     return getDummyHeatwaveNews(); // 에러 시 더미 데이터 반환
   }
 };
@@ -88,19 +81,15 @@ export const fetchHeatwaveNews = async () => {
 // 폭염 건강 대처법 뉴스 가져오기
 export const fetchHealthNews = async () => {
   try {
-    console.log('건강 뉴스 API 호출 시작...');
-    
     // 건강 관련 키워드들 (개수 줄임)
     const keywords = ['온열질환', '폭염 대처'];
     const allNews = [];
 
     for (let i = 0; i < keywords.length; i++) {
       const keyword = keywords[i];
-      console.log(`키워드 "${keyword}" 검색 중...`);
       
       try {
         const news = await fetchNaverNews(keyword, 10);
-        console.log(`키워드 "${keyword}" 결과:`, news.length, '개');
         allNews.push(...news);
         
         // 다음 요청 전 1초 대기 (속도 제한 방지)
@@ -108,17 +97,14 @@ export const fetchHealthNews = async () => {
           await delay(1000);
         }
       } catch (keywordError) {
-        console.error(`키워드 "${keyword}" 검색 실패:`, keywordError);
         // 429 에러 시 더 긴 대기
         if (keywordError.message.includes('429')) {
-          console.log('속도 제한 감지, 5초 대기...');
           await delay(5000);
         }
       }
     }
 
     if (allNews.length === 0) {
-      console.log('모든 API 호출 실패, 더미 데이터 사용');
       return getDummyHealthNews();
     }
 
@@ -127,11 +113,9 @@ export const fetchHealthNews = async () => {
       index === self.findIndex(item => item.title === news.title)
     );
 
-    console.log('최종 건강 뉴스:', uniqueNews.length, '개');
     // 최신순 정렬
     return uniqueNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
   } catch (error) {
-    console.error('건강 뉴스 가져오기 실패:', error);
     return getDummyHealthNews(); // 에러 시 더미 데이터 반환
   }
 };
@@ -139,16 +123,9 @@ export const fetchHealthNews = async () => {
 // API 테스트 함수 (개발용)
 export const testNaverAPI = async () => {
   try {
-    console.log('=== 네이버 API 테스트 시작 ===');
-    console.log('환경변수 확인:');
-    console.log('CLIENT_ID 존재:', !!CLIENT_ID);
-    console.log('CLIENT_SECRET 존재:', !!CLIENT_SECRET);
-    
     const result = await fetchNaverNews('폭염', 3);
-    console.log('API 테스트 성공:', result);
     return result;
   } catch (error) {
-    console.error('API 테스트 실패:', error);
     return null;
   }
 };
