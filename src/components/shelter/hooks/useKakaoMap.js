@@ -7,11 +7,12 @@ export default function useKakaoMap() {
 
   // 카카오지도 초기화
   const initializeMap = useCallback((mapRef) => {
-    console.log('지도 초기화 시도...', { 
-      kakaoExists: !!window.kakao, 
-      mapsExists: !!window.kakao?.maps, 
-      containerExists: !!mapRef.current 
-    });
+    // 상태 체크용 (디버깅용 객체, 필요시 주석 해제)
+    // const debugStatus = {
+    //   kakaoExists: !!window.kakao,
+    //   mapsExists: !!(window.kakao && window.kakao.maps),
+    //   containerExists: !!mapRef.current
+    // };
     
     // 이전 타임아웃 클리어
     if (initTimeoutRef.current) {
@@ -20,7 +21,7 @@ export default function useKakaoMap() {
 
     // 5초 후 타임아웃 처리
     initTimeoutRef.current = setTimeout(() => {
-      console.error('지도 초기화 시간 초과');
+      // ...existing code...
       throw new Error('지도 초기화에 시간이 너무 오래 걸립니다.');
     }, 5000);
     
@@ -38,7 +39,7 @@ export default function useKakaoMap() {
         }
         
         setMap(kakaoMap);
-        console.log('카카오지도 초기화 성공');
+        // ...existing code...
         return kakaoMap;
       } catch (error) {
         // 타임아웃 클리어
@@ -46,7 +47,7 @@ export default function useKakaoMap() {
           clearTimeout(initTimeoutRef.current);
         }
         
-        console.error('지도 초기화 오류:', error);
+        // ...existing code...
         throw new Error('지도 초기화에 실패했습니다.');
       }
     } else {
@@ -55,7 +56,7 @@ export default function useKakaoMap() {
         clearTimeout(initTimeoutRef.current);
       }
       
-      console.error('카카오지도 API가 로드되지 않았습니다.');
+      // ...existing code...
       throw new Error('카카오지도 API 로딩 중입니다. 잠시만 기다려주세요.');
     }
   }, []);
@@ -63,7 +64,7 @@ export default function useKakaoMap() {
   // 지도에 마커 표시
   const displayMarkersOnMap = useCallback((shelters, currentLocation, currentAddress) => {
     if (!map || !window.kakao || !window.kakao.maps) {
-      console.warn('지도 또는 카카오지도 API가 준비되지 않았습니다.');
+      // ...existing code...
       return;
     }
 
@@ -112,7 +113,7 @@ export default function useKakaoMap() {
             currentInfoWindow.open(map, currentMarker);
           });
         } catch (error) {
-          console.error('현재 위치 마커 생성 오류:', error);
+          // ...existing code...
         }
       }
 
@@ -153,7 +154,7 @@ export default function useKakaoMap() {
               newMarkers.push(marker);
               bounds.extend(position);
             } catch (error) {
-              console.error(`쉼터 마커 생성 오류 (${shelter.name}):`, error);
+              // ...existing code...
             }
           }
         });
@@ -166,13 +167,13 @@ export default function useKakaoMap() {
         try {
           map.setBounds(bounds);
         } catch (error) {
-          console.error('지도 범위 조정 오류:', error);
+          // ...existing code...
         }
       }
       
-      console.log(`마커 표시 완료 - 총 ${newMarkers.length}개`);
+      // ...existing code...
     } catch (error) {
-      console.error('마커 표시 중 오류 발생:', error);
+      // ...existing code...
     }
   }, [map]);
 
@@ -184,7 +185,7 @@ export default function useKakaoMap() {
         map.setCenter(currentPos);
         map.setLevel(5);
       } catch (error) {
-        console.error('현재 위치로 이동 중 오류:', error);
+        // ...existing code...
       }
     }
   }, [map]);
