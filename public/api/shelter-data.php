@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once __DIR__ . '/config.php';
 
 function isValidApiKey() {
-    return defined('STATE_API_KEY') && trim(STATE_API_KEY) !== '';
+    return defined('SHELTER_API_KEY') && trim(SHELTER_API_KEY) !== '';
 }
 
 function sendError($msg, $code = 500) {
@@ -33,12 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 }
 
 if (!isValidApiKey()) {
-    sendError('STATE_API_KEY is not set in config.php', 401);
+    sendError('SHELTER_API_KEY is not set in config.php', 401);
 }
 
 // API 호출 URL (JSON)
-$url = "https://apis.data.go.kr/1741000/CasualtiesFromHeatwaveByYear/getCasualtiesFromHeatwaveByYear?serviceKey=" 
-       . STATE_API_KEY . "&pageNo=1&numOfRows=100&type=json";
+$url = "https://www.safetydata.go.kr//V2/api/DSSP-IF-10942?serviceKey=". SHELTER_API_KEY . "&pageNo=1&numOfRows=100&type=json";
 
 // cURL 요청
 $ch = curl_init();
@@ -56,7 +55,6 @@ curl_close($ch);
 if ($httpCode !== 200) {
     sendError("API returned HTTP $httpCode", $httpCode);
 }
-
 
 // JSON 그대로 반환
 header('Content-Type: application/json; charset=utf-8');
