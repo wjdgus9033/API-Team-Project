@@ -36,9 +36,9 @@ if (!isValidApiKey()) {
     sendError('API_KEY is not set in config.php', 401);
 }
 
-// API 호출 URL
+// API 호출 URL (JSON)
 $url = "https://apis.data.go.kr/1741000/CasualtiesFromHeatwaveByYear/getCasualtiesFromHeatwaveByYear?serviceKey=" 
-       . API_KEY . "&pageNo=1&numOfRows=100&type=xml";
+       . API_KEY . "&pageNo=1&numOfRows=100&type=json";
 
 // cURL 요청
 $ch = curl_init();
@@ -57,21 +57,9 @@ if ($httpCode !== 200) {
     sendError("API returned HTTP $httpCode", $httpCode);
 }
 
-// XML 파싱
-$xml = simplexml_load_string($response, 'SimpleXMLElement', LIBXML_NOCDATA);
-if (!$xml) {
-    sendError('Failed parsing XML');
-}
 
-$result = [];
-foreach ($xml->body->items->item as $item) {
-    $result[] = [
-        'year'     => (string) $item->wrttimeid,
-        'total'    => (string) $item->tot,
-        'indoor'   => (string) $item->indoor_subtot,
-        'outdoor'  => (string) $item->otdoor_subtot,
-    ];
-}
-
-sendResponse($result);
+// JSON 그대로 반환
+header('Content-Type: application/json; charset=utf-8');
+echo $response;
+exit();
 ?>

@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const useProxy = env.VITE_USE_PROXY === 'false'; // false일 때 Vite 프록시 사용, true일 때 배포 서버 사용
+  const useProxy = env.VITE_USE_PROXY === 'dev'; 
 
   return {
     plugins: [react()],
