@@ -114,10 +114,19 @@ export default function useShelterData() {
             message: `페이지 ${pageNo} 데이터 요청 중... (300개)` 
           }));
 
-          // ...existing code...
-          
+          // 환경에 따라 API URL 분기
+          let apiUrl = '';
+          const envType = import.meta.env.VITE_ENV_TYPE;
+          if (envType === 'dev') {
+            apiUrl = `/shelter1?serviceKey=${key}&pageNo=${pageNo}&numOfRows=${ITEMS_PER_PAGE}&returnType=JSON`;
+          } else if (envType === 'prod') {
+            apiUrl = `./api/shelter-data.php?pageNo=${pageNo}&numOfRows=${ITEMS_PER_PAGE}`;
+          } else {
+            throw new Error('환경변수 VITE_ENV_TYPE이 dev 또는 prod로 설정되어야 합니다.');
+          }
+
           const response = await fetch(
-            `/shelter1?serviceKey=${key}&pageNo=${pageNo}&numOfRows=${ITEMS_PER_PAGE}&returnType=JSON`,
+            apiUrl,
             {
               signal: controller.signal,
               headers: {

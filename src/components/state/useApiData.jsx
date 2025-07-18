@@ -5,8 +5,8 @@ export default function useApiData() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // VITE_USE_PROXY 값이 'dev'면 개발, 'prod'면 배포
-  const envType = import.meta.env.VITE_USE_PROXY;
+  // VITE_ENV_TYPE 값이 'dev'면 개발, 'prod'면 배포
+  const envType = import.meta.env.VITE_ENV_TYPE;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,7 +16,7 @@ export default function useApiData() {
       } else if (envType === 'prod') {
         apiUrl = `./api/state-data.php`;
       } else {
-        setError('환경변수 VITE_USE_PROXY가 dev 또는 prod로 설정되어야 합니다.');
+        setError('환경변수 VITE_ENV_TYPE가 dev 또는 prod로 설정되어야 합니다.');
         setLoading(false);
         return;
       }
