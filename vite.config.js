@@ -2,13 +2,14 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '')
+  const env = loadEnv(mode, process.cwd(), '');
+  const useProxy = env.VITE_USE_PROXY === 'false'; // false일 때 Vite 프록시 사용, true일 때 배포 서버 사용
 
   return {
     plugins: [react()],
-    base:"/HeatGuard/",
+    base: "/HeatGuard/",
     server: {
-      proxy: {
+      proxy: useProxy ? {
         '/shelter1': {
           target: 'https://www.safetydata.go.kr',
           changeOrigin: true,
@@ -31,7 +32,7 @@ export default defineConfig(({ mode }) => {
             });
           }
         }
-      }
+      } : undefined
     }
-  }
+  };
 });
