@@ -36,8 +36,9 @@ if (!isValidApiKey()) {
     sendError('SHELTER_API_KEY is not set in config.php', 401);
 }
 
-// API 호출 URL (JSON)
-$url = "https://www.safetydata.go.kr//V2/api/DSSP-IF-10942?serviceKey=". SHELTER_API_KEY . "&pageNo=1&numOfRows=100&type=json";
+// API 호출 URL (JSON, 무더위쉼터 정보)
+$url = "https://www.safetydata.go.kr/V2/api/DSSP-IF-10942?serviceKey="
+       . SHELTER_API_KEY . "&pageNo=1&numOfRows=100&type=json";
 
 // cURL 요청
 $ch = curl_init();
@@ -56,8 +57,12 @@ if ($httpCode !== 200) {
     sendError("API returned HTTP $httpCode", $httpCode);
 }
 
-// JSON 그대로 반환
-header('Content-Type: application/json; charset=utf-8');
+// JSON 파싱
+$data = json_decode($response, true);
+if ($data === null) {
+    sendError('Failed parsing JSON');
+}
+
+// 또는 응답 내용을 직접 출력
 echo $response;
 exit();
-?>
